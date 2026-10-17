@@ -7,11 +7,10 @@
 
     <!-- ========================================== -->
     <!-- 1. SEKME İKONU (FAVICON) BÖLÜMÜ            -->
-    <!-- Tarayıcı sekmesinde görünen küçük simgedir. -->
     <!-- ========================================== -->
     <link rel="icon" type="image/png" href="https://hizliresim.com/9tiys4o7">
     
-    <!-- Dışarıdan Yüklenen Fontlar ve İkon Kütüphanesi (FontAwesome) -->
+    <!-- Dışarıdan Yüklenen Fontlar ve İkon Kütüphanesi -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
@@ -23,10 +22,8 @@
 
     <!-- ========================================== -->
     <!-- 2. CSS STİL / TASARIM BÖLÜMÜ               -->
-    <!-- Sitenin tüm renkleri, boyutları ve stilleri -->
     <!-- ========================================== -->
     <style>
-        /* SİTENİN GENEL RENK KODLARI (Buraları değiştirerek renkleri güncelleyebilirsin) */
         :root {
             --bg-dark: #08080a;
             --card-bg: rgba(15, 14, 18, 0.9);
@@ -228,7 +225,7 @@
             box-shadow: 0 6px 25px rgba(243, 195, 68, 0.4);
         }
 
-        /* Çizgili Başlık Ayrımı (Divider) Tasarımı */
+        /* Çizgili Başlık Ayrımı Tasarımı */
         .section-divider {
             display: flex;
             flex-direction: column;
@@ -281,7 +278,7 @@
             text-transform: uppercase;
         }
 
-        /* Sayaç / Sayaç Kartı Tasarımı */
+        /* Sayaç Kartı Tasarımı */
         .stats-container {
             display: flex;
             justify-content: center;
@@ -324,7 +321,7 @@
             font-family: 'Cinzel', serif;
         }
 
-        /* Arama ve Sıralama Filtre Alanı Tasarımı */
+        /* Arama ve Sıralama Filtre Alanı */
         .filter-container {
             display: flex;
             gap: 12px;
@@ -387,7 +384,7 @@
             cursor: pointer;
         }
 
-        /* Yayıncı Kartları Tasarımı (Twitch / YouTube) */
+        /* Yayıncı Kartları Tasarımı */
         .streamers-grid {
             display: flex;
             flex-wrap: wrap;
@@ -500,7 +497,7 @@
             display: none;
         }
 
-        /* Genel Buton Tasarımları (Altın Rengi, WhatsApp vs.) */
+        /* Genel Buton Tasarımları */
         .btn-gold {
             width: 100%;
             max-width: 420px;
@@ -805,7 +802,7 @@
             justify-content: center;
         }
 
-        /* OYUNCU EKİPMANLARI (DÖNEN KARTLAR) TASARIMI */
+        /* OYUNCU EKİPMANLARI (DÖNEN KARTLAR) */
         .eq-card-container {
             background-color: transparent;
             width: 230px !important;
@@ -865,7 +862,6 @@
             margin-bottom: 4px;
         }
 
-        /* Ekipman Kartının Ön Yüzündeki Altın Fiyat Yazısı */
         .eq-card-front .front-eq-price {
             font-size: 1.1rem;
             font-weight: 800;
@@ -978,7 +974,6 @@
     <div class="container">
         <!-- ========================================== -->
         <!-- 4. LOGO VE MARKA ALANI                     -->
-        <!-- Sitenin en üstünde duran ana logo alanı    -->
         <!-- ========================================== -->
         <div class="logo-container">
             <img id="mainLogoImg" src="https://hizliresim.com/9tiys4o7" alt="MusaRUZGAR Logo" class="custom-logo">
@@ -986,11 +981,9 @@
         </div>
 
         <!-- ========================================== -->
-        <!-- 5. YÖNETİCİ KONTROL PANELİ (ADMİN PANEL)   -->
-        <!-- Şifre girildikten sonra açılan özel panel  -->
+        <!-- 5. YÖNETİCİ KONTROL PANELİ                  -->
         <!-- ========================================== -->
         <div id="adminPanel" class="admin-panel">
-            <!-- Şifre Giriş Alanı -->
             <div id="loginSection">
                 <h3>YÖNETİCİ DOĞRULAMA</h3>
                 <div class="admin-login-box">
@@ -999,21 +992,17 @@
                 </div>
             </div>
 
-            <!-- Yönetici İçeriği (Şifre Doğruysa Görünür) -->
             <div id="addItemSection" style="display: none;">
-                
-                <!-- Kategori Butonları (Modüler Tab Menüsü) -->
                 <div class="admin-nav-btns">
                     <button onclick="showAdminTab('tabLogo')" id="btnTabLogo" class="admin-nav-btn active">Logo & Oyun Görselleri</button>
                     <button onclick="showAdminTab('tabStreamer')" id="btnTabStreamer" class="admin-nav-btn">Yayıncı Ekle</button>
                     <button onclick="showAdminTab('tabItem')" id="btnTabItem" class="admin-nav-btn">İlan / Ekipman Ekle</button>
                 </div>
 
-                <!-- 1. TAB: LOGO VE OYUN BUTONLARI DEĞİŞTİRME -->
                 <div id="tabLogo" class="admin-tab-content active">
                     <h3><i class="fa-solid fa-image"></i> PORTAL LOGOSU DEĞİŞTİR</h3>
                     <div class="form-group">
-                        <label>Portal Logosu Dosyası (Masaüstünden Seç)</label>
+                        <label>Portal Logosu Dosyası</label>
                         <input type="file" id="newLogoImage" class="form-control" accept="image/*">
                     </div>
                     <button onclick="updateLogo()" id="uploadLogoBtn" class="btn-gold" style="max-width: 100%; margin-top: 5px;">
@@ -1036,7 +1025,6 @@
                     </button>
                 </div>
 
-                <!-- 2. TAB: YAYINCI EKLEME FORMU -->
                 <div id="tabStreamer" class="admin-tab-content">
                     <h3><i class="fa-solid fa-video"></i> YAYINCI EKLE (TWITCH / YOUTUBE)</h3>
                     <div class="form-group">
@@ -1044,7 +1032,7 @@
                         <select id="newStreamerGame" class="form-control">
                             <option value="knight">Knight Online</option>
                             <option value="rise">Rise Online</option>
-                            <option value="both">İki Tarafa Da Ekle (Knight & Rise)</option>
+                            <option value="both">İki Tarafa Da Ekle</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1064,7 +1052,7 @@
                     </div>
                     <div class="form-group">
                         <label>Profil Fotoğrafı Linki (URL)</label>
-                        <input type="text" id="newStreamerImageUrl" class="form-control" placeholder="Resim adresini yapıştırın">
+                        <input type="text" id="newStreamerImageUrl" class="form-control" placeholder="Resim adresi">
                     </div>
                     <div class="form-group">
                         <label>veya Fotoğraf Dosyası Seç</label>
@@ -1075,7 +1063,6 @@
                     </button>
                 </div>
 
-                <!-- 3. TAB: İLAN VEYA EKİPMAN EKLEME FORMU -->
                 <div id="tabItem" class="admin-tab-content">
                     <h3><i class="fa-solid fa-plus-circle"></i> İLAN / EKİPMAN EKLE</h3>
                     <div class="form-group">
@@ -1083,27 +1070,27 @@
                         <select id="targetGame" class="form-control">
                             <option value="knight">Knight Online</option>
                             <option value="rise">Rise Online</option>
-                            <option value="both">İki Tarafa Da Ekle (Knight & Rise)</option>
+                            <option value="both">İki Tarafa Da Ekle</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Eklenecek Tür</label>
                         <select id="newItemCategory" class="form-control">
                             <option value="own">Elimde Bulunan Eşyalar</option>
-                            <option value="consignment">Konsinye Eşyalar (Sizin Satılık Eşyalarınız)</option>
+                            <option value="consignment">Konsinye Eşyalar</option>
                             <option value="equipment">Oyuncu Ekipmanı / Sistem</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>İsim / Başlık</label>
-                        <input type="text" id="newItemTitle" class="form-control" placeholder="Örn: Raptor +9 veya MİNİ PC 1">
+                        <input type="text" id="newItemTitle" class="form-control" placeholder="Örn: Raptor +9">
                     </div>
                     <div class="form-group" id="priceGroup">
                         <label>Fiyat (TL)</label>
                         <input type="text" id="newItemPrice" class="form-control" placeholder="Örn: 1.000,00 TL">
                     </div>
                     <div class="form-group" id="specsGroup" style="display: none;">
-                        <label>Ekipman Özellikleri (İki Nokta İle! Örn: İŞLEMCİ: i5)</label>
+                        <label>Ekipman Özellikleri (Örn: İŞLEMCİ: i5)</label>
                         <textarea id="newEqSpecs" class="form-control" style="height: 70px; resize: none;" placeholder="İŞLEMCİ: i5&#10;RAM: 16 GB"></textarea>
                     </div>
                     <div class="form-group">
@@ -1114,12 +1101,11 @@
                         <i class="fa-solid fa-cloud-arrow-up"></i> Seçilen Oyuna Ekle
                     </button>
                 </div>
-
             </div>
         </div>
 
         <!-- ========================================== -->
-        <!-- 6. TOPLAM ZİYARETÇİ SAYAÇ ALANI            -->
+        <!-- 6. TOPLAM ZİYARETÇİ SAYAÇ                  -->
         <!-- ========================================== -->
         <div class="stats-container">
             <div class="stat-card">
@@ -1130,7 +1116,7 @@
         </div>
 
         <!-- ========================================== -->
-        <!-- 7. OYUN SEÇİM SEKMELERİ (KNIGHT / RISE)    -->
+        <!-- 7. OYUN SEÇİM SEKMELERİ                    -->
         <!-- ========================================== -->
         <div class="game-tabs-container">
             <button onclick="switchGame('knight')" id="knightTabBtn" class="game-tab-btn active">
@@ -1143,13 +1129,12 @@
             </button>
         </div>
 
-        <!-- Boydan Boya GB Fiyatları Butonu -->
         <a href="https://www.enucuzgb.com/rise-online/gb?d=1" target="_blank" class="gb-banner-btn">
             <i class="fa-solid fa-coins" style="font-size: 1.2rem;"></i> GB FİYATLARI İÇİN TIKLAYIN
         </a>
 
         <!-- ========================================== -->
-        <!-- 8. TWITCH YAYINCILARI LİSTELEME ALANI      -->
+        <!-- 8. TWITCH YAYINCILARI                      -->
         <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
@@ -1167,7 +1152,7 @@
         </div>
 
         <!-- ========================================== -->
-        <!-- 9. YOUTUBE YAYINCILARI LİSTELEME ALANI     -->
+        <!-- 9. YOUTUBE YAYINCILARI                     -->
         <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
@@ -1184,13 +1169,12 @@
             <div style="color: var(--text-muted); font-size: 0.9rem;">Yükleniyor...</div>
         </div>
 
-        <!-- WHATSAPP HIZLI İLETİŞİM BUTONU -->
         <a href="https://wa.me/905393112169?text=Merhaba,%20MusaRUZGAR%20iletişim%20hattından%20ulaşıyorum." target="_blank" class="btn-whatsapp">
             <i class="fa-brands fa-whatsapp" style="font-size: 1.3rem;"></i> WHATSAPP İLETİŞİM
         </a>
 
         <!-- ========================================== -->
-        <!-- 10. DIŞ BAĞLANTILAR / PARTNER LİNKLERİ    -->
+        <!-- 10. PARTNER LİNKLERİ                       -->
         <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
@@ -1213,7 +1197,7 @@
         </a>
 
         <!-- ========================================== -->
-        <!-- 11. İLAN ARAMA VE FİYAT SIRALAMA FİLTRESİ  -->
+        <!-- 11. ARAMA VE FİLTRE                        -->
         <!-- ========================================== -->
         <div class="filter-container">
             <input type="text" id="searchInput" class="search-input" placeholder="Örnek: Raptor(+9)" oninput="filterAndSortAll()">
@@ -1223,7 +1207,7 @@
         </div>
 
         <!-- ========================================== -->
-        <!-- 12. ELİMDE BULUNAN EŞYALAR (İTEM LİSTESİ)  -->
+        <!-- 12. ELİMDE BULUNAN EŞYALAR                 -->
         <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
@@ -1237,7 +1221,7 @@
         <div class="items-grid" id="itemsContainer"></div>
 
         <!-- ========================================== -->
-        <!-- 13. KONSİNYE EŞYALAR LİSTELEME ALANI       -->
+        <!-- 13. KONSİNYE EŞYALAR                       -->
         <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
@@ -1252,7 +1236,7 @@
         <div class="items-grid" id="consignmentContainer"></div>
 
         <!-- ========================================== -->
-        <!-- 14. OYUNCU EKİPMANLARI VE SİSTEM ALANI     -->
+        <!-- 14. OYUNCU EKİPMANLARI                     -->
         <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
@@ -1266,7 +1250,7 @@
         <div class="equipments-grid" id="equipmentsContainer"></div>
 
         <!-- ========================================== -->
-        <!-- 15. SİPARİŞ İTEM / TEKLİF ALMA ALANI        -->
+        <!-- 15. SİPARİŞ İTEM / TEKLİF ALMA             -->
         <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
@@ -1287,10 +1271,9 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- 16. JAVASCRIPT (SİTE MANTIK & VERİTABANI)  -->
+    <!-- 16. JAVASCRIPT                             -->
     <!-- ========================================== -->
     <script>
-        // FIREBASE VERİTABANI BAĞLANTI BİLGİLERİ
         const firebaseConfig = {
             apiKey: "AIzaSyCigD_pzl2aDUbjg1GXgDXIFWuEABa9Gmo",
             authDomain: "musaruzgarportal.firebaseapp.com",
@@ -1304,14 +1287,12 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // GENEL DEĞİŞKENLER
         let isAdminLoggedIn = false;
         let currentSelectedGame = 'knight';
         let globalItemsData = [];
         let globalEquipmentsData = [];
         let globalStreamersData = [];
 
-        // Ekipman seçildiğinde formda Özellik alanını açıp kapatan dinleyici
         document.getElementById('newItemCategory').addEventListener('change', function() {
             const val = this.value;
             if (val === 'equipment') {
@@ -1323,7 +1304,6 @@
             }
         });
 
-        // Yönetici Paneli İçindeki Tab'lar Arasında Geçiş Yapar
         function showAdminTab(tabId) {
             document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.admin-nav-btn').forEach(el => el.classList.remove('active'));
@@ -1334,7 +1314,6 @@
             if(tabId === 'tabItem') document.getElementById('btnTabItem').classList.add('active');
         }
 
-        // Knight Online / Rise Online Sekme Değişikliği Fonksiyonu
         function switchGame(gameKey) {
             currentSelectedGame = gameKey;
             document.getElementById('knightTabBtn').classList.toggle('active', gameKey === 'knight');
@@ -1355,7 +1334,6 @@
             renderStreamers();
         }
 
-        // Yönetici Panelini Açıp Kapatır
         function toggleAdminPanel() {
             const panel = document.getElementById('adminPanel');
             if (panel) {
@@ -1368,7 +1346,6 @@
             }
         }
 
-        // Admin Şifresini Kontrol Eder
         function checkAdminPassword() {
             const pass = document.getElementById('adminPassword').value;
             if (pass === "musaruzgar123") {
@@ -1384,7 +1361,6 @@
             }
         }
 
-        // Sayfa Açıldığında Çalışacak İlk Yüklemeler
         window.addEventListener('DOMContentLoaded', () => {
             loadSettings();
             loadDataFromFirebase();
@@ -1392,7 +1368,6 @@
             incrementAndGetVisitorStats();
         });
 
-        // Sayfa Ziyaretçi Sayacını Günceller
         function incrementAndGetVisitorStats() {
             const statsRef = db.collection("settings").doc("visitorStats");
             
@@ -1413,7 +1388,6 @@
             });
         }
 
-        // Kayıtlı Logo ve Oyun Buton Resimlerini Yükler
         function loadSettings() {
             db.collection("settings").doc("portalSettings").get().then((doc) => {
                 if (doc.exists) {
@@ -1425,7 +1399,6 @@
             }).catch((error) => console.error("Ayarlar yükleme hatası:", error));
         }
 
-        // Logo Güncelleme Fonksiyonu
         function updateLogo() {
             const imageFile = document.getElementById('newLogoImage').files[0];
             const uploadLogoBtn = document.getElementById('uploadLogoBtn');
@@ -1450,7 +1423,6 @@
             };
         }
 
-        // Knight/Rise Oyun Buton Resimlerini Günceller
         function updateGameTabImages() {
             const knightFile = document.getElementById('knightImgFile').files[0];
             const riseFile = document.getElementById('riseImgFile').files[0];
@@ -1495,7 +1467,6 @@
             }
         }
 
-        // Yayıncıları Veritabanından Çeker
         function loadStreamers() {
             db.collection("streamers").orderBy("createdAt", "desc").get().then((snapshot) => {
                 globalStreamersData = [];
@@ -1506,7 +1477,6 @@
             });
         }
 
-        // Yayıncıları Ekrana Bastırır
         function renderStreamers() {
             const twitchContainer = document.getElementById('twitchContainer');
             const youtubeContainer = document.getElementById('youtubeContainer');
@@ -1553,7 +1523,6 @@
             youtubeContainer.innerHTML = youtubeCount > 0 ? youtubeHtml : '<div style="color: var(--text-muted); font-size: 0.9rem;">Henüz YouTuber eklenmedi.</div>';
         }
 
-        // Yeni Yayıncı Yükleme Fonksiyonu
         function uploadNewStreamer() {
             const game = document.getElementById('newStreamerGame').value;
             const platform = document.getElementById('newStreamerPlatform').value;
@@ -1591,7 +1560,6 @@
             }
         }
 
-        // Yayıncı Düzenleme Fonksiyonu
         function editStreamer(docId, oldName, oldUrl) {
             const newName = prompt("Yayıncı Adını Güncelleyin:", oldName);
             if (newName === null) return;
@@ -1607,13 +1575,11 @@
             });
         }
 
-        // Yayıncı Silme Fonksiyonu
         function deleteStreamer(docId) {
             if (!confirm('Silmek istediğinize emin misiniz?')) return;
             db.collection("streamers").doc(docId).delete().then(() => loadStreamers());
         }
 
-        // Tüm İlan ve Ekipman Verilerini Firebase'den Çeker
         function loadDataFromFirebase() {
             Promise.all([
                 db.collection("items").orderBy("createdAt", "desc").get(),
@@ -1629,7 +1595,6 @@
             });
         }
 
-        // Fiyat Metnini Sayıya Dönüştürür (Sıralama İçin)
         function parsePrice(priceStr) {
             if (!priceStr) return 0;
             let clean = priceStr.replace(/[^\d,.-]/g, '');
@@ -1638,7 +1603,6 @@
             return isNaN(num) ? 0 : num;
         }
 
-        // İlan Filtreleme ve Sıralama Fonksiyonu
         function filterAndSortAll() {
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const sortChecked = document.getElementById('sortPriceCheck').checked;
@@ -1662,7 +1626,6 @@
             renderEquipments(filteredEq);
         }
 
-        // İtem İlanlarını Ekrana Bastırır
         function renderItems(items) {
             const itemsContainer = document.getElementById('itemsContainer');
             const consignmentContainer = document.getElementById('consignmentContainer');
@@ -1686,7 +1649,6 @@
             }
         }
 
-        // İtem Kartı Oluşturma Şablonu
         function createItemCard(item) {
             const cardEl = document.createElement('div');
             cardEl.className = 'item-card';
@@ -1717,7 +1679,6 @@
             return cardEl;
         }
 
-        // Oyuncu Ekipmanı Kartlarını Ekrana Bastırır
         function renderEquipments(equipments) {
             const container = document.getElementById('equipmentsContainer');
             container.innerHTML = "";
@@ -1769,10 +1730,10 @@
                                     </a>
                                 </div>
                                 <button onclick="editEquipment('${eq.id}', '${eq.title}', '${eq.price || ''}', \`${eq.specs || ''}\`)" class="admin-delete-eq-btn" style="display: ${isAdminLoggedIn ? 'block' : 'none'}; margin-top: 4px; background: #1d4ed8; color: #fff; border: 1px solid #1e40af; padding: 3px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; width: 100%;">
-                                    <i class="fa-solid fa-pen-to-square"></i> Ekipmanı Düzenle
+                                    <i class="fa-solid fa-pen-to-square"></i> Düzenle
                                 </button>
                                 <button onclick="deleteEquipment('${eq.id}')" class="admin-delete-eq-btn" style="display: ${isAdminLoggedIn ? 'block' : 'none'}; margin-top: 2px; background: #7f1d1d; color: #fca5a5; border: 1px solid #991b1b; padding: 3px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; width: 100%;">
-                                    <i class="fa-solid fa-trash"></i> Ekipmanı Kaldır
+                                    <i class="fa-solid fa-trash"></i> Kaldır
                                 </button>
                             </div>
                         </div>
@@ -1782,7 +1743,6 @@
             });
         }
 
-        // Yeni İlan / Ekipman Yükleme
         function uploadNewRecord() {
             const game = document.getElementById('targetGame').value;
             const category = document.getElementById('newItemCategory').value;
@@ -1819,7 +1779,6 @@
             };
         }
 
-        // Yükleme Tamamlandığında Formu Sıfırlar
         function finishUpload() {
             alert('Başarıyla eklendi!');
             document.getElementById('newItemTitle').value = '';
@@ -1832,7 +1791,6 @@
             loadDataFromFirebase();
         }
 
-        // İlan Düzenleme Fonksiyonu
         function editItem(docId, oldTitle, oldPrice) {
             const newTitle = prompt("Yeni Başlık / İtem Adı:", oldTitle);
             if (newTitle === null) return;
@@ -1848,13 +1806,12 @@
             });
         }
 
-        // Ekipman Düzenleme Fonksiyonu
         function editEquipment(docId, oldTitle, oldPrice, oldSpecs) {
             const newTitle = prompt("Yeni Ekipman Başlığı:", oldTitle);
             if (newTitle === null) return;
             const newPrice = prompt("Yeni Fiyat:", oldPrice);
             if (newPrice === null) return;
-            const newSpecs = prompt("Yeni Özellikler (Satır satır):", oldSpecs);
+            const newSpecs = prompt("Yeni Özellikler:", oldSpecs);
             if (newSpecs === null) return;
 
             db.collection("equipments").doc(docId).update({
@@ -1867,19 +1824,16 @@
             });
         }
 
-        // İlan Silme Fonksiyonu
         function deleteItem(docId) {
             if (!confirm('İlanı silmek istediğinize emin misiniz?')) return;
             db.collection("items").doc(docId).delete().then(() => loadDataFromFirebase());
         }
 
-        // Ekipman Silme Fonksiyonu
         function deleteEquipment(docId) {
             if (!confirm('Ekipmanı silmek istediğinize emin misiniz?')) return;
             db.collection("equipments").doc(docId).delete().then(() => loadDataFromFirebase());
         }
 
-        // Sipariş / Teklif WhatsApp Mesajı Gönderir
         function sendOffer() {
             const offerMsg = document.getElementById('offerText').value.trim();
             const phone = "905393112169";
