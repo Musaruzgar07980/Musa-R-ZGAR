@@ -54,7 +54,6 @@
             padding: 30px 15px 80px 15px;
         }
 
-        /* YÖNETİCİ GİRİŞİ SAĞ ÜST SABİT */
         .top-admin-btn {
             position: fixed;
             top: 20px;
@@ -251,7 +250,6 @@
             gap: 10px;
         }
 
-        /* 1. YEŞİL NOKTALAR KÜÇÜLTÜLDÜ VE GÖZ YORMASI ENGELLENDİ */
         .title-dot {
             color: var(--green-dot);
             font-size: 0.55rem;
@@ -367,20 +365,21 @@
             max-width: 800px;
         }
 
-        /* 4. YAYINCI ÜZERİNE GELİNCE BELİRGİN KALKMA VE HIZLI DÖNEN GEÇİŞ EFEKTİ */
+        /* YAYINCI - YANDAN SAĞDAN SOLA HIZLI PARA ÇEVİRİR GİBİ DÖNME EFEKTİ */
         .streamer-card {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 8px;
             text-decoration: none;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.3s ease;
             width: 100px;
             position: relative;
+            perspective: 1000px;
         }
 
         .streamer-card:hover {
-            transform: translateY(-8px) scale(1.05);
+            transform: translateY(-6px);
         }
 
         .streamer-avatar-frame {
@@ -392,7 +391,8 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            transition: all 0.3s ease;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
         }
 
         .streamer-card.twitch .streamer-avatar-frame {
@@ -405,14 +405,9 @@
             box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
         }
 
-        /* Seri dönen geçiş efekti */
+        /* Sağdan sola para çevirir gibi hızlı Y-Ekseni Dönüşü */
         .streamer-card:hover .streamer-avatar-frame {
-            animation: spinRing 0.8s linear infinite;
-        }
-
-        @keyframes spinRing {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            transform: rotateY(360deg);
         }
 
         .streamer-avatar {
@@ -565,67 +560,78 @@
             margin: 0 auto !important;
         }
 
-        /* 3. İLAN KUTULARI KÜÇÜLTÜLDÜ VE BOŞLUKLAR GİDERİLDİ */
+        /* İLAN KUTULARI - BUTONLARIN TIKLANABİLİR KANITLANMIŞ YENİ SİSTEMİ */
         .item-card-container {
-            background-color: transparent;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
             width: 220px !important;
-            height: 310px !important;
-            perspective: 1000px;
-            margin: 0 !important;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            backdrop-filter: blur(6px);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .item-card-inner {
+        .item-card-container:hover {
+            border-color: var(--gold-primary);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), 0 0 12px var(--gold-glow);
+        }
+
+        /* Yalnizca Resim Kutusu Kendi İcinde 3D Donuyor */
+        .item-flip-box {
+            width: 100%;
+            height: 120px;
+            perspective: 1000px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .item-flip-inner {
             position: relative;
             width: 100%;
             height: 100%;
             text-align: center;
             transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
             transform-style: preserve-3d;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            border-radius: 8px;
         }
 
-        .item-card-container:hover .item-card-inner {
+        .item-flip-box:hover .item-flip-inner {
             transform: rotateY(180deg);
         }
 
-        .item-card-front, .item-card-back {
+        .item-flip-front, .item-flip-back {
             position: absolute;
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            border-radius: 10px;
-            border: 1px solid var(--card-border);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px;
-            backdrop-filter: blur(6px);
-        }
-
-        .item-card-front {
-            background: var(--card-bg);
-            color: white;
-            justify-content: space-between;
-        }
-
-        .item-img-container {
-            width: 55px;
-            height: 55px;
-            border: 1px solid rgba(243, 195, 68, 0.4);
             border-radius: 8px;
+            border: 1px solid rgba(243, 195, 68, 0.3);
             background: #08070a;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            flex-shrink: 0;
         }
 
-        .item-img {
+        .item-flip-front img, .item-flip-back img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+        }
+
+        .item-flip-back {
+            transform: rotateY(180deg);
+            background: #0d0c10;
+        }
+
+        .no-spec-text {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-align: center;
+            padding: 5px;
         }
 
         .item-title {
@@ -640,15 +646,14 @@
             justify-content: center;
             text-align: center;
             overflow: hidden;
-            flex-shrink: 0;
+            width: 100%;
         }
 
         .item-price {
             font-size: 0.95rem;
             font-weight: 700;
             color: var(--gold-primary);
-            margin-bottom: 4px;
-            flex-shrink: 0;
+            margin-bottom: 6px;
         }
 
         .item-actions {
@@ -656,7 +661,8 @@
             flex-direction: column;
             gap: 4px;
             width: 100%;
-            flex-shrink: 0;
+            position: relative;
+            z-index: 10; /* Her zaman tıklanabilir sabit katman */
         }
 
         .action-btn {
@@ -664,7 +670,7 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            padding: 5px 6px;
+            padding: 6px 8px;
             border-radius: 5px;
             font-size: 0.72rem;
             font-weight: 700;
@@ -672,6 +678,7 @@
             transition: all 0.2s ease;
             border: none;
             cursor: pointer;
+            width: 100%;
         }
 
         .btn-wa { background: #25d366; color: #000; }
@@ -684,24 +691,90 @@
         .btn-edit-action { background: #1d4ed8; color: #fff; display: none; }
         .btn-delete { background: #7f1d1d; color: #fca5a5; border: 1px solid #991b1b; display: none; }
 
-        .item-card-back {
-            background: rgba(14, 12, 18, 0.98);
-            color: #ffffff;
-            transform: rotateY(180deg);
-            border-color: var(--gold-primary);
-            justify-content: center;
+        /* EKİPMAN BÖLÜMÜ BÜYÜTÜLMÜŞ TASARIMI */
+        .eq-card-container {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            width: 220px !important;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            padding: 10px;
+            backdrop-filter: blur(8px);
         }
 
-        .item-specs-img {
+        .eq-flip-box {
+            width: 100%;
+            height: 140px; /* Ekipman görseli büyütüldü */
+            perspective: 1000px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .eq-flip-inner {
+            position: relative;
             width: 100%;
             height: 100%;
-            max-height: 290px;
-            object-fit: contain;
-            border-radius: 6px;
-            border: 1px solid var(--gold-secondary);
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: 8px;
         }
+
+        .eq-flip-box:hover .eq-flip-inner {
+            transform: rotateY(180deg);
+        }
+
+        .eq-flip-front, .eq-flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            border: 1px solid var(--gold-secondary);
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 6px;
+        }
+
+        .eq-flip-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .eq-flip-back {
+            transform: rotateY(180deg);
+            background: rgba(14, 12, 18, 0.98);
+            text-align: left;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        .eq-specs-list {
+            list-style: none;
+            width: 100%;
+            font-size: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .eq-specs-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed rgba(243, 195, 68, 0.3);
+            padding-bottom: 2px;
+        }
+
+        .eq-specs-list span.spec-label { color: #94a3b8; font-weight: 700; font-size: 0.68rem; }
+        .eq-specs-list span.spec-val { color: #ffffff; font-weight: 800; font-size: 0.72rem; }
 
         .admin-panel {
             display: none;
@@ -772,123 +845,6 @@
             gap: 10px;
             justify-content: center;
         }
-
-        /* 2. EKİPMAN KUTULARI VE FOTOĞRAFLARI BÜYÜTÜLDÜ */
-        .eq-card-container {
-            background-color: transparent;
-            width: 220px !important;
-            height: 310px !important;
-            perspective: 1000px;
-            margin: 0 !important;
-        }
-
-        .eq-card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
-            transform-style: preserve-3d;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-        }
-
-        .eq-card-container:hover .eq-card-inner {
-            transform: rotateY(180deg);
-        }
-
-        .eq-card-front, .eq-card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 10px;
-            border: 1px solid var(--card-border);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px;
-            backdrop-filter: blur(8px);
-            overflow-y: auto;
-        }
-
-        .eq-card-front {
-            background: var(--card-bg);
-            color: white;
-            justify-content: center;
-        }
-
-        .eq-card-front img {
-            width: 110px;  /* Ekipman resmi büyütüldü */
-            height: 110px; /* Ekipman resmi büyütüldü */
-            object-fit: contain;
-            margin-bottom: 8px;
-            border-radius: 6px;
-            background: #000;
-            padding: 4px;
-            border: 1px solid var(--gold-secondary);
-        }
-
-        .eq-card-front h3 {
-            font-size: 0.9rem;
-            color: var(--gold-primary);
-            font-family: 'Cinzel', serif;
-            margin-bottom: 4px;
-        }
-
-        .eq-card-front .front-eq-price {
-            font-size: 1rem;
-            font-weight: 800;
-            color: var(--gold-primary);
-            margin-top: 4px;
-        }
-
-        .eq-card-back {
-            background: rgba(14, 12, 18, 0.98);
-            color: #ffffff;
-            transform: rotateY(180deg);
-            border-color: var(--gold-primary);
-            text-align: left;
-            justify-content: space-between;
-        }
-
-        .eq-card-back-content {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .eq-card-back h3 {
-            font-size: 0.8rem;
-            color: var(--gold-primary);
-            margin-bottom: 6px;
-            border-bottom: 2px solid var(--gold-secondary);
-            padding-bottom: 4px;
-            width: 100%;
-            text-align: center;
-            font-family: 'Cinzel', serif;
-        }
-
-        .eq-specs-list {
-            list-style: none;
-            width: 100%;
-            font-size: 0.8rem;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-
-        .eq-specs-list li {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px dashed rgba(243, 195, 68, 0.3);
-            padding-bottom: 2px;
-        }
-
-        .eq-specs-list span.spec-label { color: #94a3b8; font-weight: 700; font-size: 0.7rem; }
-        .eq-specs-list span.spec-val { color: #ffffff; font-weight: 800; font-size: 0.75rem; }
 
         .offer-section {
             width: 100%;
@@ -1591,38 +1547,38 @@
             cardEl.className = 'item-card-container';
 
             const backFaceContent = item.backImageUrl 
-                ? `<img src="${item.backImageUrl}" alt="${item.title} Özellikleri" class="item-specs-img">`
-                : `<div style="color:var(--text-muted); font-size:0.9rem; text-align:center; height:100%; display:flex; align-items:center; justify-content:center;">Özellik görseli eklenmemiş.</div>`;
+                ? `<img src="${item.backImageUrl}" alt="${item.title} Özellikleri">`
+                : `<div class="no-spec-text">Özellik görseli eklenmemiş.</div>`;
 
             cardEl.innerHTML = `
-                <div class="item-card-inner">
-                    <div class="item-card-front">
-                        <div class="item-img-container">
-                            <img src="${item.imageUrl}" alt="${item.title}" class="item-img">
+                <div class="item-flip-box">
+                    <div class="item-flip-inner">
+                        <div class="item-flip-front">
+                            <img src="${item.imageUrl}" alt="${item.title}">
                         </div>
-                        <div class="item-title">${item.title}</div>
-                        <div class="item-price">${item.price}</div>
-                        <div class="item-actions">
-                            <a href="https://wa.me/905393112169?text=Merhaba%20MusaRUZGAR,%20${encodeURIComponent(item.title)}%20ürününü%20satın%20almak%20istiyorum." target="_blank" class="action-btn btn-wa">
-                                <i class="fa-brands fa-whatsapp"></i> WhatsApp ile Al
-                            </a>
-                            <a href="https://www.sonteklif.com" target="_blank" class="action-btn btn-st">
-                                <i class="fa-solid fa-shopping-cart"></i> SonTeklif İlanı
-                            </a>
-                            <a href="https://www.bynogame.com" target="_blank" class="action-btn btn-bng">
-                                <i class="fa-solid fa-store"></i> ByNoGame İlanı
-                            </a>
-                            <button onclick="editItem('${item.id}', '${item.title}', '${item.price}')" class="action-btn btn-edit-action" style="display: ${isAdminLoggedIn ? 'flex' : 'none'};">
-                                <i class="fa-solid fa-pen-to-square"></i> Düzenle
-                            </button>
-                            <button onclick="deleteItem('${item.id}')" class="action-btn btn-delete" style="display: ${isAdminLoggedIn ? 'flex' : 'none'};">
-                                <i class="fa-solid fa-trash"></i> İlanı Kaldır
-                            </button>
+                        <div class="item-flip-back">
+                            ${backFaceContent}
                         </div>
                     </div>
-                    <div class="item-card-back">
-                        ${backFaceContent}
-                    </div>
+                </div>
+                <div class="item-title">${item.title}</div>
+                <div class="item-price">${item.price}</div>
+                <div class="item-actions">
+                    <a href="https://wa.me/905393112169?text=Merhaba%20MusaRUZGAR,%20${encodeURIComponent(item.title)}%20ürününü%20satın%20almak%20istiyorum." target="_blank" class="action-btn btn-wa">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp ile Al
+                    </a>
+                    <a href="https://www.sonteklif.com" target="_blank" class="action-btn btn-st">
+                        <i class="fa-solid fa-shopping-cart"></i> SonTeklif İlanı
+                    </a>
+                    <a href="https://www.bynogame.com" target="_blank" class="action-btn btn-bng">
+                        <i class="fa-solid fa-store"></i> ByNoGame İlanı
+                    </a>
+                    <button onclick="editItem('${item.id}', '${item.title}', '${item.price}')" class="action-btn btn-edit-action" style="display: ${isAdminLoggedIn ? 'flex' : 'none'};">
+                        <i class="fa-solid fa-pen-to-square"></i> Düzenle
+                    </button>
+                    <button onclick="deleteItem('${item.id}')" class="action-btn btn-delete" style="display: ${isAdminLoggedIn ? 'flex' : 'none'};">
+                        <i class="fa-solid fa-trash"></i> İlanı Kaldır
+                    </button>
                 </div>
             `;
             return cardEl;
@@ -1654,38 +1610,34 @@
                 const eqCard = document.createElement('div');
                 eqCard.className = 'eq-card-container';
                 eqCard.innerHTML = `
-                    <div class="eq-card-inner">
-                        <div class="eq-card-front">
-                            <img src="${eq.imageUrl}" alt="${eq.title}">
-                            <h3>${eq.title}</h3>
-                            <div class="front-eq-price">${eq.price || ''}</div>
-                        </div>
-                        <div class="eq-card-back">
-                            <div class="eq-card-back-content">
-                                <h3>${eq.title} ÖZELLİKLERİ</h3>
-                                <ul class="eq-specs-list">${specsHtml}</ul>
+                    <div class="eq-flip-box">
+                        <div class="eq-flip-inner">
+                            <div class="eq-flip-front">
+                                <img src="${eq.imageUrl}" alt="${eq.title}">
                             </div>
-                            <div style="width: 100%; margin-top: auto;">
-                                <div class="item-price" style="margin-bottom: 4px; font-size: 0.9rem;">${eq.price || ''}</div>
-                                <div class="item-actions">
-                                    <a href="https://wa.me/905393112169?text=Merhaba%20MusaRUZGAR,%20${encodeURIComponent(eq.title)}%20ekipmanını%20satın%20almak%20istiyorum." target="_blank" class="action-btn btn-wa">
-                                        <i class="fa-brands fa-whatsapp"></i> WhatsApp ile Al
-                                    </a>
-                                    <a href="https://www.sonteklif.com" target="_blank" class="action-btn btn-st">
-                                        <i class="fa-solid fa-shopping-cart"></i> SonTeklif İlanı
-                                    </a>
-                                    <a href="https://www.bynogame.com" target="_blank" class="action-btn btn-bng">
-                                        <i class="fa-solid fa-store"></i> ByNoGame İlanı
-                                    </a>
-                                </div>
-                                <button onclick="editEquipment('${eq.id}', '${eq.title}', '${eq.price || ''}', \`${eq.specs || ''}\`)" class="action-btn btn-edit-action" style="display: ${isAdminLoggedIn ? 'flex' : 'none'}; margin-top: 4px;">
-                                    <i class="fa-solid fa-pen-to-square"></i> Düzenle
-                                </button>
-                                <button onclick="deleteEquipment('${eq.id}')" class="action-btn btn-delete" style="display: ${isAdminLoggedIn ? 'flex' : 'none'}; margin-top: 2px;">
-                                    <i class="fa-solid fa-trash"></i> Kaldır
-                                </button>
+                            <div class="eq-flip-back">
+                                <ul class="eq-specs-list">${specsHtml || '<li class="no-spec-text">Özellik eklenmemiş.</li>'}</ul>
                             </div>
                         </div>
+                    </div>
+                    <div class="item-title">${eq.title}</div>
+                    <div class="item-price">${eq.price || ''}</div>
+                    <div class="item-actions">
+                        <a href="https://wa.me/905393112169?text=Merhaba%20MusaRUZGAR,%20${encodeURIComponent(eq.title)}%20ekipmanını%20satın%20almak%20istiyorum." target="_blank" class="action-btn btn-wa">
+                            <i class="fa-brands fa-whatsapp"></i> WhatsApp ile Al
+                        </a>
+                        <a href="https://www.sonteklif.com" target="_blank" class="action-btn btn-st">
+                            <i class="fa-solid fa-shopping-cart"></i> SonTeklif İlanı
+                        </a>
+                        <a href="https://www.bynogame.com" target="_blank" class="action-btn btn-bng">
+                            <i class="fa-solid fa-store"></i> ByNoGame İlanı
+                        </a>
+                        <button onclick="editEquipment('${eq.id}', '${eq.title}', '${eq.price || ''}', \`${eq.specs || ''}\`)" class="action-btn btn-edit-action" style="display: ${isAdminLoggedIn ? 'flex' : 'none'}; margin-top: 4px;">
+                            <i class="fa-solid fa-pen-to-square"></i> Düzenle
+                        </button>
+                        <button onclick="deleteEquipment('${eq.id}')" class="action-btn btn-delete" style="display: ${isAdminLoggedIn ? 'flex' : 'none'}; margin-top: 2px;">
+                            <i class="fa-solid fa-trash"></i> Kaldır
+                        </button>
                     </div>
                 `;
                 container.appendChild(eqCard);
