@@ -552,7 +552,7 @@
             transform: translateY(-2px);
         }
 
-        /* GB ALIM SATIM WHATSAPP ŞABLONLARI */
+        /* GB ALIM SATIM VE WHATSAPP GRUPLARI ŞABLONU */
         .wa-groups-grid {
             display: flex;
             flex-wrap: wrap;
@@ -597,37 +597,65 @@
             margin: 0 auto !important;
         }
 
-        .item-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 10px;
-            padding: 14px;
+        /* EŞYA KARTLARI (DÖNEN KART YAPISI) */
+        .item-card-container {
+            background-color: transparent;
             width: 230px !important;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            transition: all 0.25s ease;
-            backdrop-filter: blur(6px);
+            height: 350px; 
+            perspective: 1000px;
             margin: 0 !important;
         }
 
-        .item-card:hover {
+        .item-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .item-card-container:hover .item-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .item-card-front, .item-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 14px;
+            backdrop-filter: blur(6px);
+        }
+
+        .item-card-front {
+            background: var(--card-bg);
+            color: white;
+            justify-content: space-between;
+        }
+
+        .item-card-front:hover {
             border-color: var(--gold-primary);
-            transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), 0 0 12px var(--gold-glow);
         }
 
         .item-img-container {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             border: 1px solid rgba(243, 195, 68, 0.4);
             border-radius: 8px;
             background: #08070a;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
             box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
             overflow: hidden;
         }
@@ -654,7 +682,7 @@
             font-size: 1.05rem;
             font-weight: 700;
             color: var(--gold-primary);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .item-actions {
@@ -702,6 +730,26 @@
             display: none;
         }
         .btn-delete:hover { background: #991b1b; }
+
+        /* KARTIN ARKA YÜZÜ (ÖZELLİK RESMİ) */
+        .item-card-back {
+            background: rgba(14, 12, 18, 0.98);
+            color: #ffffff;
+            transform: rotateY(180deg);
+            border-color: var(--gold-primary);
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .item-specs-img {
+            width: 100%;
+            height: 100%;
+            max-height: 320px;
+            object-fit: contain;
+            border-radius: 6px;
+            border: 1px solid var(--gold-secondary);
+        }
 
         /* YÖNETİCİ PANELİ SEKMELİ MÖDÜLER TASARIMI */
         .admin-panel {
@@ -787,7 +835,7 @@
         .eq-card-container {
             background-color: transparent;
             width: 230px !important;
-            height: 330px; 
+            height: 350px; 
             perspective: 1000px;
             margin: 0 !important;
         }
@@ -1074,9 +1122,13 @@
                         <label>Ekipman Özellikleri (Örn: İŞLEMCİ: i5)</label>
                         <textarea id="newEqSpecs" class="form-control" style="height: 70px; resize: none;" placeholder="İŞLEMCİ: i5&#10;RAM: 16 GB"></textarea>
                     </div>
-                    <div class="form-group">
-                        <label>Görsel Seç</label>
+                    <div class="form-group" id="mainImgGroup">
+                        <label id="mainImgLabel">1. Eşya Ana Görseli (Ön Yüz)</label>
                         <input type="file" id="newItemImage" class="form-control" accept="image/*">
+                    </div>
+                    <div class="form-group" id="backImgGroup">
+                        <label>2. Eşya Özellikleri Görseli (Arka Yüz / İtem Özelliği)</label>
+                        <input type="file" id="newItemBackImage" class="form-control" accept="image/*">
                     </div>
                     <button onclick="uploadNewRecord()" id="uploadBtn" class="btn-gold" style="max-width: 100%; margin-top: 5px;">
                         <i class="fa-solid fa-cloud-arrow-up"></i> Seçilen Oyuna Ekle
@@ -1165,15 +1217,40 @@
 
         <div class="wa-groups-grid">
             <a href="https://wa.me/905393112169?text=Merhaba,%20Knight%20Online%20Yeni%20Server%20GB%20alım%20satımı%20için%20ulaşıyorum." target="_blank" class="btn-group-card">
-                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem; color: #25d366;"></i> Knight Online Yeni Server (05393112169)
+                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem; color: #25d366;"></i> Knight Online Yeni Server
             </a>
             <a href="https://wa.me/905067718812?text=Merhaba,%20Rise%20Online%20Galantis%20GB%20alım%20satımı%20için%20ulaşıyorum." target="_blank" class="btn-group-card">
-                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem; color: #25d366;"></i> Rise Online Galantis (+90 506 771 88 12)
+                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem; color: #25d366;"></i> Rise Online Galantis
             </a>
         </div>
 
         <!-- ========================================== -->
-        <!-- 11. ARAMA VE FİLTRE                        -->
+        <!-- 11. WHATSAPP OYUNCU GRUPLARI               -->
+        <!-- ========================================== -->
+        <div class="section-divider">
+            <div class="section-divider-inner">
+                <div class="divider-line"></div>
+                <div class="section-title">
+                    <i class="fa-solid fa-circle title-dot"></i> WHATSAPP OYUNCU GRUPLARI <i class="fa-solid fa-circle title-dot"></i>
+                </div>
+                <div class="divider-line"></div>
+            </div>
+        </div>
+
+        <div class="wa-groups-grid">
+            <a href="https://chat.whatsapp.com/GqQdDxcYNj0DfJruk4RVyO" target="_blank" class="btn-group-card">
+                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem; color: #25d366;"></i> Rise Galantis Tıkla
+            </a>
+            <a href="https://chat.whatsapp.com/HEhizXzHOHX9wm26t3B4te?s=cl&p=a&mlu=4&ilr=4" target="_blank" class="btn-group-card">
+                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem; color: #25d366;"></i> Rise Mobil Tıkla
+            </a>
+            <a href="https://chat.whatsapp.com/I84huNYeVwaJkigmmq8rXg?s=cl&p=a&mlu=4&ilr=4" target="_blank" class="btn-group-card">
+                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem; color: #25d366;"></i> Knight Yeni Server Tıkla
+            </a>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 12. ARAMA VE FİLTRE                        -->
         <!-- ========================================== -->
         <div class="filter-container">
             <input type="text" id="searchInput" class="search-input" placeholder="Örnek: Raptor(+9)" oninput="filterAndSortAll()">
@@ -1183,7 +1260,7 @@
         </div>
 
         <!-- ========================================== -->
-        <!-- 12. ELİMDE BULUNAN EŞYALAR                 -->
+        <!-- 13. ELİMDE BULUNAN EŞYALAR                 -->
         <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
@@ -1197,7 +1274,7 @@
         <div class="items-grid" id="itemsContainer"></div>
 
         <!-- ========================================== -->
-        <!-- 13. KONSİNYE EŞYALAR                       -->
+        <!-- 14. KONSİNYE EŞYALAR                       -->
         <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
@@ -1212,7 +1289,7 @@
         <div class="items-grid" id="consignmentContainer"></div>
 
         <!-- ========================================== -->
-        <!-- 14. OYUNCU EKİPMANLARI                     -->
+        <!-- 15. OYUNCU EKİPMANLARI                     -->
         <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
@@ -1226,7 +1303,7 @@
         <div class="equipments-grid" id="equipmentsContainer"></div>
 
         <!-- ========================================== -->
-        <!-- 15. SİPARİŞ İTEM / TEKLİF ALMA             -->
+        <!-- 16. SİPARİŞ İTEM / TEKLİF ALMA             -->
         <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
@@ -1247,7 +1324,7 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- 16. JAVASCRIPT                             -->
+    <!-- 17. JAVASCRIPT                             -->
     <!-- ========================================== -->
     <script>
         const firebaseConfig = {
@@ -1271,12 +1348,18 @@
 
         document.getElementById('newItemCategory').addEventListener('change', function() {
             const val = this.value;
+            const specsGroup = document.getElementById('specsGroup');
+            const backImgGroup = document.getElementById('backImgGroup');
+            const mainImgLabel = document.getElementById('mainImgLabel');
+
             if (val === 'equipment') {
-                document.getElementById('priceGroup').style.display = 'flex';
-                document.getElementById('specsGroup').style.display = 'flex';
+                specsGroup.style.display = 'flex';
+                backImgGroup.style.display = 'none';
+                mainImgLabel.innerText = "Ekipman Görseli";
             } else {
-                document.getElementById('priceGroup').style.display = 'flex';
-                document.getElementById('specsGroup').style.display = 'none';
+                specsGroup.style.display = 'none';
+                backImgGroup.style.display = 'flex';
+                mainImgLabel.innerText = "1. Eşya Ana Görseli (Ön Yüz)";
             }
         });
 
@@ -1627,29 +1710,45 @@
 
         function createItemCard(item) {
             const cardEl = document.createElement('div');
-            cardEl.className = 'item-card';
+            cardEl.className = 'item-card-container';
+
+            const backFaceContent = item.backImageUrl 
+                ? `<img src="${item.backImageUrl}" alt="${item.title} Özellikleri" class="item-specs-img">`
+                : `<div style="color:var(--text-muted); font-size:0.85rem; text-align:center;">Özellik görseli eklenmemiş.</div>`;
+
             cardEl.innerHTML = `
-                <div class="item-img-container">
-                    <img src="${item.imageUrl}" alt="${item.title}" class="item-img">
-                </div>
-                <div class="item-title">${item.title}</div>
-                <div class="item-price">${item.price}</div>
-                <div class="item-actions">
-                    <a href="https://wa.me/905393112169?text=Merhaba%20MusaRUZGAR,%20${encodeURIComponent(item.title)}%20ürününü%20satın%20almak%20istiyorum." target="_blank" class="action-btn btn-wa">
-                        <i class="fa-brands fa-whatsapp"></i> WhatsApp ile Al
-                    </a>
-                    <a href="https://www.sonteklif.com" target="_blank" class="action-btn btn-st">
-                        <i class="fa-solid fa-shopping-cart"></i> SonTeklif İlanı
-                    </a>
-                    <a href="https://www.bynogame.com" target="_blank" class="action-btn btn-bng">
-                        <i class="fa-solid fa-store"></i> ByNoGame İlanı
-                    </a>
-                    <button onclick="editItem('${item.id}', '${item.title}', '${item.price}')" class="action-btn btn-edit-action" style="display: ${isAdminLoggedIn ? 'flex' : 'none'};">
-                        <i class="fa-solid fa-pen-to-square"></i> Düzenle
-                    </button>
-                    <button onclick="deleteItem('${item.id}')" class="action-btn btn-delete" style="display: ${isAdminLoggedIn ? 'flex' : 'none'};">
-                        <i class="fa-solid fa-trash"></i> İlanı Kaldır
-                    </button>
+                <div class="item-card-inner">
+                    <div class="item-card-front">
+                        <div>
+                            <div class="item-img-container">
+                                <img src="${item.imageUrl}" alt="${item.title}" class="item-img">
+                            </div>
+                            <div class="item-title">${item.title}</div>
+                        </div>
+                        <div style="width: 100%;">
+                            <div class="item-price">${item.price}</div>
+                            <div class="item-actions">
+                                <a href="https://wa.me/905393112169?text=Merhaba%20MusaRUZGAR,%20${encodeURIComponent(item.title)}%20ürününü%20satın%20almak%20istiyorum." target="_blank" class="action-btn btn-wa">
+                                    <i class="fa-brands fa-whatsapp"></i> WhatsApp ile Al
+                                </a>
+                                <a href="https://www.sonteklif.com" target="_blank" class="action-btn btn-st">
+                                    <i class="fa-solid fa-shopping-cart"></i> SonTeklif İlanı
+                                </a>
+                                <a href="https://www.bynogame.com" target="_blank" class="action-btn btn-bng">
+                                    <i class="fa-solid fa-store"></i> ByNoGame İlanı
+                                </a>
+                                <button onclick="editItem('${item.id}', '${item.title}', '${item.price}')" class="action-btn btn-edit-action" style="display: ${isAdminLoggedIn ? 'flex' : 'none'};">
+                                    <i class="fa-solid fa-pen-to-square"></i> Düzenle
+                                </button>
+                                <button onclick="deleteItem('${item.id}')" class="action-btn btn-delete" style="display: ${isAdminLoggedIn ? 'flex' : 'none'};">
+                                    <i class="fa-solid fa-trash"></i> İlanı Kaldır
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item-card-back">
+                        ${backFaceContent}
+                    </div>
                 </div>
             `;
             return cardEl;
@@ -1724,35 +1823,49 @@
             const category = document.getElementById('newItemCategory').value;
             const title = document.getElementById('newItemTitle').value.trim();
             const price = document.getElementById('newItemPrice').value.trim();
-            const imageFile = document.getElementById('newItemImage').files[0];
+            const mainFile = document.getElementById('newItemImage').files[0];
+            const backFile = document.getElementById('newItemBackImage').files[0];
             const uploadBtn = document.getElementById('uploadBtn');
 
-            if (!title || !imageFile) {
-                alert('Lütfen başlık yazın ve görsel seçin.');
+            if (!title || !mainFile) {
+                alert('Lütfen başlık yazın ve ana görseli seçin.');
                 return;
             }
 
             uploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Yükleniyor...';
             uploadBtn.disabled = true;
 
-            const reader = new FileReader();
-            reader.readAsDataURL(imageFile);
-            reader.onload = function () {
-                const base64Img = reader.result;
+            const readerMain = new FileReader();
+            readerMain.readAsDataURL(mainFile);
+            readerMain.onload = function () {
+                const base64Main = readerMain.result;
 
                 if (category === 'equipment') {
                     const specs = document.getElementById('newEqSpecs').value.trim();
                     db.collection("equipments").add({
-                        game, title, price, specs, imageUrl: base64Img,
+                        game, title, price, specs, imageUrl: base64Main,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     }).then(() => finishUpload());
                 } else {
-                    db.collection("items").add({
-                        game, category, title, price, imageUrl: base64Img,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    }).then(() => finishUpload());
+                    if (backFile) {
+                        const readerBack = new FileReader();
+                        readerBack.readAsDataURL(backFile);
+                        readerBack.onload = function() {
+                            const base64Back = readerBack.result;
+                            saveItemToDb(game, category, title, price, base64Main, base64Back);
+                        };
+                    } else {
+                        saveItemToDb(game, category, title, price, base64Main, "");
+                    }
                 }
             };
+        }
+
+        function saveItemToDb(game, category, title, price, imageUrl, backImageUrl) {
+            db.collection("items").add({
+                game, category, title, price, imageUrl, backImageUrl,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => finishUpload());
         }
 
         function finishUpload() {
@@ -1761,6 +1874,7 @@
             document.getElementById('newItemPrice').value = '';
             document.getElementById('newEqSpecs').value = '';
             document.getElementById('newItemImage').value = '';
+            document.getElementById('newItemBackImage').value = '';
             document.getElementById('uploadBtn').innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Seçilen Oyuna Ekle';
             document.getElementById('uploadBtn').disabled = false;
             toggleAdminPanel();
@@ -1814,6 +1928,7 @@
             const offerMsg = document.getElementById('offerText').value.trim();
             const phone = "905393112169";
             
+            ,
             if (!offerMsg) {
                 alert('Lütfen sipariş/teklif mesajınızı yazınız.');
                 return;
