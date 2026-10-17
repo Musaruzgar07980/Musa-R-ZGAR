@@ -22,7 +22,7 @@
             --card-border: rgba(212, 160, 23, 0.25);
             --gold-primary: #f3c344;
             --gold-secondary: #d49f17;
-            --gold-glow: rgba(243, 195, 68, 0.2);
+            --gold-glow: rgba(243, 195, 68, 0.3);
             --text-main: #e2e8f0;
             --text-muted: #94a3b8;
             --twitch-color: #9146ff;
@@ -184,8 +184,8 @@
             width: 100%;
             max-width: 550px;
             padding: 14px 20px;
-            background: linear-gradient(135deg, rgba(212, 159, 23, 0.2), rgba(14, 12, 18, 0.95));
-            border: 2px solid var(--gold-primary);
+            background: rgba(14, 12, 18, 0.85);
+            border: 2px solid var(--card-border);
             border-radius: 14px;
             color: var(--gold-primary);
             font-family: 'Cinzel', serif;
@@ -193,7 +193,7 @@
             font-size: 0.95rem;
             letter-spacing: 2px;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(212, 159, 23, 0.25);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -205,11 +205,11 @@
         }
 
         .gb-banner-btn:hover {
-            background: rgba(212, 159, 23, 0.3);
-            border-color: #ffe89e;
-            color: #fff;
+            background: rgba(212, 159, 23, 0.15);
+            border-color: var(--gold-primary);
+            color: #ffffff;
             transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(243, 195, 68, 0.4);
+            box-shadow: 0 0 20px var(--gold-glow), 0 6px 20px rgba(0, 0, 0, 0.6);
         }
 
         .section-divider {
@@ -365,7 +365,6 @@
             max-width: 800px;
         }
 
-        /* YAYINCI - YANDAN SAĞDAN SOLA HIZLI PARA ÇEVİRİR GİBİ DÖNME EFEKTİ */
         .streamer-card {
             display: flex;
             flex-direction: column;
@@ -405,7 +404,6 @@
             box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
         }
 
-        /* Sağdan sola para çevirir gibi hızlı Y-Ekseni Dönüşü */
         .streamer-card:hover .streamer-avatar-frame {
             transform: rotateY(360deg);
         }
@@ -560,18 +558,19 @@
             margin: 0 auto !important;
         }
 
-        /* İLAN KUTULARI - BUTONLARIN TIKLANABİLİR KANITLANMIŞ YENİ SİSTEMİ */
+        /* İLAN KUTULARI - İTEM GÖRSELİ KÜÇÜLTÜLDÜ, ÖZELLİK KISMI BOYDAN OLDU, BUTONLAR ÜZERİNE GELDİ */
         .item-card-container {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 12px;
             width: 220px !important;
-            padding: 12px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
             backdrop-filter: blur(6px);
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
         }
 
         .item-card-container:hover {
@@ -579,12 +578,12 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), 0 0 12px var(--gold-glow);
         }
 
-        /* Yalnizca Resim Kutusu Kendi İcinde 3D Donuyor */
+        /* İtem resim alanı daha küçük yapıldı (65px) */
         .item-flip-box {
-            width: 100%;
-            height: 120px;
+            width: 65px;
+            height: 65px;
             perspective: 1000px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             cursor: pointer;
         }
 
@@ -608,7 +607,7 @@
             height: 100%;
             backface-visibility: hidden;
             border-radius: 8px;
-            border: 1px solid rgba(243, 195, 68, 0.3);
+            border: 1px solid rgba(243, 195, 68, 0.4);
             background: #08070a;
             display: flex;
             align-items: center;
@@ -616,22 +615,43 @@
             overflow: hidden;
         }
 
-        .item-flip-front img, .item-flip-back img {
+        .item-flip-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Arka yüz özellik görseli BOYDAN (TÜM KARTI KAPLAYACAK ŞEKİLDE) */
+        .item-card-container:has(.item-flip-box:hover) .item-flip-back-overlay {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .item-flip-back-overlay {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            background: rgba(10, 9, 13, 0.97);
+            border: 1px solid var(--gold-primary);
+            border-radius: 8px;
+            z-index: 25;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            overflow: hidden;
+            padding: 5px;
+        }
+
+        .item-flip-back-overlay img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-        }
-
-        .item-flip-back {
-            transform: rotateY(180deg);
-            background: #0d0c10;
-        }
-
-        .no-spec-text {
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            text-align: center;
-            padding: 5px;
+            border-radius: 6px;
         }
 
         .item-title {
@@ -662,7 +682,7 @@
             gap: 4px;
             width: 100%;
             position: relative;
-            z-index: 10; /* Her zaman tıklanabilir sabit katman */
+            z-index: 10;
         }
 
         .action-btn {
@@ -681,17 +701,17 @@
             width: 100%;
         }
 
-        .btn-wa { background: #25d366; color: #000; }
-        .btn-wa:hover { background: #1eb855; }
-        .btn-st { background: #e67e22; color: #fff; }
-        .btn-st:hover { background: #d35400; }
-        .btn-bng { background: #e74c3c; color: #fff; }
-        .btn-bng:hover { background: #c0392b; }
+        .btn-wa { background: rgba(37, 211, 102, 0.9); color: #000; backdrop-filter: blur(4px); }
+        .btn-wa:hover { background: #25d366; }
+        .btn-st { background: rgba(230, 126, 34, 0.9); color: #fff; backdrop-filter: blur(4px); }
+        .btn-st:hover { background: #e67e22; }
+        .btn-bng { background: rgba(231, 76, 60, 0.9); color: #fff; backdrop-filter: blur(4px); }
+        .btn-bng:hover { background: #e74c3c; }
         
         .btn-edit-action { background: #1d4ed8; color: #fff; display: none; }
         .btn-delete { background: #7f1d1d; color: #fca5a5; border: 1px solid #991b1b; display: none; }
 
-        /* EKİPMAN BÖLÜMÜ BÜYÜTÜLMÜŞ TASARIMI */
+        /* EKİPMAN BÖLÜMÜ (KORUNUYOR) */
         .eq-card-container {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -706,7 +726,7 @@
 
         .eq-flip-box {
             width: 100%;
-            height: 140px; /* Ekipman görseli büyütüldü */
+            height: 140px;
             perspective: 1000px;
             margin-bottom: 8px;
             cursor: pointer;
@@ -1546,9 +1566,9 @@
             const cardEl = document.createElement('div');
             cardEl.className = 'item-card-container';
 
-            const backFaceContent = item.backImageUrl 
+            const backOverlayContent = item.backImageUrl 
                 ? `<img src="${item.backImageUrl}" alt="${item.title} Özellikleri">`
-                : `<div class="no-spec-text">Özellik görseli eklenmemiş.</div>`;
+                : `<div style="color:var(--text-muted); font-size:0.75rem; text-align:center;">Özellik görseli eklenmemiş.</div>`;
 
             cardEl.innerHTML = `
                 <div class="item-flip-box">
@@ -1557,9 +1577,12 @@
                             <img src="${item.imageUrl}" alt="${item.title}">
                         </div>
                         <div class="item-flip-back">
-                            ${backFaceContent}
+                            <img src="${item.imageUrl}" alt="${item.title}">
                         </div>
                     </div>
+                </div>
+                <div class="item-flip-back-overlay">
+                    ${backOverlayContent}
                 </div>
                 <div class="item-title">${item.title}</div>
                 <div class="item-price">${item.price}</div>
@@ -1616,7 +1639,7 @@
                                 <img src="${eq.imageUrl}" alt="${eq.title}">
                             </div>
                             <div class="eq-flip-back">
-                                <ul class="eq-specs-list">${specsHtml || '<li class="no-spec-text">Özellik eklenmemiş.</li>'}</ul>
+                                <ul class="eq-specs-list">${specsHtml || '<li style="color:var(--text-muted); font-size:0.75rem; text-align:center;">Özellik eklenmemiş.</li>'}</ul>
                             </div>
                         </div>
                     </div>
