@@ -8,7 +8,7 @@
     <!-- ========================================== -->
     <!-- 1. SEKME İKONU (FAVICON) BÖLÜMÜ            -->
     <!-- ========================================== -->
-    <link rel="icon" type="image/png" href="https://hizliresim.com/9tiys4o7">
+    <link rel="icon" type="image/png" href="https://i.hizliresim.com/9tiys4o.png">
     
     <!-- Dışarıdan Yüklenen Fontlar ve İkon Kütüphanesi -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -63,7 +63,6 @@
             padding: 30px 15px 80px 15px;
         }
 
-        /* Sağ üstteki Yönetici Giriş Butonu Tasarımı */
         .top-admin-btn {
             position: fixed;
             top: 20px;
@@ -102,7 +101,6 @@
             gap: 28px;
         }
 
-        /* Logo Tasarımı */
         .logo-container {
             display: flex;
             flex-direction: column;
@@ -132,7 +130,6 @@
             text-shadow: 0 0 10px rgba(243, 195, 68, 0.4);
         }
 
-        /* Knight / Rise Oyun Değiştirme Butonları Tasarımı */
         .game-tabs-container {
             display: flex;
             gap: 20px;
@@ -192,7 +189,6 @@
             text-shadow: 0 0 8px rgba(243, 195, 68, 0.5);
         }
 
-        /* GB Fiyatları Banner Butonu Tasarımı */
         .gb-banner-btn {
             width: 100%;
             max-width: 550px;
@@ -225,7 +221,6 @@
             box-shadow: 0 6px 25px rgba(243, 195, 68, 0.4);
         }
 
-        /* Çizgili Başlık Ayrımı Tasarımı */
         .section-divider {
             display: flex;
             flex-direction: column;
@@ -278,7 +273,6 @@
             text-transform: uppercase;
         }
 
-        /* Sayaç Kartı Tasarımı */
         .stats-container {
             display: flex;
             justify-content: center;
@@ -321,7 +315,6 @@
             font-family: 'Cinzel', serif;
         }
 
-        /* Arama ve Sıralama Filtre Alanı */
         .filter-container {
             display: flex;
             gap: 12px;
@@ -384,7 +377,6 @@
             cursor: pointer;
         }
 
-        /* Yayıncı Kartları Tasarımı */
         .streamers-grid {
             display: flex;
             flex-wrap: wrap;
@@ -497,7 +489,6 @@
             display: none;
         }
 
-        /* Genel Buton Tasarımları */
         .btn-gold {
             width: 100%;
             max-width: 420px;
@@ -552,7 +543,6 @@
             transform: translateY(-2px);
         }
 
-        /* GB ALIM SATIM VE WHATSAPP GRUPLARI ŞABLONU */
         .wa-groups-grid {
             display: flex;
             flex-wrap: wrap;
@@ -585,7 +575,6 @@
             transform: translateY(-2px);
         }
 
-        /* İlan / Item Kartları Tasarımı */
         .items-grid, .equipments-grid {
             display: flex !important;
             flex-wrap: wrap !important;
@@ -597,7 +586,6 @@
             margin: 0 auto !important;
         }
 
-        /* EŞYA KARTLARI (DÖNEN KART YAPISI) */
         .item-card-container {
             background-color: transparent;
             width: 230px !important;
@@ -731,7 +719,6 @@
         }
         .btn-delete:hover { background: #991b1b; }
 
-        /* KARTIN ARKA YÜZÜ (ÖZELLİK RESMİ) */
         .item-card-back {
             background: rgba(14, 12, 18, 0.98);
             color: #ffffff;
@@ -751,7 +738,6 @@
             border: 1px solid var(--gold-secondary);
         }
 
-        /* YÖNETİCİ PANELİ SEKMELİ MÖDÜLER TASARIMI */
         .admin-panel {
             display: none;
             width: 100%;
@@ -831,7 +817,6 @@
             justify-content: center;
         }
 
-        /* OYUNCU EKİPMANLARI (DÖNEN KARTLAR) */
         .eq-card-container {
             background-color: transparent;
             width: 230px !important;
@@ -961,7 +946,6 @@
             font-size: 0.8rem;
         }
 
-        /* Sipariş İtem / Teklif Alanı Tasarımı */
         .offer-section {
             width: 100%;
             max-width: 500px;
@@ -993,25 +977,16 @@
 </head>
 <body>
 
-    <!-- ========================================== -->
-    <!-- 3. SAĞ ÜST YÖNETİCİ GİRİŞİ BUTONU          -->
-    <!-- ========================================== -->
     <button onclick="toggleAdminPanel()" class="top-admin-btn">
         <i class="fa-solid fa-lock"></i> Yönetici Girişi
     </button>
 
     <div class="container">
-        <!-- ========================================== -->
-        <!-- 4. LOGO VE MARKA ALANI                     -->
-        <!-- ========================================== -->
         <div class="logo-container">
-            <img id="mainLogoImg" src="https://hizliresim.com/9tiys4o7" alt="MusaRUZGAR Logo" class="custom-logo">
+            <img id="mainLogoImg" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=500&auto=format&fit=crop" alt="MusaRUZGAR Logo" class="custom-logo">
             <div class="brand-domain">MUSA RÜZGAR PAZAR ALANI</div>
         </div>
 
-        <!-- ========================================== -->
-        <!-- 5. YÖNETİCİ KONTROL PANELİ                  -->
-        <!-- ========================================== -->
         <div id="adminPanel" class="admin-panel">
             <div id="loginSection">
                 <h3>YÖNETİCİ DOĞRULAMA</h3>
@@ -1137,9 +1112,6 @@
             </div>
         </div>
 
-        <!-- ========================================== -->
-        <!-- 6. TOPLAM ZİYARETÇİ SAYAÇ                  -->
-        <!-- ========================================== -->
         <div class="stats-container">
             <div class="stat-card">
                 <i class="fa-solid fa-users"></i>
@@ -1148,9 +1120,6 @@
             </div>
         </div>
 
-        <!-- ========================================== -->
-        <!-- 7. OYUN SEÇİM SEKMELERİ                    -->
-        <!-- ========================================== -->
         <div class="game-tabs-container">
             <button onclick="switchGame('knight')" id="knightTabBtn" class="game-tab-btn active">
                 <img id="knightTabImg" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=100&auto=format&fit=crop" class="game-tab-img" alt="Knight Online">
@@ -1166,9 +1135,6 @@
             <i class="fa-solid fa-coins" style="font-size: 1.2rem;"></i> GB FİYATLARI İÇİN TIKLAYIN
         </a>
 
-        <!-- ========================================== -->
-        <!-- 8. TWITCH YAYINCILARI                      -->
-        <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
                 <div class="divider-line"></div>
@@ -1184,9 +1150,6 @@
             <div style="color: var(--text-muted); font-size: 0.9rem;">Yükleniyor...</div>
         </div>
 
-        <!-- ========================================== -->
-        <!-- 9. YOUTUBE YAYINCILARI                     -->
-        <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
                 <div class="divider-line"></div>
@@ -1202,9 +1165,6 @@
             <div style="color: var(--text-muted); font-size: 0.9rem;">Yükleniyor...</div>
         </div>
 
-        <!-- ========================================== -->
-        <!-- 10. GB ALIM SATIM BÖLÜMÜ                   -->
-        <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
                 <div class="divider-line"></div>
@@ -1224,9 +1184,6 @@
             </a>
         </div>
 
-        <!-- ========================================== -->
-        <!-- 11. WHATSAPP OYUNCU GRUPLARI               -->
-        <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
                 <div class="divider-line"></div>
@@ -1249,9 +1206,6 @@
             </a>
         </div>
 
-        <!-- ========================================== -->
-        <!-- 12. ARAMA VE FİLTRE                        -->
-        <!-- ========================================== -->
         <div class="filter-container">
             <input type="text" id="searchInput" class="search-input" placeholder="Örnek: Raptor(+9)" oninput="filterAndSortAll()">
             <label class="sort-checkbox-label">
@@ -1259,9 +1213,6 @@
             </label>
         </div>
 
-        <!-- ========================================== -->
-        <!-- 13. ELİMDE BULUNAN EŞYALAR                 -->
-        <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
                 <div class="divider-line"></div>
@@ -1273,9 +1224,6 @@
         </div>
         <div class="items-grid" id="itemsContainer"></div>
 
-        <!-- ========================================== -->
-        <!-- 14. KONSİNYE EŞYALAR                       -->
-        <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
                 <div class="divider-line"></div>
@@ -1288,9 +1236,6 @@
         </div>
         <div class="items-grid" id="consignmentContainer"></div>
 
-        <!-- ========================================== -->
-        <!-- 15. OYUNCU EKİPMANLARI                     -->
-        <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
                 <div class="divider-line"></div>
@@ -1302,9 +1247,6 @@
         </div>
         <div class="equipments-grid" id="equipmentsContainer"></div>
 
-        <!-- ========================================== -->
-        <!-- 16. SİPARİŞ İTEM / TEKLİF ALMA             -->
-        <!-- ========================================== -->
         <div class="section-divider">
             <div class="section-divider-inner">
                 <div class="divider-line"></div>
@@ -1323,9 +1265,6 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- 17. JAVASCRIPT                             -->
-    <!-- ========================================== -->
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyCigD_pzl2aDUbjg1GXgDXIFWuEABa9Gmo",
@@ -1928,7 +1867,6 @@
             const offerMsg = document.getElementById('offerText').value.trim();
             const phone = "905393112169";
             
-            ,
             if (!offerMsg) {
                 alert('Lütfen sipariş/teklif mesajınızı yazınız.');
                 return;
