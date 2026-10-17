@@ -558,7 +558,6 @@
             margin: 0 auto !important;
         }
 
-        /* İLAN KUTULARI - SADE VE TEMİZ YAPISI */
         .item-card-container {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -654,7 +653,6 @@
         .btn-edit-action { background: #1d4ed8; color: #fff; display: none; }
         .btn-delete { background: #7f1d1d; color: #fca5a5; border: 1px solid #991b1b; display: none; }
 
-        /* EKİPMAN BÖLÜMÜ - DÖNEN ÖZELLİK KARTLARI TAM SİSTEMİYLE GERİ GELDİ */
         .eq-card-container {
             background-color: transparent;
             width: 220px !important;
@@ -896,7 +894,7 @@
                 <div id="tabLogo" class="admin-tab-content active">
                     <h3><i class="fa-solid fa-image"></i> PORTAL LOGOSU DEĞİŞTİR</h3>
                     <div class="form-group">
-                        <label>Portal Logosu Dosyası</label>
+                        <label>Portal Logosu Dosyası (JPG, PNG önerilir)</label>
                         <input type="file" id="newLogoImage" class="form-control" accept="image/*">
                     </div>
                     <button onclick="updateLogo()" id="uploadLogoBtn" class="btn-gold" style="max-width: 100%; margin-top: 5px;">
@@ -1291,6 +1289,7 @@
 
             const reader = new FileReader();
             reader.readAsDataURL(imageFile);
+            
             reader.onload = function () {
                 db.collection("settings").doc("portalSettings").set({
                     logoUrl: reader.result
@@ -1300,7 +1299,18 @@
                     document.getElementById('newLogoImage').value = '';
                     uploadLogoBtn.innerHTML = '<i class="fa-solid fa-upload"></i> Logoyu Güncelle';
                     uploadLogoBtn.disabled = false;
+                }).catch((error) => {
+                    console.error("Firebase kayıt hatası:", error);
+                    alert("Logo kaydedilirken hata oluştu (Dosya boyutu çok büyük olabilir).");
+                    uploadLogoBtn.innerHTML = '<i class="fa-solid fa-upload"></i> Logoyu Güncelle';
+                    uploadLogoBtn.disabled = false;
                 });
+            };
+
+            reader.onerror = function () {
+                alert("Dosya okunamadı. Lütfen farklı bir JPG veya PNG görsel deneyin.");
+                uploadLogoBtn.innerHTML = '<i class="fa-solid fa-upload"></i> Logoyu Güncelle';
+                uploadLogoBtn.disabled = false;
             };
         }
 
