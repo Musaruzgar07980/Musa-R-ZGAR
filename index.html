@@ -653,7 +653,7 @@
         .btn-edit-action { background: #1d4ed8; color: #fff; display: none; }
         .btn-delete { background: #7f1d1d; color: #fca5a5; border: 1px solid #991b1b; display: none; }
 
-        /* EKİPMAN BÖLÜMÜ - BÜYÜTÜLMÜŞ GÖRSEL ALANI */
+        /* EKİPMAN BÖLÜMÜ - İSİM VE FİYAT YAKLAŞTIRILMIŞ & GÖRSEL DÜZENLENMİŞ */
         .eq-card-container {
             background-color: transparent;
             width: 220px !important;
@@ -687,7 +687,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 10px;
+            padding: 12px;
             backdrop-filter: blur(8px);
             overflow-y: auto;
         }
@@ -696,14 +696,14 @@
             background: var(--card-bg);
             color: white;
             justify-content: flex-start;
-            padding-top: 12px;
         }
 
+        /* Pikselleşmeyen, kaliteli ve orantılı büyütülmüş görsel alanı */
         .eq-card-front img {
             width: 100% !important;
-            height: 145px !important;
+            height: 165px !important;
             object-fit: contain;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             border-radius: 6px;
             background: #000;
             padding: 6px;
@@ -721,14 +721,15 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            width: 100%;
         }
 
+        /* İsim ile fiyatı yakınlaştıran ve düzenleyen yapı */
         .eq-card-front .front-eq-price {
             font-size: 1rem;
             font-weight: 800;
             color: var(--gold-primary);
-            margin-top: auto;
-            margin-bottom: 5px;
+            margin-top: 2px;
         }
 
         .eq-card-back {
