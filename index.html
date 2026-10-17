@@ -558,7 +558,7 @@
             margin: 0 auto !important;
         }
 
-        /* İLAN KUTULARI - SADE KUSURSUZ TEMİZ ESKİ SİSTEM */
+        /* İLAN KUTULARI - SADE VE TEMİZ YAPISI */
         .item-card-container {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -578,7 +578,6 @@
             transform: translateY(-3px);
         }
 
-        /* Görsel Çerçevesi Ve Bozmayan Kaliteli Resim Hizalaması */
         .item-img-box {
             width: 80px;
             height: 80px;
@@ -596,7 +595,7 @@
         .item-img-box img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Görseli ezmeden net gösterir */
+            object-fit: contain;
             border-radius: 6px;
         }
 
@@ -655,37 +654,122 @@
         .btn-edit-action { background: #1d4ed8; color: #fff; display: none; }
         .btn-delete { background: #7f1d1d; color: #fca5a5; border: 1px solid #991b1b; display: none; }
 
-        /* EKİPMAN BÖLÜMÜ */
+        /* EKİPMAN BÖLÜMÜ - DÖNEN ÖZELLİK KARTLARI TAM SİSTEMİYLE GERİ GELDİ */
         .eq-card-container {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
+            background-color: transparent;
             width: 220px !important;
-            padding: 14px;
+            height: 310px !important;
+            perspective: 1000px;
+            margin: 0 !important;
+        }
+
+        .eq-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+
+        .eq-card-container:hover .eq-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .eq-card-front, .eq-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 10px;
             backdrop-filter: blur(8px);
+            overflow-y: auto;
         }
 
-        .eq-img-box {
-            width: 110px;
-            height: 110px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            border: 1px solid var(--gold-secondary);
-            background: #000;
-            padding: 4px;
-            display: flex;
-            align-items: center;
+        .eq-card-front {
+            background: var(--card-bg);
+            color: white;
             justify-content: center;
         }
 
-        .eq-img-box img {
-            width: 100%;
-            height: 100%;
+        .eq-card-front img {
+            width: 110px;
+            height: 110px;
             object-fit: contain;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            background: #000;
+            padding: 4px;
+            border: 1px solid var(--gold-secondary);
         }
+
+        .eq-card-front h3 {
+            font-size: 0.9rem;
+            color: var(--gold-primary);
+            font-family: 'Cinzel', serif;
+            margin-bottom: 4px;
+        }
+
+        .eq-card-front .front-eq-price {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--gold-primary);
+            margin-top: 4px;
+        }
+
+        .eq-card-back {
+            background: rgba(14, 12, 18, 0.98);
+            color: #ffffff;
+            transform: rotateY(180deg);
+            border-color: var(--gold-primary);
+            text-align: left;
+            justify-content: space-between;
+        }
+
+        .eq-card-back-content {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .eq-card-back h3 {
+            font-size: 0.8rem;
+            color: var(--gold-primary);
+            margin-bottom: 6px;
+            border-bottom: 2px solid var(--gold-secondary);
+            padding-bottom: 4px;
+            width: 100%;
+            text-align: center;
+            font-family: 'Cinzel', serif;
+        }
+
+        .eq-specs-list {
+            list-style: none;
+            width: 100%;
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .eq-specs-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed rgba(243, 195, 68, 0.3);
+            padding-bottom: 2px;
+        }
+
+        .eq-specs-list span.spec-label { color: #94a3b8; font-weight: 700; font-size: 0.7rem; }
+        .eq-specs-list span.spec-val { color: #ffffff; font-weight: 800; font-size: 0.75rem; }
 
         .admin-panel {
             display: none;
@@ -900,7 +984,7 @@
                         <input type="text" id="newItemPrice" class="form-control" placeholder="Örn: 1.000,00 TL">
                     </div>
                     <div class="form-group" id="specsGroup" style="display: none;">
-                        <label>Ekipman Özellikleri (Örn: İŞLEMCİ: i5)</label>
+                        <label>Ekipman Özellikleri (Örn: İŞLEMCİ: i5&#10;RAM: 16 GB)</label>
                         <textarea id="newEqSpecs" class="form-control" style="height: 70px; resize: none;" placeholder="İŞLEMCİ: i5&#10;RAM: 16 GB"></textarea>
                     </div>
                     <div class="form-group" id="mainImgGroup">
@@ -1487,30 +1571,48 @@
             }
 
             equipments.forEach((eq) => {
+                let specsHtml = '';
+                if (eq.specs) {
+                    const lines = eq.specs.split('\n');
+                    lines.forEach(line => {
+                        if (line.includes(':')) {
+                            const parts = line.split(':');
+                            specsHtml += `<li><span class="spec-label">${parts[0].trim()}:</span><span class="spec-val">${parts[1].trim()}</span></li>`;
+                        } else if (line.trim() !== '') {
+                            specsHtml += `<li><span class="spec-val" style="width:100%; text-align:center;">${line.trim()}</span></li>`;
+                        }
+                    });
+                }
+
                 const eqCard = document.createElement('div');
                 eqCard.className = 'eq-card-container';
                 eqCard.innerHTML = `
-                    <div class="eq-img-box">
-                        <img src="${eq.imageUrl}" alt="${eq.title}">
-                    </div>
-                    <div class="item-title">${eq.title}</div>
-                    <div class="item-price">${eq.price || ''}</div>
-                    <div class="item-actions">
-                        <a href="https://wa.me/905393112169?text=Merhaba%20MusaRUZGAR,%20${encodeURIComponent(eq.title)}%20ekipmanını%20satın%20almak%20istiyorum." target="_blank" class="action-btn btn-wa">
-                            <i class="fa-brands fa-whatsapp"></i> WhatsApp ile Al
-                        </a>
-                        <a href="https://www.sonteklif.com" target="_blank" class="action-btn btn-st">
-                            <i class="fa-solid fa-shopping-cart"></i> SonTeklif İlanı
-                        </a>
-                        <a href="https://www.bynogame.com" target="_blank" class="action-btn btn-bng">
-                            <i class="fa-solid fa-store"></i> ByNoGame İlanı
-                        </a>
-                        <button onclick="editEquipment('${eq.id}', '${eq.title}', '${eq.price || ''}', \`${eq.specs || ''}\`)" class="action-btn btn-edit-action" style="display: ${isAdminLoggedIn ? 'flex' : 'none'}; margin-top: 4px;">
-                            <i class="fa-solid fa-pen-to-square"></i> Düzenle
-                        </button>
-                        <button onclick="deleteEquipment('${eq.id}')" class="action-btn btn-delete" style="display: ${isAdminLoggedIn ? 'flex' : 'none'}; margin-top: 2px;">
-                            <i class="fa-solid fa-trash"></i> Kaldır
-                        </button>
+                    <div class="eq-card-inner">
+                        <div class="eq-card-front">
+                            <img src="${eq.imageUrl}" alt="${eq.title}">
+                            <h3>${eq.title}</h3>
+                            <div class="front-eq-price">${eq.price || ''}</div>
+                        </div>
+                        <div class="eq-card-back">
+                            <div class="eq-card-back-content">
+                                <h3>${eq.title} ÖZELLİKLERİ</h3>
+                                <ul class="eq-specs-list">${specsHtml || '<li style="color:var(--text-muted); font-size:0.75rem; text-align:center;">Özellik eklenmemiş.</li>'}</ul>
+                            </div>
+                            <div style="width: 100%; margin-top: auto;">
+                                <div class="item-price" style="margin-bottom: 4px; font-size: 0.9rem; text-align:center;">${eq.price || ''}</div>
+                                <div class="item-actions">
+                                    <a href="https://wa.me/905393112169?text=Merhaba%20MusaRUZGAR,%20${encodeURIComponent(eq.title)}%20ekipmanını%20satın%20almak%20istiyorum." target="_blank" class="action-btn btn-wa">
+                                        <i class="fa-brands fa-whatsapp"></i> WhatsApp ile Al
+                                    </a>
+                                </div>
+                                <button onclick="editEquipment('${eq.id}', '${eq.title}', '${eq.price || ''}', \`${eq.specs || ''}\`)" class="action-btn btn-edit-action" style="display: ${isAdminLoggedIn ? 'flex' : 'none'}; margin-top: 4px;">
+                                    <i class="fa-solid fa-pen-to-square"></i> Düzenle
+                                </button>
+                                <button onclick="deleteEquipment('${eq.id}')" class="action-btn btn-delete" style="display: ${isAdminLoggedIn ? 'flex' : 'none'}; margin-top: 2px;">
+                                    <i class="fa-solid fa-trash"></i> Kaldır
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 `;
                 container.appendChild(eqCard);
@@ -1589,10 +1691,13 @@
             if (newTitle === null) return;
             const newPrice = prompt("Yeni Fiyat:", oldPrice);
             if (newPrice === null) return;
+            const newSpecs = prompt("Yeni Özellikler:", oldSpecs);
+            if (newSpecs === null) return;
 
             db.collection("equipments").doc(docId).update({
                 title: newTitle,
-                price: newPrice
+                price: newPrice,
+                specs: newSpecs
             }).then(() => {
                 alert("Ekipman güncellendi!");
                 loadDataFromFirebase();
