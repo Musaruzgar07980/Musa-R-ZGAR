@@ -558,108 +558,54 @@
             margin: 0 auto !important;
         }
 
-        /* İLAN KUTULARI - İTEM GÖRSELİ KÜÇÜLTÜLDÜ, ÖZELLİK KISMI BOYDAN OLDU, BUTONLAR ÜZERİNE GELDİ */
+        /* İLAN KUTULARI - SADE KUSURSUZ TEMİZ ESKİ SİSTEM */
         .item-card-container {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 12px;
             width: 220px !important;
-            padding: 10px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
             align-items: center;
             backdrop-filter: blur(6px);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
         }
 
         .item-card-container:hover {
             border-color: var(--gold-primary);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), 0 0 12px var(--gold-glow);
+            transform: translateY(-3px);
         }
 
-        /* İtem resim alanı daha küçük yapıldı (65px) */
-        .item-flip-box {
-            width: 65px;
-            height: 65px;
-            perspective: 1000px;
-            margin-bottom: 6px;
-            cursor: pointer;
-        }
-
-        .item-flip-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
-            transform-style: preserve-3d;
-            border-radius: 8px;
-        }
-
-        .item-flip-box:hover .item-flip-inner {
-            transform: rotateY(180deg);
-        }
-
-        .item-flip-front, .item-flip-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 8px;
+        /* Görsel Çerçevesi Ve Bozmayan Kaliteli Resim Hizalaması */
+        .item-img-box {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
             border: 1px solid rgba(243, 195, 68, 0.4);
             background: #08070a;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            margin-bottom: 10px;
+            padding: 4px;
         }
 
-        .item-flip-front img {
+        .item-img-box img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-        }
-
-        /* Arka yüz özellik görseli BOYDAN (TÜM KARTI KAPLAYACAK ŞEKİLDE) */
-        .item-card-container:has(.item-flip-box:hover) .item-flip-back-overlay {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .item-flip-back-overlay {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            right: 8px;
-            bottom: 8px;
-            background: rgba(10, 9, 13, 0.97);
-            border: 1px solid var(--gold-primary);
-            border-radius: 8px;
-            z-index: 25;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            overflow: hidden;
-            padding: 5px;
-        }
-
-        .item-flip-back-overlay img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+            object-fit: contain; /* Görseli ezmeden net gösterir */
             border-radius: 6px;
         }
 
         .item-title {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: #ffffff;
-            margin-bottom: 2px;
-            line-height: 1.1;
+            margin-bottom: 4px;
+            line-height: 1.2;
             height: 2.2em;
             display: flex;
             align-items: center;
@@ -670,19 +616,17 @@
         }
 
         .item-price {
-            font-size: 0.95rem;
-            font-weight: 700;
+            font-size: 1rem;
+            font-weight: 800;
             color: var(--gold-primary);
-            margin-bottom: 6px;
+            margin-bottom: 10px;
         }
 
         .item-actions {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
             width: 100%;
-            position: relative;
-            z-index: 10;
         }
 
         .action-btn {
@@ -690,9 +634,9 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            padding: 6px 8px;
-            border-radius: 5px;
-            font-size: 0.72rem;
+            padding: 7px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
             font-weight: 700;
             text-decoration: none;
             transition: all 0.2s ease;
@@ -701,100 +645,47 @@
             width: 100%;
         }
 
-        .btn-wa { background: rgba(37, 211, 102, 0.9); color: #000; backdrop-filter: blur(4px); }
-        .btn-wa:hover { background: #25d366; }
-        .btn-st { background: rgba(230, 126, 34, 0.9); color: #fff; backdrop-filter: blur(4px); }
-        .btn-st:hover { background: #e67e22; }
-        .btn-bng { background: rgba(231, 76, 60, 0.9); color: #fff; backdrop-filter: blur(4px); }
-        .btn-bng:hover { background: #e74c3c; }
+        .btn-wa { background: #25d366; color: #000; }
+        .btn-wa:hover { background: #1eb855; }
+        .btn-st { background: #e67e22; color: #fff; }
+        .btn-st:hover { background: #d35400; }
+        .btn-bng { background: #e74c3c; color: #fff; }
+        .btn-bng:hover { background: #c0392b; }
         
         .btn-edit-action { background: #1d4ed8; color: #fff; display: none; }
         .btn-delete { background: #7f1d1d; color: #fca5a5; border: 1px solid #991b1b; display: none; }
 
-        /* EKİPMAN BÖLÜMÜ (KORUNUYOR) */
+        /* EKİPMAN BÖLÜMÜ */
         .eq-card-container {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 12px;
             width: 220px !important;
-            padding: 12px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
             align-items: center;
             backdrop-filter: blur(8px);
         }
 
-        .eq-flip-box {
-            width: 100%;
-            height: 140px;
-            perspective: 1000px;
+        .eq-img-box {
+            width: 110px;
+            height: 110px;
             margin-bottom: 8px;
-            cursor: pointer;
-        }
-
-        .eq-flip-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
-            transform-style: preserve-3d;
-            border-radius: 8px;
-        }
-
-        .eq-flip-box:hover .eq-flip-inner {
-            transform: rotateY(180deg);
-        }
-
-        .eq-flip-front, .eq-flip-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
             border-radius: 8px;
             border: 1px solid var(--gold-secondary);
             background: #000;
+            padding: 4px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow-y: auto;
-            padding: 6px;
         }
 
-        .eq-flip-front img {
+        .eq-img-box img {
             width: 100%;
             height: 100%;
             object-fit: contain;
         }
-
-        .eq-flip-back {
-            transform: rotateY(180deg);
-            background: rgba(14, 12, 18, 0.98);
-            text-align: left;
-            align-items: flex-start;
-            justify-content: flex-start;
-        }
-
-        .eq-specs-list {
-            list-style: none;
-            width: 100%;
-            font-size: 0.75rem;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-
-        .eq-specs-list li {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px dashed rgba(243, 195, 68, 0.3);
-            padding-bottom: 2px;
-        }
-
-        .eq-specs-list span.spec-label { color: #94a3b8; font-weight: 700; font-size: 0.68rem; }
-        .eq-specs-list span.spec-val { color: #ffffff; font-weight: 800; font-size: 0.72rem; }
 
         .admin-panel {
             display: none;
@@ -1013,12 +904,8 @@
                         <textarea id="newEqSpecs" class="form-control" style="height: 70px; resize: none;" placeholder="İŞLEMCİ: i5&#10;RAM: 16 GB"></textarea>
                     </div>
                     <div class="form-group" id="mainImgGroup">
-                        <label id="mainImgLabel">1. Eşya Ana Görseli (Ön Yüz)</label>
+                        <label id="mainImgLabel">Görsel Seç</label>
                         <input type="file" id="newItemImage" class="form-control" accept="image/*">
-                    </div>
-                    <div class="form-group" id="backImgGroup">
-                        <label>2. Eşya Özellikleri Görseli (Arka Yüz / İtem Özelliği)</label>
-                        <input type="file" id="newItemBackImage" class="form-control" accept="image/*">
                     </div>
                     <button onclick="uploadNewRecord()" id="uploadBtn" class="btn-gold" style="max-width: 100%; margin-top: 5px;">
                         <i class="fa-solid fa-cloud-arrow-up"></i> Seçilen Oyuna Ekle
@@ -1203,17 +1090,14 @@
         document.getElementById('newItemCategory').addEventListener('change', function() {
             const val = this.value;
             const specsGroup = document.getElementById('specsGroup');
-            const backImgGroup = document.getElementById('backImgGroup');
             const mainImgLabel = document.getElementById('mainImgLabel');
 
             if (val === 'equipment') {
                 specsGroup.style.display = 'flex';
-                backImgGroup.style.display = 'none';
                 mainImgLabel.innerText = "Ekipman Görseli";
             } else {
                 specsGroup.style.display = 'none';
-                backImgGroup.style.display = 'flex';
-                mainImgLabel.innerText = "1. Eşya Ana Görseli (Ön Yüz)";
+                mainImgLabel.innerText = "Eşya Görseli";
             }
         });
 
@@ -1566,23 +1450,9 @@
             const cardEl = document.createElement('div');
             cardEl.className = 'item-card-container';
 
-            const backOverlayContent = item.backImageUrl 
-                ? `<img src="${item.backImageUrl}" alt="${item.title} Özellikleri">`
-                : `<div style="color:var(--text-muted); font-size:0.75rem; text-align:center;">Özellik görseli eklenmemiş.</div>`;
-
             cardEl.innerHTML = `
-                <div class="item-flip-box">
-                    <div class="item-flip-inner">
-                        <div class="item-flip-front">
-                            <img src="${item.imageUrl}" alt="${item.title}">
-                        </div>
-                        <div class="item-flip-back">
-                            <img src="${item.imageUrl}" alt="${item.title}">
-                        </div>
-                    </div>
-                </div>
-                <div class="item-flip-back-overlay">
-                    ${backOverlayContent}
+                <div class="item-img-box">
+                    <img src="${item.imageUrl}" alt="${item.title}">
                 </div>
                 <div class="item-title">${item.title}</div>
                 <div class="item-price">${item.price}</div>
@@ -1617,31 +1487,11 @@
             }
 
             equipments.forEach((eq) => {
-                let specsHtml = '';
-                if (eq.specs) {
-                    const lines = eq.specs.split('\n');
-                    lines.forEach(line => {
-                        if (line.includes(':')) {
-                            const parts = line.split(':');
-                            specsHtml += `<li><span class="spec-label">${parts[0].trim()}:</span><span class="spec-val">${parts[1].trim()}</span></li>`;
-                        } else if (line.trim() !== '') {
-                            specsHtml += `<li><span class="spec-val" style="width:100%; text-align:center;">${line.trim()}</span></li>`;
-                        }
-                    });
-                }
-
                 const eqCard = document.createElement('div');
                 eqCard.className = 'eq-card-container';
                 eqCard.innerHTML = `
-                    <div class="eq-flip-box">
-                        <div class="eq-flip-inner">
-                            <div class="eq-flip-front">
-                                <img src="${eq.imageUrl}" alt="${eq.title}">
-                            </div>
-                            <div class="eq-flip-back">
-                                <ul class="eq-specs-list">${specsHtml || '<li style="color:var(--text-muted); font-size:0.75rem; text-align:center;">Özellik eklenmemiş.</li>'}</ul>
-                            </div>
-                        </div>
+                    <div class="eq-img-box">
+                        <img src="${eq.imageUrl}" alt="${eq.title}">
                     </div>
                     <div class="item-title">${eq.title}</div>
                     <div class="item-price">${eq.price || ''}</div>
@@ -1673,11 +1523,10 @@
             const title = document.getElementById('newItemTitle').value.trim();
             const price = document.getElementById('newItemPrice').value.trim();
             const mainFile = document.getElementById('newItemImage').files[0];
-            const backFile = document.getElementById('newItemBackImage').files[0];
             const uploadBtn = document.getElementById('uploadBtn');
 
             if (!title || !mainFile) {
-                alert('Lütfen başlık yazın ve ana görseli seçin.');
+                alert('Lütfen başlık yazın ve bir görsel seçin.');
                 return;
             }
 
@@ -1696,23 +1545,14 @@
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     }).then(() => finishUpload());
                 } else {
-                    if (backFile) {
-                        const readerBack = new FileReader();
-                        readerBack.readAsDataURL(backFile);
-                        readerBack.onload = function() {
-                            const base64Back = readerBack.result;
-                            saveItemToDb(game, category, title, price, base64Main, base64Back);
-                        };
-                    } else {
-                        saveItemToDb(game, category, title, price, base64Main, "");
-                    }
+                    saveItemToDb(game, category, title, price, base64Main);
                 }
             };
         }
 
-        function saveItemToDb(game, category, title, price, imageUrl, backImageUrl) {
+        function saveItemToDb(game, category, title, price, imageUrl) {
             db.collection("items").add({
-                game, category, title, price, imageUrl, backImageUrl,
+                game, category, title, price, imageUrl,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => finishUpload());
         }
@@ -1723,7 +1563,6 @@
             document.getElementById('newItemPrice').value = '';
             document.getElementById('newEqSpecs').value = '';
             document.getElementById('newItemImage').value = '';
-            document.getElementById('newItemBackImage').value = '';
             document.getElementById('uploadBtn').innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Seçilen Oyuna Ekle';
             document.getElementById('uploadBtn').disabled = false;
             toggleAdminPanel();
@@ -1750,13 +1589,10 @@
             if (newTitle === null) return;
             const newPrice = prompt("Yeni Fiyat:", oldPrice);
             if (newPrice === null) return;
-            const newSpecs = prompt("Yeni Özellikler:", oldSpecs);
-            if (newSpecs === null) return;
 
             db.collection("equipments").doc(docId).update({
                 title: newTitle,
-                price: newPrice,
-                specs: newSpecs
+                price: newPrice
             }).then(() => {
                 alert("Ekipman güncellendi!");
                 loadDataFromFirebase();
