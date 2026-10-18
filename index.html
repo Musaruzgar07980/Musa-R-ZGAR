@@ -19,10 +19,10 @@
         :root {
             --bg-dark: #08080a;
             --card-bg: rgba(15, 14, 18, 0.95);
-            --card-border: rgba(212, 160, 23, 0.25);
+            --card-border: rgba(212, 160, 23, 0.6);
             --gold-primary: #f3c344;
             --gold-secondary: #d49f17;
-            --gold-glow: rgba(243, 195, 68, 0.3);
+            --gold-glow: rgba(243, 195, 68, 0.35);
             --text-main: #e2e8f0;
             --text-muted: #94a3b8;
             --twitch-color: #9146ff;
@@ -561,7 +561,7 @@
 
         .item-card-container {
             background: var(--card-bg);
-            border: 1px solid var(--card-border);
+            border: 1.5px solid var(--gold-secondary);
             border-radius: 12px;
             width: 220px !important;
             padding: 14px;
@@ -582,7 +582,7 @@
             width: 80px;
             height: 80px;
             border-radius: 10px;
-            border: 1px solid rgba(243, 195, 68, 0.4);
+            border: none;
             background: #08070a;
             display: flex;
             align-items: center;
@@ -654,7 +654,7 @@
         .btn-edit-action { background: #1d4ed8; color: #fff; display: none; }
         .btn-delete { background: #7f1d1d; color: #fca5a5; border: 1px solid #991b1b; display: none; }
 
-        /* EKİPMAN KARTI (KART BOYUTU 350PX VE SIRALAMA: İSİM -> RESİM -> FİYAT -> STOK) */
+        /* EKİPMAN KARTI (DIŞ ÇERÇEVE SARI, İÇ RESİM SADE) */
         .eq-card-container {
             background-color: transparent;
             width: 220px !important;
@@ -670,8 +670,8 @@
             text-align: center;
             transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
             transform-style: preserve-3d;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
 
         .eq-card-inner.flipped {
@@ -683,14 +683,15 @@
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            border-radius: 10px;
-            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            border: 2px solid var(--gold-secondary); /* DIŞ ÇERÇEVE SARI CİZGİ */
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 12px;
             backdrop-filter: blur(8px);
             overflow: hidden;
+            box-shadow: 0 0 10px rgba(212, 159, 23, 0.15);
         }
 
         .eq-card-front {
@@ -714,16 +715,16 @@
             width: 100%;
         }
 
-        /* 2. RESİM (ORTADA) */
+        /* 2. RESİM (SARI İÇ ÇERÇEVE KALDIRILDI) */
         .eq-card-front img {
             width: 100% !important;
             height: 155px !important;
             object-fit: contain;
             margin-bottom: 8px;
-            border-radius: 6px;
+            border-radius: 8px;
             background: #000;
-            padding: 4px;
-            border: 1px solid var(--gold-secondary);
+            padding: 2px;
+            border: none; /* İÇ ÇERÇEVE TEMİZLENDİ */
         }
 
         /* 3. FİYAT */
