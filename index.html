@@ -52,10 +52,12 @@
             flex-direction: column;
             align-items: center;
             padding: 30px 15px 80px 15px;
+            position: relative;
         }
 
+        /* YÖNETİCİ GİRİŞİ BUTONU ARTİK SAYFA BAŞINDA SABİT (SAYFAYLA BİRLİKTE AŞAĞI GELMEZ) */
         .top-admin-btn {
-            position: fixed;
+            position: absolute;
             top: 20px;
             right: 20px;
             background: rgba(18, 16, 20, 0.95);
@@ -617,7 +619,19 @@
             font-size: 1rem;
             font-weight: 800;
             color: var(--gold-primary);
+            margin-bottom: 2px;
+        }
+
+        /* STOK GÖSTERİM STİLİ */
+        .item-stock {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #38bdf8;
             margin-bottom: 10px;
+            background: rgba(56, 189, 248, 0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
         }
 
         .item-actions {
@@ -653,11 +667,10 @@
         .btn-edit-action { background: #1d4ed8; color: #fff; display: none; }
         .btn-delete { background: #7f1d1d; color: #fca5a5; border: 1px solid #991b1b; display: none; }
 
-        /* EKİPMAN BÖLÜMÜ - İSİM VE FİYAT YAKLAŞTIRILMIŞ & GÖRSEL DÜZENLENMİŞ */
         .eq-card-container {
             background-color: transparent;
             width: 220px !important;
-            height: 330px !important;
+            height: 350px !important;
             perspective: 1000px;
             margin: 0 !important;
         }
@@ -698,7 +711,6 @@
             justify-content: flex-start;
         }
 
-        /* Pikselleşmeyen, kaliteli ve orantılı büyütülmüş görsel alanı */
         .eq-card-front img {
             width: 100% !important;
             height: 165px !important;
@@ -724,7 +736,6 @@
             width: 100%;
         }
 
-        /* İsim ile fiyatı yakınlaştıran ve düzenleyen yapı */
         .eq-card-front .front-eq-price {
             font-size: 1rem;
             font-weight: 800;
@@ -989,7 +1000,12 @@
                     </div>
                     <div class="form-group" id="priceGroup">
                         <label>Fiyat (TL)</label>
-                        <input type="text" id="newItemPrice" class="form-control" placeholder="Örn: 1.000,00 TL">
+                        <input type="text" id="newItemPrice" class="form-control" placeholder="Örn: 4.799 TL (Kargo Dahil)">
+                    </div>
+                    <!-- YENİ EKLENEN STOK ALANI -->
+                    <div class="form-group" id="stockGroup">
+                        <label>Stok Adedi</label>
+                        <input type="text" id="newItemStock" class="form-control" placeholder="Örn: 2 Adet veya 1">
                     </div>
                     <div class="form-group" id="specsGroup" style="display: none;">
                         <label>Ekipman Özellikleri (Örn: İŞLEMCİ: i5&#10;RAM: 16 GB)</label>
@@ -1554,12 +1570,15 @@
             const cardEl = document.createElement('div');
             cardEl.className = 'item-card-container';
 
+            const stockText = item.stock ? item.stock : "Stok Belirtilmedi";
+
             cardEl.innerHTML = `
                 <div class="item-img-box">
                     <img src="${item.imageUrl}" alt="${item.title}">
                 </div>
                 <div class="item-title">${item.title}</div>
                 <div class="item-price">${item.price}</div>
+                <div class="item-stock"><i class="fa-solid fa-boxes-stacked"></i> Stok: ${stockText}</div>
                 <div class="item-actions">
                     <a href="https://wa.me/905393112169?text=Merhaba%20MusaRUZGAR,%20${encodeURIComponent(item.title)}%20ürününü%20satın%20almak%20istiyorum." target="_blank" class="action-btn btn-wa">
                         <i class="fa-brands fa-whatsapp"></i> WhatsApp ile Al
@@ -1570,7 +1589,7 @@
                     <a href="https://www.bynogame.com" target="_blank" class="action-btn btn-bng">
                         <i class="fa-solid fa-store"></i> ByNoGame İlanı
                     </a>
-                    <button onclick="editItem('${item.id}', '${item.title}', '${item.price}')" class="action-btn btn-edit-action" style="display: ${isAdminLoggedIn ? 'flex' : 'none'};">
+                    <button onclick="editItem('${item.id}', '${item.title}', '${item.price || ''}', '${item.stock || ''}')" class="action-btn btn-edit-action" style="display: ${isAdminLoggedIn ? 'flex' : 'none'};">
                         <i class="fa-solid fa-pen-to-square"></i> Düzenle
                     </button>
                     <button onclick="deleteItem('${item.id}')" class="action-btn btn-delete" style="display: ${isAdminLoggedIn ? 'flex' : 'none'};">
@@ -1604,6 +1623,8 @@
                     });
                 }
 
+                const stockText = eq.stock ? eq.stock : "1 Adet";
+
                 const eqCard = document.createElement('div');
                 eqCard.className = 'eq-card-container';
                 eqCard.innerHTML = `
@@ -1612,6 +1633,7 @@
                             <img src="${eq.imageUrl}" alt="${eq.title}">
                             <h3>${eq.title}</h3>
                             <div class="front-eq-price">${eq.price || ''}</div>
+                            <div class="item-stock" style="margin-top: 4px;"><i class="fa-solid fa-boxes-stacked"></i> Stok: ${stockText}</div>
                         </div>
                         <div class="eq-card-back">
                             <div class="eq-card-back-content">
@@ -1619,13 +1641,14 @@
                                 <ul class="eq-specs-list">${specsHtml || '<li style="color:var(--text-muted); font-size:0.75rem; text-align:center;">Özellik eklenmemiş.</li>'}</ul>
                             </div>
                             <div style="width: 100%; margin-top: auto;">
-                                <div class="item-price" style="margin-bottom: 4px; font-size: 0.9rem; text-align:center;">${eq.price || ''}</div>
+                                <div class="item-price" style="margin-bottom: 2px; font-size: 0.9rem; text-align:center;">${eq.price || ''}</div>
+                                <div class="item-stock" style="margin-bottom: 6px; text-align:center;"><i class="fa-solid fa-boxes-stacked"></i> Stok: ${stockText}</div>
                                 <div class="item-actions">
                                     <a href="https://wa.me/905393112169?text=Merhaba%20MusaRUZGAR,%20${encodeURIComponent(eq.title)}%20ekipmanını%20satın%20almak%20istiyorum." target="_blank" class="action-btn btn-wa">
                                         <i class="fa-brands fa-whatsapp"></i> WhatsApp ile Al
                                     </a>
                                 </div>
-                                <button onclick="editEquipment('${eq.id}', '${eq.title}', '${eq.price || ''}', \`${eq.specs || ''}\`)" class="action-btn btn-edit-action" style="display: ${isAdminLoggedIn ? 'flex' : 'none'}; margin-top: 4px;">
+                                <button onclick="editEquipment('${eq.id}', '${eq.title}', '${eq.price || ''}', '${eq.stock || ''}', \`${eq.specs || ''}\`)" class="action-btn btn-edit-action" style="display: ${isAdminLoggedIn ? 'flex' : 'none'}; margin-top: 4px;">
                                     <i class="fa-solid fa-pen-to-square"></i> Düzenle
                                 </button>
                                 <button onclick="deleteEquipment('${eq.id}')" class="action-btn btn-delete" style="display: ${isAdminLoggedIn ? 'flex' : 'none'}; margin-top: 2px;">
@@ -1644,6 +1667,7 @@
             const category = document.getElementById('newItemCategory').value;
             const title = document.getElementById('newItemTitle').value.trim();
             const price = document.getElementById('newItemPrice').value.trim();
+            const stock = document.getElementById('newItemStock').value.trim();
             const mainFile = document.getElementById('newItemImage').files[0];
             const uploadBtn = document.getElementById('uploadBtn');
 
@@ -1663,18 +1687,18 @@
                 if (category === 'equipment') {
                     const specs = document.getElementById('newEqSpecs').value.trim();
                     db.collection("equipments").add({
-                        game, title, price, specs, imageUrl: base64Main,
+                        game, title, price, stock, specs, imageUrl: base64Main,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     }).then(() => finishUpload());
                 } else {
-                    saveItemToDb(game, category, title, price, base64Main);
+                    saveItemToDb(game, category, title, price, stock, base64Main);
                 }
             };
         }
 
-        function saveItemToDb(game, category, title, price, imageUrl) {
+        function saveItemToDb(game, category, title, price, stock, imageUrl) {
             db.collection("items").add({
-                game, category, title, price, imageUrl,
+                game, category, title, price, stock, imageUrl,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => finishUpload());
         }
@@ -1683,6 +1707,7 @@
             alert('Başarıyla eklendi!');
             document.getElementById('newItemTitle').value = '';
             document.getElementById('newItemPrice').value = '';
+            document.getElementById('newItemStock').value = '';
             document.getElementById('newEqSpecs').value = '';
             document.getElementById('newItemImage').value = '';
             document.getElementById('uploadBtn').innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Seçilen Oyuna Ekle';
@@ -1691,35 +1716,41 @@
             loadDataFromFirebase();
         }
 
-        function editItem(docId, oldTitle, oldPrice) {
+        function editItem(docId, oldTitle, oldPrice, oldStock) {
             const newTitle = prompt("Yeni Başlık / İtem Adı:", oldTitle);
             if (newTitle === null) return;
             const newPrice = prompt("Yeni Fiyat:", oldPrice);
             if (newPrice === null) return;
+            const newStock = prompt("Yeni Stok Adedi:", oldStock);
+            if (newStock === null) return;
 
             db.collection("items").doc(docId).update({
                 title: newTitle,
-                price: newPrice
+                price: newPrice,
+                stock: newStock
             }).then(() => {
-                alert("İlan güncellendi!");
+                alert("İlan ve stok güncellendi!");
                 loadDataFromFirebase();
             });
         }
 
-        function editEquipment(docId, oldTitle, oldPrice, oldSpecs) {
+        function editEquipment(docId, oldTitle, oldPrice, oldStock, oldSpecs) {
             const newTitle = prompt("Yeni Ekipman Başlığı:", oldTitle);
             if (newTitle === null) return;
             const newPrice = prompt("Yeni Fiyat:", oldPrice);
             if (newPrice === null) return;
+            const newStock = prompt("Yeni Stok Adedi:", oldStock);
+            if (newStock === null) return;
             const newSpecs = prompt("Yeni Özellikler:", oldSpecs);
             if (newSpecs === null) return;
 
             db.collection("equipments").doc(docId).update({
                 title: newTitle,
                 price: newPrice,
+                stock: newStock,
                 specs: newSpecs
             }).then(() => {
-                alert("Ekipman güncellendi!");
+                alert("Ekipman ve stok güncellendi!");
                 loadDataFromFirebase();
             });
         }
