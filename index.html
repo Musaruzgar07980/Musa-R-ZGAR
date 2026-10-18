@@ -552,7 +552,7 @@
             display: flex !important;
             flex-wrap: wrap !important;
             justify-content: center !important;
-            align-items: center !important;
+            align-items: stretch !important;
             gap: 16px;
             width: 100% !important;
             max-width: 1100px;
@@ -607,12 +607,10 @@
             color: #ffffff;
             margin-bottom: 4px;
             line-height: 1.2;
-            height: 2.2em;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            overflow: hidden;
             width: 100%;
         }
 
@@ -656,12 +654,14 @@
         .btn-edit-action { background: #1d4ed8; color: #fff; display: none; }
         .btn-delete { background: #7f1d1d; color: #fca5a5; border: 1px solid #991b1b; display: none; }
 
+        /* EKİPMAN KARTLARI ESNEK DÜZENLEME */
         .eq-card-container {
             background-color: transparent;
             width: 220px !important;
-            height: 350px !important;
+            min-height: 380px !important;
             perspective: 1000px;
             margin: 0 !important;
+            display: flex;
         }
 
         .eq-card-inner {
@@ -673,15 +673,18 @@
             transform-style: preserve-3d;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Tıklanınca dönme efekti için sınıf */
         .eq-card-inner.flipped {
             transform: rotateY(180deg);
         }
 
         .eq-card-front, .eq-card-back {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
@@ -692,19 +695,18 @@
             align-items: center;
             padding: 12px;
             backdrop-filter: blur(8px);
-            overflow: hidden;
+            box-sizing: border-box;
         }
 
         .eq-card-front {
             background: var(--card-bg);
             color: white;
             justify-content: flex-start;
-            position: relative;
         }
 
         .eq-card-front img {
             width: 100% !important;
-            height: 165px !important;
+            height: 150px !important;
             object-fit: cover !important;
             object-position: center 55% !important;
             transform: scale(1.35) !important;
@@ -713,30 +715,33 @@
             background: #000;
             padding: 2px;
             border: 1px solid var(--gold-secondary);
+            flex-shrink: 0;
         }
 
+        /* BAŞLIK DÜZELTMESİ: BAŞLIĞIN TAMAMI SIKINTISIZ GÖRÜNSÜN */
         .eq-card-front h3 {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--gold-primary);
             font-family: 'Cinzel', serif;
-            margin-bottom: 4px;
-            line-height: 1.1;
-            height: 2.2em;
+            margin-bottom: 6px;
+            line-height: 1.25;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            text-align: center;
             width: 100%;
+            padding: 0 2px;
+            word-break: break-word;
         }
 
         .eq-card-front .front-eq-price {
             font-size: 1rem;
             font-weight: 800;
             color: var(--gold-primary);
-            margin-top: 2px;
+            margin-top: auto;
+            margin-bottom: 35px;
         }
 
-        /* SAĞ ALTTAKİ ÜRÜN DETAYI BUTONU */
         .btn-detail-toggle {
             position: absolute;
             bottom: 10px;
@@ -745,30 +750,33 @@
             border: 1px solid var(--gold-secondary);
             color: var(--gold-primary);
             font-family: 'Rajdhani', sans-serif;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 700;
-            padding: 4px 8px;
+            padding: 5px 10px;
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s ease;
             z-index: 10;
         }
+
         .btn-detail-toggle:hover {
             background: var(--gold-primary);
             color: #000;
         }
 
         .item-stock {
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: 700;
             color: #38bdf8;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             background: rgba(56, 189, 248, 0.1);
-            padding: 2px 8px;
+            padding: 3px 10px;
             border-radius: 10px;
             border: 1px solid rgba(56, 189, 248, 0.3);
+            display: inline-block;
         }
 
+        /* DÖNEN ARKA YÜZ: İÇERİĞE GÖRE DÜZGÜN YERLEŞİM VE TAŞMA ENGELLEYİCİ */
         .eq-card-back {
             background: rgba(14, 12, 18, 0.98);
             color: #ffffff;
@@ -795,6 +803,7 @@
             width: 100%;
             text-align: center;
             font-family: 'Cinzel', serif;
+            line-height: 1.2;
         }
 
         .eq-specs-list {
@@ -1029,7 +1038,6 @@
                         <label>Fiyat (TL)</label>
                         <input type="text" id="newItemPrice" class="form-control" placeholder="Örn: 4.799 TL (Kargo Dahil)">
                     </div>
-                    <!-- SADECE EKİPMAN SEÇİLDİĞİNDE GÖRÜNECEK STOK ALANI -->
                     <div class="form-group" id="stockGroup" style="display: none;">
                         <label>Stok Adedi</label>
                         <input type="text" id="newItemStock" class="form-control" placeholder="Örn: 2 Adet">
@@ -1666,10 +1674,10 @@
                         <div class="eq-card-back">
                             <div class="eq-card-back-content">
                                 <h3>${eq.title} ÖZELLİKLERİ</h3>
-                                <div class="item-stock" style="margin-bottom: 4px; text-align:center;">Stok: ${stockText}</div>
+                                <div class="item-stock" style="margin-bottom: 6px; text-align:center;">Stok: ${stockText}</div>
                                 <ul class="eq-specs-list">${specsHtml || '<li style="color:var(--text-muted); font-size:0.75rem; text-align:center;">Özellik eklenmemiş.</li>'}</ul>
                             </div>
-                            <div style="width: 100%; margin-top: auto;">
+                            <div style="width: 100%; margin-top: auto; padding-top: 6px;">
                                 <div class="item-price" style="margin-bottom: 4px; font-size: 0.9rem; text-align:center;">${eq.price || ''}</div>
                                 <div class="item-actions">
                                     <a href="https://wa.me/905393112169?text=Merhaba%20MusaRUZGAR,%20${encodeURIComponent(eq.title)}%20ekipmanını%20satın%20almak%20istiyorum." target="_blank" class="action-btn btn-wa">
