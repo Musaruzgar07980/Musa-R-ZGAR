@@ -1812,4 +1812,1128 @@
             projectId: "musaruzgarportal",
             storageBucket: "musaruzgarportal.firebasestorage.app",
             messagingSenderId: "247941006757",
-            appId: "1:247941006757:web:
+            appId: "1:247941006757:web:0de22993f9274290e1144c",
+            measurementId: "G-4QJ7S73TJ5"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let isAdminLoggedIn = false;
+        let currentSelectedGame = 'knight';
+        let currentYtSortMode = 'latest'; 
+        let globalItemsData = [];
+        let globalEquipmentsData = [];
+        let globalStreamersData = [];
+        let storedYoutubeApiKey = "";
+        let storedTwitchClientId = "";
+        let storedTwitchSecret = "";
+
+        let rawCommentsList = [];
+        let finalParticipantsPool = [];
+        let currentGiveawayMethod = 'link';
+
+        function showCustomAlert(msg, title = "BİLGİLENDİRME") {
+            document.getElementById('customAlertTitle').innerHTML = `<i class="fa-solid fa-bell"></i> ${title}`;
+            document.getElementById('customAlertMsg').innerText = msg;
+            document.getElementById('customAlertOverlay').style.display = 'flex';
+        }
+
+        function closeCustomAlert() {
+            document.getElementById('customAlertOverlay').style.display = 'none';
+        }
+
+        function openGiveawayModal() {
+            document.getElementById('giveawayModalOverlay').style.display = 'flex';
+        }
+
+        function closeGiveawayModal() {
+            document.getElementById('giveawayModalOverlay').style.display = 'none';
+        }
+
+        function showAdminTab(tabId) {
+            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.admin-nav-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            if(tabId === 'tabLogo') document.getElementById('btnTabLogo').classList.add('active');
+            if(tabId === 'tabStreamer') document.getElementById('btnTabStreamer').classList.add('active');
+            if(tabId === 'tabStreamerManage') document.getElementById('btnTabStreamerManage').classList.add('active');
+            if(tabId === 'tabItem') document.getElementById('btnTabItem').classList.add('active');
+            if(tabId === 'tabApi') document.getElementById('btnTabApi').classList.add('active');
+        }
+
+        function switchGame(gameKey) {
+            currentSelectedGame = gameKey;
+            document.getElementById('knightTabBtn').classList.toggle('active', gameKey === 'knight');
+            document.getElementById('riseTabBtn').classList.toggle('active', gameKey === 'rise');
+
+            const searchInput = document.getElementById('searchInput');
+            const offerText = document.getElementById('offerText');
+
+            if (gameKey === 'rise') {
+                searchInput.placeholder = "Örnek: Vixen +9";
+                offerText.placeholder = "Örn: 7 Rogue Radiant Set +2 Blue Dragon Ring...";
+            } else {
+                searchInput.placeholder = "Örnek: Raptor(+9)";
+                offerText.placeholder = "Örn: Mythril Pad +1 (Reverse), Blue Dragon Necklace +2...";
+            }
+
+            filterAndSortAll();
+            renderStreamers();
+        }
+
+        function switchYtSort(mode) {
+            currentYtSortMode = mode;
+            document.getElementById('btnYtSortLatest').classList.toggle('active', mode === 'latest');
+            document.getElementById('btnYtSortPopular').classList.toggle('active', mode === 'popular');
+            renderStreamersWithApiCheck();
+        }
+
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            if (panel) {
+                if (panel.style.display === 'block') {
+                    panel.style.display = 'none';
+                } else {
+                    panel.style.display = 'block';
+                    panel.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }
+
+        function checkAdminPassword() {
+            const pass = document.getElementById('adminPassword').value;
+            if (pass === "musaruzgar123") {
+                isAdminLoggedIn = true;
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('addItemSection').style.display = 'block';
+                loadSettings();
+                loadDataFromFirebase();
+                loadStreamers();
+                showCustomAlert('Yönetici girişi başarılı!', 'TEBRİKLER');
+            } else {
+                showCustomAlert('Hatalı şifre!', 'HATA');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
+            loadDataFromFirebase();
+            loadStreamers();
+            incrementAndGetVisitorStats();
+
+            setInterval(() => {
+                loadStreamers();
+            }, 60000);
+        });
+
+        function incrementAndGetVisitorStats() {
+            const statsRef = db.collection("settings").doc("visitorStats");
+            
+            db.runTransaction((transaction) => {
+                return transaction.get(statsRef).then((doc) => {
+                    let newCount = 1;
+                    if (doc.exists) {
+                        newCount = (doc.data().totalVisits || 0) + 1;
+                    }
+                    transaction.set(statsRef, { totalVisits: newCount }, { merge: true });
+                    return newCount;
+                });
+            }).then((total) => {
+                document.getElementById('totalVisitsCount').innerText = total.toLocaleString('tr-TR');
+            }).catch((error) => {
+                console.error("Ziyaretçi sayaç hatası:", error);
+                document.getElementById('totalVisitsCount').innerText = "1";
+            });
+        }
+
+        function loadSettings() {
+            db.collection("settings").doc("portalSettings").get().then((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (data.logoUrl) document.getElementById('mainLogoImg').src = data.logoUrl;
+                    if (data.knightImg) document.getElementById('knightTabImg').src = data.knightImg;
+                    if (data.riseImg) document.getElementById('riseTabImg').src = data.riseImg;
+                    if (data.youtubeApiKey) {
+                        storedYoutubeApiKey = data.youtubeApiKey;
+                        document.getElementById('youtubeApiKeyInput').value = data.youtubeApiKey;
+                    }
+                    if (data.twitchClientId) {
+                        storedTwitchClientId = data.twitchClientId;
+                        document.getElementById('twitchClientIdInput').value = data.twitchClientId;
+                    }
+                    if (data.twitchSecret) {
+                        storedTwitchSecret = data.twitchSecret;
+                        document.getElementById('twitchSecretInput').value = data.twitchSecret;
+                    }
+                }
+            }).catch((error) => console.error("Ayarlar yükleme hatası:", error));
+        }
+
+        function saveApiKeys() {
+            const ytKey = document.getElementById('youtubeApiKeyInput').value.trim();
+            const twId = document.getElementById('twitchClientIdInput').value.trim();
+            const twSec = document.getElementById('twitchSecretInput').value.trim();
+
+            db.collection("settings").doc("portalSettings").set({
+                youtubeApiKey: ytKey,
+                twitchClientId: twId,
+                twitchSecret: twSec
+            }, { merge: true }).then(() => {
+                storedYoutubeApiKey = ytKey;
+                storedTwitchClientId = twId;
+                storedTwitchSecret = twSec;
+                showCustomAlert("API Ayarları başarıyla kaydedildi!", "BAŞARILI");
+                loadStreamers();
+            }).catch(err => showCustomAlert("Kayıt hatası: " + err.message, "HATA"));
+        }
+
+        function updateLogo() {
+            const imageFile = document.getElementById('newLogoImage').files[0];
+            const uploadLogoBtn = document.getElementById('uploadLogoBtn');
+
+            if (!imageFile) { showCustomAlert('Lütfen bir logo görseli seçin.', 'UYARI'); return; }
+
+            uploadLogoBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Yükleniyor...';
+            uploadLogoBtn.disabled = true;
+
+            const reader = new FileReader();
+            reader.readAsDataURL(imageFile);
+            
+            reader.onload = function () {
+                db.collection("settings").doc("portalSettings").set({
+                    logoUrl: reader.result
+                }, { merge: true }).then(() => {
+                    showCustomAlert('Portal logosu başarıyla güncellendi!', 'BAŞARILI');
+                    document.getElementById('mainLogoImg').src = reader.result;
+                    document.getElementById('newLogoImage').value = '';
+                    uploadLogoBtn.innerHTML = '<i class="fa-solid fa-upload"></i> Logoyu Güncelle';
+                    uploadLogoBtn.disabled = false;
+                }).catch((error) => {
+                    console.error("Firebase kayıt hatası:", error);
+                    showCustomAlert("Logo kaydedilirken hata oluştu.", "HATA");
+                    uploadLogoBtn.innerHTML = '<i class="fa-solid fa-upload"></i> Logoyu Güncelle';
+                    uploadLogoBtn.disabled = false;
+                });
+            };
+        }
+
+        function updateGameTabImages() {
+            const knightFile = document.getElementById('knightImgFile').files[0];
+            const riseFile = document.getElementById('riseImgFile').files[0];
+
+            if (!knightFile && !riseFile) {
+                showCustomAlert('En az bir oyun görseli seçin.', 'UYARI');
+                return;
+            }
+
+            const updateData = {};
+            let processed = 0;
+            let totalToProcess = (knightFile ? 1 : 0) + (riseFile ? 1 : 0);
+
+            const checkAndSave = () => {
+                processed++;
+                if (processed === totalToProcess) {
+                    db.collection("settings").doc("portalSettings").set(updateData, { merge: true }).then(() => {
+                        showCustomAlert('Oyun buton görselleri güncellendi!', 'BAŞARILI');
+                        loadSettings();
+                    });
+                }
+            };
+
+            if (knightFile) {
+                const r1 = new FileReader();
+                r1.readAsDataURL(knightFile);
+                r1.onload = function() {
+                    updateData.knightImg = r1.result;
+                    document.getElementById('knightTabImg').src = r1.result;
+                    checkAndSave();
+                };
+            }
+
+            if (riseFile) {
+                const r2 = new FileReader();
+                r2.readAsDataURL(riseFile);
+                r2.onload = function() {
+                    updateData.riseImg = r2.result;
+                    document.getElementById('riseTabImg').src = r2.result;
+                    checkAndSave();
+                };
+            }
+        }
+
+        function loadStreamers() {
+            db.collection("streamers").orderBy("createdAt", "desc").get().then((snapshot) => {
+                globalStreamersData = [];
+                snapshot.forEach(doc => {
+                    globalStreamersData.push({ id: doc.id, ...doc.data() });
+                });
+                renderStreamersWithApiCheck();
+            });
+        }
+
+        async function renderStreamersWithApiCheck() {
+            const twitchOnlineContainer = document.getElementById('twitchOnlineContainer');
+            const youtubeContainer = document.getElementById('youtubeContainer');
+            const adminStreamersList = document.getElementById('adminStreamersList');
+
+            let twitchList = [];
+            let youtubeList = [];
+            let allStreamersWithStatus = [];
+
+            try {
+                let twitchTokensValid = false;
+                let accessToken = "";
+
+                if (storedTwitchClientId && storedTwitchSecret) {
+                    try {
+                        const tokenRes = await fetch(`https://id.twitch.tv/oauth2/token?client_id=${storedTwitchClientId}&client_secret=${storedTwitchSecret}&grant_type=client_credentials`, { method: 'POST' });
+                        const tokenData = await tokenRes.json();
+                        if (tokenData.access_token) {
+                            accessToken = tokenData.access_token;
+                            twitchTokensValid = true;
+                        }
+                    } catch(e) { console.error("Twitch token hatası", e); }
+                }
+
+                for (let data of globalStreamersData) {
+                    if (data.game === currentSelectedGame || data.game === 'both' || (!data.game && currentSelectedGame === 'knight')) {
+                        
+                        let isLive = false;
+                        let viewerCount = 0;
+                        let lastVideoTime = data.lastVideoTime || 0;
+
+                        if (data.platform === 'twitch' && twitchTokensValid) {
+                            try {
+                                const streamRes = await fetch(`https://api.twitch.tv/helix/streams?user_login=${encodeURIComponent(data.name)}`, {
+                                    headers: {
+                                        'Client-ID': storedTwitchClientId,
+                                        'Authorization': `Bearer ${accessToken}`
+                                    }
+                                });
+                                const streamData = await streamRes.json();
+                                if (streamData.data && streamData.data.length > 0) {
+                                    isLive = true;
+                                    viewerCount = streamData.data[0].viewer_count || 0;
+                                }
+                            } catch(e) { console.error("Stream check error", e); }
+                        }
+
+                        if (data.platform === 'youtube' && storedYoutubeApiKey) {
+                            try {
+                                const searchUrl = `https://www.googleapis.com/youtube/v3/search?key=${storedYoutubeApiKey}&channelId=${encodeURIComponent(data.name)}&part=snippet,id&order=date&maxResults=1`;
+                                const ytRes = await fetch(searchUrl);
+                                const ytData = await ytRes.json();
+                                if (ytData.items && ytData.items.length > 0) {
+                                    const publishedAt = ytData.items[0].snippet.publishedAt;
+                                    lastVideoTime = new Date(publishedAt).getTime();
+                                }
+                            } catch(e) { console.error("YouTube video check error for channel:", data.name, e); }
+                        }
+
+                        const streamerObj = {
+                            ...data,
+                            followers: parseInt(data.followers) || 0,
+                            viewerCount: viewerCount,
+                            isLive: isLive,
+                            lastVideoTime: lastVideoTime
+                        };
+
+                        allStreamersWithStatus.push(streamerObj);
+
+                        if (data.platform === 'twitch') {
+                            twitchList.push(streamerObj);
+                        } else if (data.platform === 'youtube') {
+                            youtubeList.push(streamerObj);
+                        }
+                    }
+                }
+
+                let onlineTwitch = twitchList.filter(s => s.isLive);
+                onlineTwitch.sort((a, b) => b.viewerCount - a.viewerCount);
+
+                if (currentYtSortMode === 'latest') {
+                    youtubeList.sort((a, b) => (b.lastVideoTime || 0) - (a.lastVideoTime || 0));
+                } else {
+                    youtubeList.sort((a, b) => b.followers - a.followers);
+                }
+
+                let twitchOnlineHtml = "";
+                onlineTwitch.forEach(data => {
+                    twitchOnlineHtml += `
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                            <a href="${data.url}" target="_blank" class="streamer-card twitch">
+                                <div class="streamer-avatar-frame" style="border: 2px solid #25d366; box-shadow: 0 0 15px #25d366;">
+                                    <img src="${data.imageUrl}" alt="${data.name}" class="streamer-avatar">
+                                    <div class="platform-badge twitch-badge">
+                                        <i class="fa-brands fa-twitch"></i>
+                                    </div>
+                                </div>
+                                <div class="streamer-name">${data.name}</div>
+                            </a>
+                            <div class="viewer-count-badge"><i class="fa-solid fa-eye"></i> ${data.viewerCount.toLocaleString('tr-TR')} izleyici</div>
+                        </div>
+                    `;
+                });
+
+                let youtubeHtml = "";
+                youtubeList.forEach(data => {
+                    youtubeHtml += `
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                            <a href="${data.url}" target="_blank" class="streamer-card youtube">
+                                <div class="streamer-avatar-frame">
+                                    <img src="${data.imageUrl}" alt="${data.name}" class="streamer-avatar">
+                                    <div class="platform-badge youtube-badge">
+                                        <i class="fa-brands fa-youtube"></i>
+                                    </div>
+                                </div>
+                                <div class="streamer-name">${data.name}</div>
+                            </a>
+                            <div class="yt-sub-badge"><i class="fa-solid fa-users"></i> ${data.followers.toLocaleString('tr-TR')}</div>
+                        </div>
+                    `;
+                });
+
+                twitchOnlineContainer.innerHTML = onlineTwitch.length > 0 ? twitchOnlineHtml : '<div style="color: var(--text-muted); font-size: 0.9rem;">Şu an aktif canlı yayında olan yayıncı yok.</div>';
+                youtubeContainer.innerHTML = youtubeList.length > 0 ? youtubeHtml : '<div style="color: var(--text-muted); font-size: 0.9rem;">Henüz YouTuber eklenmedi.</div>';
+
+            } catch (err) {
+                console.error("Render error:", err);
+                twitchOnlineContainer.innerHTML = '<div style="color: #ef4444; font-size: 0.9rem;">Yayınlar yüklenemedi.</div>';
+                youtubeContainer.innerHTML = '<div style="color: #ef4444; font-size: 0.9rem;">YouTuberlar yüklenemedi.</div>';
+            }
+
+            let adminListHtml = "";
+            allStreamersWithStatus.forEach(s => {
+                adminListHtml += `
+                    <div class="admin-streamer-item">
+                        <div class="admin-streamer-info">
+                            <img src="${s.imageUrl}" alt="${s.name}">
+                            <div>
+                                <strong>${s.name}</strong> 
+                                <span class="status-pill ${s.platform === 'twitch' ? (s.isLive ? 'online' : 'offline') : 'online'}">
+                                    ${s.platform === 'twitch' ? (s.isLive ? `🔴 CANLI (${s.viewerCount} İzleyici)` : '⚫ OFFLINE') : `▶️ YOUTUBE (Son Tarih: ${s.lastVideoTime ? new Date(s.lastVideoTime).toLocaleDateString('tr-TR') : 'Yok'})`}
+                                </span>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:6px;">
+                            <button onclick="editStreamer('${s.id}', '${s.name}', '${s.url}', '${s.followers}')" class="admin-edit-btn" style="display:inline-block;">Düzenle</button>
+                            <button onclick="deleteStreamer('${s.id}')" class="admin-delete-btn" style="display:inline-block;">Sil</button>
+                        </div>
+                    </div>
+                `;
+            });
+            if (adminStreamersList) {
+                adminStreamersList.innerHTML = adminListHtml || '<div style="color:var(--text-muted); text-align:center;">Ekli yayıncı bulunmuyor.</div>';
+            }
+        }
+
+        function renderStreamers() {
+            renderStreamersWithApiCheck();
+        }
+
+        function uploadNewStreamer() {
+            const game = document.getElementById('newStreamerGame').value;
+            const platform = document.getElementById('newStreamerPlatform').value;
+            const name = document.getElementById('newStreamerName').value.trim();
+            const url = document.getElementById('newStreamerUrl').value.trim();
+            const followers = document.getElementById('newStreamerFollowers').value.trim() || "0";
+            const imageUrlInput = document.getElementById('newStreamerImageUrl').value.trim();
+            const imageFile = document.getElementById('newStreamerImage').files[0];
+
+            if (!name || !url || (!imageUrlInput && !imageFile)) {
+                showCustomAlert('Lütfen bilgileri eksiksiz doldurun.', 'UYARI');
+                return;
+            }
+
+            const saveStreamer = (finalImgUrl) => {
+                db.collection("streamers").add({
+                    game, platform, name, url, followers, imageUrl: finalImgUrl,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                }).then(() => {
+                    showCustomAlert('Yayıncı eklendi!', 'BAŞARILI');
+                    document.getElementById('newStreamerName').value = '';
+                    document.getElementById('newStreamerUrl').value = '';
+                    document.getElementById('newStreamerFollowers').value = '';
+                    document.getElementById('newStreamerImageUrl').value = '';
+                    document.getElementById('newStreamerImage').value = '';
+                    toggleAdminPanel();
+                    loadStreamers();
+                });
+            };
+
+            if (imageUrlInput) {
+                saveStreamer(imageUrlInput);
+            } else {
+                const reader = new FileReader();
+                reader.readAsDataURL(imageFile);
+                reader.onload = function () { saveStreamer(reader.result); };
+            }
+        }
+
+        function editStreamer(docId, oldName, oldUrl, oldFollowers) {
+            const newName = prompt("Yayıncı Adını Güncelleyin:", oldName);
+            if (newName === null) return;
+            const newUrl = prompt("Kanal Linkini Güncelleyin:", oldUrl);
+            if (newUrl === null) return;
+            const newFollowers = prompt("Takipçi/Abone Sayısını Güncelleyin:", oldFollowers || "0");
+            if (newFollowers === null) return;
+
+            db.collection("streamers").doc(docId).update({
+                name: newName,
+                url: newUrl,
+                followers: newFollowers
+            }).then(() => {
+                showCustomAlert("Yayıncı bilgileri güncellendi!", "BAŞARILI");
+                loadStreamers();
+            });
+        }
+
+        function deleteStreamer(docId) {
+            if (!confirm('Silmek istediğinize emin misiniz?')) return;
+            db.collection("streamers").doc(docId).delete().then(() => loadStreamers());
+        }
+
+        function loadDataFromFirebase() {
+            Promise.all([
+                db.collection("items").orderBy("createdAt", "desc").get(),
+                db.collection("equipments").orderBy("createdAt", "desc").get()
+            ]).then(([itemsSnap, eqSnap]) => {
+                globalItemsData = [];
+                itemsSnap.forEach(doc => globalItemsData.push({ id: doc.id, ...doc.data() }));
+
+                globalEquipmentsData = [];
+                eqSnap.forEach(doc => globalEquipmentsData.push({ id: doc.id, ...doc.data() }));
+
+                filterAndSortAll();
+            });
+        }
+
+        function parsePrice(priceStr) {
+            if (!priceStr) return 0;
+            let clean = priceStr.replace(/[^\d,.-]/g, '');
+            clean = clean.replace(/\./g, '').replace(',', '.');
+            const num = parseFloat(clean);
+            return isNaN(num) ? 0 : num;
+        }
+
+        function filterAndSortAll() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const sortChecked = document.getElementById('sortPriceCheck').checked;
+
+            let filteredItems = globalItemsData.filter(item => 
+                (item.game === currentSelectedGame || item.game === 'both' || (!item.game && currentSelectedGame === 'knight')) &&
+                (item.title.toLowerCase().includes(query) || (item.price && item.price.toLowerCase().includes(query)))
+            );
+
+            let filteredEq = globalEquipmentsData.filter(eq => 
+                (eq.game === currentSelectedGame || eq.game === 'both' || (!eq.game && currentSelectedGame === 'knight')) &&
+                (eq.title.toLowerCase().includes(query) || (eq.specs && eq.specs.toLowerCase().includes(query)) || (eq.price && eq.price.toLowerCase().includes(query)))
+            );
+
+            if (sortChecked) {
+                filteredItems.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
+                filteredEq.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
+            }
+
+            renderItems(filteredItems);
+            renderEquipments(filteredEq);
+        }
+
+        function renderItems(items) {
+            const itemsContainer = document.getElementById('itemsContainer');
+            const consignmentContainer = document.getElementById('consignmentContainer');
+
+            itemsContainer.innerHTML = "";
+            consignmentContainer.innerHTML = "";
+
+            const ownItems = items.filter(i => !i.category || i.category === 'own');
+            const consignmentItems = items.filter(i => i.category === 'consignment');
+
+            if (ownItems.length === 0) {
+                itemsContainer.innerHTML = '<div style="width: 100%; text-align:center; color:var(--text-muted);">Elimde bulunan eşya yok.</div>';
+            } else {
+                ownItems.forEach(item => itemsContainer.appendChild(createItemCard(item)));
+            }
+
+            if (consignmentItems.length === 0) {
+                consignmentContainer.innerHTML = '<div style="width: 100%; text-align:center; color:var(--text-muted);">Konsinye eşya bulunmuyor.</div>';
+            } else {
+                consignmentItems.forEach(item => consignmentContainer.appendChild(createItemCard(item)));
+            }
+        }
+
+        function createItemCard(item) {
+            const cardEl = document.createElement('div');
+            cardEl.className = 'item-card-container';
+
+            cardEl.innerHTML = `
+                <div class="item-img-box">
+                    <img src="${item.imageUrl}" alt="${item.title}">
+                </div>
+                <div class="item-title">${item.title}</div>
+                <div class="item-price">${item.price}</div>
+                <div class="item-actions">
+                    <a href="https://wa.me/905393112169?text=Merhaba%20MusaRUZGAR,%20${encodeURIComponent(item.title)}%20ürününü%20satın%20almak%20istiyorum." target="_blank" class="action-btn btn-wa">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp ile Al
+                    </a>
+                    <a href="https://www.sonteklif.com" target="_blank" class="action-btn btn-st">
+                        <i class="fa-solid fa-shopping-cart"></i> SonTeklif İlanı
+                    </a>
+                    <a href="https://www.bynogame.com" target="_blank" class="action-btn btn-bng">
+                        <i class="fa-solid fa-store"></i> ByNoGame İlanı
+                    </a>
+                    <button onclick="editItem('${item.id}', '${item.title}', '${item.price || ''}')" class="action-btn btn-edit-action" style="display: ${isAdminLoggedIn ? 'flex' : 'none'};">
+                        <i class="fa-solid fa-pen-to-square"></i> Düzenle
+                    </button>
+                    <button onclick="deleteItem('${item.id}')" class="action-btn btn-delete" style="display: ${isAdminLoggedIn ? 'flex' : 'none'};">
+                        <i class="fa-solid fa-trash"></i> İlanı Kaldır
+                    </button>
+                </div>
+            `;
+            return cardEl;
+        }
+
+        function renderEquipments(equipments) {
+            const compContainer = document.getElementById('computersContainer');
+            const tabletContainer = document.getElementById('tabletsContainer');
+            const eqContainer = document.getElementById('equipmentsContainer');
+
+            compContainer.innerHTML = "";
+            tabletContainer.innerHTML = "";
+            eqContainer.innerHTML = "";
+
+            let comps = [];
+            let tablets = [];
+            let generalEqs = [];
+
+            equipments.forEach(eq => {
+                if (!eq.category || eq.category === 'computer') {
+                    comps.push(eq);
+                } else if (eq.category === 'tablet') {
+                    tablets.push(eq);
+                } else if (eq.category === 'equipment' || eq.category === 'computer_equipment') {
+                    generalEqs.push(eq);
+                }
+            });
+
+            if (comps.length === 0) compContainer.innerHTML = '<div style="width: 100%; text-align:center; color:var(--text-muted); font-size:0.85rem;">Bilgisayar bulunamadı.</div>';
+            else comps.forEach((eq, idx) => compContainer.appendChild(createEqCard(eq, 'comp_' + idx)));
+
+            if (tablets.length === 0) tabletContainer.innerHTML = '<div style="width: 100%; text-align:center; color:var(--text-muted); font-size:0.85rem;">Tablet bulunamadı.</div>';
+            else tablets.forEach((eq, idx) => tabletContainer.appendChild(createEqCard(eq, 'tab_' + idx)));
+
+            if (generalEqs.length === 0) eqContainer.innerHTML = '<div style="width: 100%; text-align:center; color:var(--text-muted); font-size:0.85rem;">Ekipman bulunamadı.</div>';
+            else generalEqs.forEach((eq, idx) => eqContainer.appendChild(createEqCard(eq, 'geneq_' + idx)));
+        }
+
+        function createEqCard(eq, indexKey) {
+            let specsHtml = '';
+            if (eq.specs) {
+                const lines = eq.specs.split('\n');
+                lines.forEach(line => {
+                    if (line.includes(':')) {
+                        const parts = line.split(':');
+                        specsHtml += `<li><span class="spec-label">${parts[0].trim()}:</span><span class="spec-val">${parts[1].trim()}</span></li>`;
+                    } else if (line.trim() !== '') {
+                        specsHtml += `<li><span class="spec-val" style="width:100%; text-align:center;">${line.trim()}</span></li>`;
+                    }
+                });
+            }
+
+            const stockText = eq.stock ? eq.stock : "1 Adet";
+            const innerId = `eqCardInner_${indexKey}`;
+
+            const eqCard = document.createElement('div');
+            eqCard.className = 'eq-card-container';
+            eqCard.innerHTML = `
+                <div class="eq-card-inner" id="${innerId}">
+                    <div class="eq-card-front">
+                        <h3>${eq.title}</h3>
+                        <img src="${eq.imageUrl}" alt="${eq.title}">
+                        <div class="front-eq-price">${eq.price || ''}</div>
+                        <div class="item-stock">Stok: ${stockText}</div>
+                        <button onclick="toggleCardFlip('${innerId}')" class="btn-detail-toggle">Ürün Detayı</button>
+                    </div>
+                    <div class="eq-card-back">
+                        <div class="eq-card-back-content">
+                            <h3>${eq.title} ÖZELLİKLERİ</h3>
+                            <ul class="eq-specs-list">${specsHtml || '<li style="color:var(--text-muted); font-size:0.75rem; text-align:center;">Özellik eklenmemiş.</li>'}</ul>
+                        </div>
+                        <div style="width: 100%; margin-top: auto;">
+                            <div class="item-price" style="margin-bottom: 4px; font-size: 0.9rem; text-align:center;">${eq.price || ''}</div>
+                            <div class="item-stock" style="margin-bottom: 4px; text-align:center;">Stok: ${stockText}</div>
+                            <div class="item-actions">
+                                <a href="https://wa.me/905393112169?text=Merhaba%20MusaRUZGAR,%20${encodeURIComponent(eq.title)}%20ürününü%20satın%20almak%20istiyorum." target="_blank" class="action-btn btn-wa">
+                                    <i class="fa-brands fa-whatsapp"></i> WhatsApp ile Al
+                                </a>
+                            </div>
+                            <button onclick="toggleCardFlip('${innerId}')" class="action-btn" style="background: rgba(212,159,23,0.2); color:var(--gold-primary); margin-top: 4px; border:1px solid var(--gold-secondary);">
+                                <i class="fa-solid fa-arrow-rotate-left"></i> Geri Dön
+                            </button>
+                            <button onclick="editEquipment('${eq.id}', '${eq.title}', '${eq.price || ''}', '${eq.stock || ''}', \`${eq.specs || ''}\`)" class="action-btn btn-edit-action" style="display: ${isAdminLoggedIn ? 'flex' : 'none'}; margin-top: 4px;">
+                                <i class="fa-solid fa-pen-to-square"></i> Düzenle
+                            </button>
+                            <button onclick="deleteEquipment('${eq.id}')" class="action-btn btn-delete" style="display: ${isAdminLoggedIn ? 'flex' : 'none'}; margin-top: 2px;">
+                                <i class="fa-solid fa-trash"></i> Kaldır
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return eqCard;
+        }
+
+        function toggleCardFlip(innerId) {
+            const innerEl = document.getElementById(innerId);
+            if (innerEl) {
+                innerEl.classList.toggle('flipped');
+            }
+        }
+
+        function uploadNewRecord() {
+            const game = document.getElementById('targetGame').value;
+            const category = document.getElementById('newItemCategory').value;
+            const title = document.getElementById('newItemTitle').value.trim();
+            const price = document.getElementById('newItemPrice').value.trim();
+            const stock = document.getElementById('newItemStock').value.trim();
+            const specs = document.getElementById('newEqSpecs').value.trim();
+            const mainFile = document.getElementById('newItemImage').files[0];
+            const uploadBtn = document.getElementById('uploadBtn');
+
+            if (!title || !mainFile) {
+                showCustomAlert('Lütfen başlık yazın ve bir görsel seçin.', 'UYARI');
+                return;
+            }
+
+            uploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Yükleniyor...';
+            uploadBtn.disabled = true;
+
+            const readerMain = new FileReader();
+            readerMain.readAsDataURL(mainFile);
+            readerMain.onload = function () {
+                const base64Main = readerMain.result;
+
+                if (category === 'own' || category === 'consignment') {
+                    db.collection("items").add({
+                        game, category, title, price, imageUrl: base64Main,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }).then(() => finishUpload());
+                } else {
+                    db.collection("equipments").add({
+                        game, category, title, price, stock, specs, imageUrl: base64Main,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }).then(() => finishUpload());
+                }
+            };
+        }
+
+        function finishUpload() {
+            showCustomAlert('Başarıyla eklendi!', 'BAŞARILI');
+            document.getElementById('newItemTitle').value = '';
+            document.getElementById('newItemPrice').value = '';
+            document.getElementById('newItemStock').value = '';
+            document.getElementById('newEqSpecs').value = '';
+            document.getElementById('newItemImage').value = '';
+            document.getElementById('uploadBtn').innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Seçilen Alana Ekle';
+            document.getElementById('uploadBtn').disabled = false;
+            toggleAdminPanel();
+            loadDataFromFirebase();
+        }
+
+        function editItem(docId, oldTitle, oldPrice) {
+            const newTitle = prompt("Yeni Başlık / İtem Adı:", oldTitle);
+            if (newTitle === null) return;
+            const newPrice = prompt("Yeni Fiyat:", oldPrice);
+            if (newPrice === null) return;
+
+            db.collection("items").doc(docId).update({
+                title: newTitle,
+                price: newPrice
+            }).then(() => {
+                showCustomAlert("İlan güncellendi!", "BAŞARILI");
+                loadDataFromFirebase();
+            });
+        }
+
+        function editEquipment(docId, oldTitle, oldPrice, oldStock, oldSpecs) {
+            const newTitle = prompt("Yeni Başlık:", oldTitle);
+            if (newTitle === null) return;
+            const newPrice = prompt("Yeni Fiyat:", oldPrice);
+            if (newPrice === null) return;
+            const newStock = prompt("Yeni Stok Adedi:", oldStock);
+            if (newStock === null) return;
+            const newSpecs = prompt("Yeni Özellikler:", oldSpecs);
+            if (newSpecs === null) return;
+
+            db.collection("equipments").doc(docId).update({
+                title: newTitle,
+                price: newPrice,
+                stock: newStock,
+                specs: newSpecs
+            }).then(() => {
+                showCustomAlert("Bilgiler güncellendi!", "BAŞARILI");
+                loadDataFromFirebase();
+            });
+        }
+
+        function deleteItem(docId) {
+            if (!confirm('İlanı silmek istediğinize emin misiniz?')) return;
+            db.collection("items").doc(docId).delete().then(() => loadDataFromFirebase());
+        }
+
+        function deleteEquipment(docId) {
+            if (!confirm('Kaldırmak istediğinize emin misiniz?')) return;
+            db.collection("equipments").doc(docId).delete().then(() => loadDataFromFirebase());
+        }
+
+        function sendOffer() {
+            const offerMsg = document.getElementById('offerText').value.trim();
+            const phone = "905393112169";
+            
+            if (!offerMsg) {
+                showCustomAlert('Lütfen sipariş/teklif mesajınızı yazınız.', 'UYARI');
+                return;
+            }
+
+            const text = encodeURIComponent(`Merhaba MusaRUZGAR, teklif/sipariş mesajım (${currentSelectedGame === 'knight' ? 'Knight Online' : 'Rise Online'}): \n\n${offerMsg}`);
+            window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+        }
+
+        function switchGiveawayMethod(method) {
+            currentGiveawayMethod = method;
+            const linkBox = document.getElementById('methodLinkBox');
+            const manualBox = document.getElementById('methodManualBox');
+            const btnLink = document.getElementById('btnMethodLink');
+            const btnManual = document.getElementById('btnMethodManual');
+            const participantsContainer = document.getElementById('participantsContainer');
+
+            if (method === 'link') {
+                linkBox.style.display = 'block';
+                manualBox.style.display = 'none';
+                btnLink.classList.add('active');
+                btnManual.classList.remove('active');
+                if (finalParticipantsPool.length > 0) participantsContainer.style.display = 'flex';
+            } else {
+                linkBox.style.display = 'none';
+                manualBox.style.display = 'block';
+                btnLink.classList.remove('active');
+                btnManual.classList.add('active');
+                participantsContainer.style.display = 'none';
+            }
+        }
+
+        function extractVideoId(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        async function fetchYoutubeComments() {
+            const urlInput = document.getElementById('ytVideoUrl').value.trim();
+            const statusMsg = document.getElementById('giveawayStatus');
+            const btnFetch = document.getElementById('btnFetchComments');
+
+            if (!urlInput) {
+                showCustomAlert("Lütfen geçerli bir YouTube video linki yazın.", "UYARI");
+                return;
+            }
+
+            const videoId = extractVideoId(urlInput);
+            if (!videoId) {
+                showCustomAlert("YouTube Video ID'si bulunamadı. Lütfen geçerli bir link girin.", "UYARI");
+                return;
+            }
+
+            btnFetch.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Çekiliyor...';
+            btnFetch.disabled = true;
+            statusMsg.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Yorumlar toplanıyor, lütfen bekleyin...';
+
+            rawCommentsList = [];
+
+            try {
+                if (storedYoutubeApiKey) {
+                    let nextPageToken = "";
+                    let fetchMore = true;
+
+                    while (fetchMore) {
+                        let apiUrl = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=100&key=${storedYoutubeApiKey}`;
+                        if (nextPageToken) apiUrl += `&pageToken=${nextPageToken}`;
+
+                        const res = await fetch(apiUrl);
+                        const data = await res.json();
+
+                        if (data.error) throw new Error(data.error.message || "API Hatası oluştu.");
+
+                        if (data.items) {
+                            data.items.forEach(item => {
+                                const topComment = item.snippet.topLevelComment.snippet;
+                                rawCommentsList.push({
+                                    author: topComment.authorDisplayName,
+                                    text: topComment.textDisplay
+                                });
+                            });
+                        }
+
+                        if (data.nextPageToken) {
+                            nextPageToken = data.nextPageToken;
+                        } else {
+                            fetchMore = false;
+                        }
+                    }
+                } else {
+                    const targetUrl = `https://yt-comments-api.vercel.app/api/comments?videoId=${videoId}`;
+                    const corsProxy = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+                    
+                    const res = await fetch(corsProxy);
+                    if (!res.ok) throw new Error("Yorum servisine erişilemedi.");
+                    
+                    const wrapperData = await res.json();
+                    const data = JSON.parse(wrapperData.contents);
+
+                    if (data.comments && data.comments.length > 0) {
+                        data.comments.forEach(c => {
+                            rawCommentsList.push({
+                                author: c.author || c.authorDisplayName || "Kullanıcı",
+                                text: c.text || c.textDisplay || ""
+                            });
+                        });
+                    } else {
+                        throw new Error("Yorum bulunamadı veya video yoruma kapalı.");
+                    }
+                }
+
+                if (rawCommentsList.length === 0) {
+                    statusMsg.innerHTML = "❌ Bu videoda hiç yorum bulunamadı.";
+                    document.getElementById('btnStartDraw').disabled = true;
+                } else {
+                    processParticipantsList();
+                }
+
+            } catch (err) {
+                console.error(err);
+                statusMsg.innerHTML = `<span style="color:#ef4444;">❌ Hata: ${err.message}</span>`;
+                showCustomAlert("Yorumlar otomatik çekilemedi. YouTube API Key ekleyebilir veya 'Twitch Yardımlaşma' sekmesini kullanabilirsiniz.", "BİLGİ");
+            } finally {
+                btnFetch.innerHTML = '<i class="fa-solid fa-comments"></i> Yorumları Çek';
+                btnFetch.disabled = false;
+            }
+        }
+
+        function loadManualComments() {
+            const text = document.getElementById('manualCommentsText').value.trim();
+
+            if (!text) {
+                showCustomAlert("Lütfen listeye en az bir isim yazın.", "UYARI");
+                return;
+            }
+
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            rawCommentsList = lines.map(line => ({
+                author: line,
+                text: "Twitch Yardımlaşma Katılımcısı"
+            }));
+
+            processParticipantsList();
+        }
+
+        function processParticipantsList() {
+            const isUnique = document.getElementById('uniqueUserCheck').checked;
+            const statusMsg = document.getElementById('giveawayStatus');
+            const container = document.getElementById('participantsContainer');
+            const btnDraw = document.getElementById('btnStartDraw');
+
+            if (rawCommentsList.length === 0) return;
+
+            finalParticipantsPool = [];
+
+            if (isUnique) {
+                const uniqueAuthors = new Set();
+                rawCommentsList.forEach(c => {
+                    if (!uniqueAuthors.has(c.author)) {
+                        uniqueAuthors.add(c.author);
+                        finalParticipantsPool.push(c);
+                    }
+                });
+            } else {
+                finalParticipantsPool = [...rawCommentsList];
+            }
+
+            statusMsg.innerHTML = `✅ Katılımcı Listesi Yüklendi: <b>${finalParticipantsPool.length} Kişi/Hak</b>`;
+
+            let listHtml = "";
+            finalParticipantsPool.forEach((p, idx) => {
+                listHtml += `
+                    <div class="participant-item">
+                        <span><strong>${idx + 1}.</strong> ${escapeHtml(p.author)}</span>
+                        <span class="comment-text">${escapeHtml(p.text)}</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = listHtml;
+            
+            if (currentGiveawayMethod === 'link') {
+                container.style.display = 'flex';
+            } else {
+                container.style.display = 'none';
+            }
+
+            btnDraw.disabled = false;
+        }
+
+        function escapeHtml(str) {
+            return str ? str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;") : '';
+        }
+
+        function startGiveawayDraw() {
+            const isElimination = currentGiveawayMethod === 'manual' && document.getElementById('eliminationModeCheck').checked;
+            const winnerNum = parseInt(document.getElementById('winnerCount').value) || 1;
+            const backupNum = isElimination ? 0 : (parseInt(document.getElementById('backupCount').value) || 0);
+            const durationSec = parseInt(document.getElementById('drawDurationSec').value) || 3;
+
+            const statusMsg = document.getElementById('giveawayStatus');
+            const winnerBox = document.getElementById('winnerDisplayBox');
+            const winnerListEl = document.getElementById('winnerList');
+            const backupListEl = document.getElementById('backupList');
+            const btnDraw = document.getElementById('btnStartDraw');
+
+            if (finalParticipantsPool.length === 0) {
+                showCustomAlert("Çekiliş yapılacak katılımcı listesi boş!", "UYARI");
+                return;
+            }
+
+            if (isElimination && winnerNum >= finalParticipantsPool.length) {
+                showCustomAlert(`Eleme modunda elenecek kişi sayısı (${winnerNum}), listedeki toplam kişiden (${finalParticipantsPool.length}) az olmalıdır.`, "UYARI");
+                return;
+            }
+
+            if (!isElimination && (winnerNum + backupNum > finalParticipantsPool.length)) {
+                showCustomAlert(`İstenen kazanan (${winnerNum}) ve yedek (${backupNum}) sayısı, toplam katılan kişi sayısından (${finalParticipantsPool.length}) fazla olamaz!`, "UYARI");
+                return;
+            }
+
+            btnDraw.disabled = true;
+            winnerBox.style.display = 'none';
+            winnerListEl.innerHTML = "";
+            backupListEl.innerHTML = "";
+
+            let totalSteps = durationSec * 10;
+            
+            const interval = setInterval(() => {
+                const randomIdx = Math.floor(Math.random() * finalParticipantsPool.length);
+                const currentSec = Math.ceil(totalSteps / 10);
+                
+                statusMsg.innerHTML = `<i class="fa-solid fa-dice fa-spin" style="color:var(--gold-primary);"></i> ${isElimination ? 'Elenen Belirleniyor' : 'Kazanan Belirleniyor'} (${currentSec} sn): <span style="font-size:1.2rem; font-weight:bold; color:var(--gold-primary);">${escapeHtml(finalParticipantsPool[randomIdx].author)}</span>`;
+                totalSteps--;
+
+                if (totalSteps <= 0) {
+                    clearInterval(interval);
+                    executeFinalSelection(winnerNum, backupNum, isElimination);
+                    btnDraw.disabled = false;
+                }
+            }, 100);
+        }
+
+        function executeFinalSelection(wNum, bNum, isElimination) {
+            const poolCopy = [...finalParticipantsPool];
+            const winnerBox = document.getElementById('winnerDisplayBox');
+            const winnerListEl = document.getElementById('winnerList');
+            const backupListEl = document.getElementById('backupList');
+            const statusMsg = document.getElementById('giveawayStatus');
+            const winnerTitleEl = document.getElementById('winnerDisplayTitle');
+
+            if (isElimination) {
+                if (wNum >= poolCopy.length) wNum = poolCopy.length - 1;
+                if (wNum < 1) wNum = 1;
+
+                const eliminatedList = [];
+                for (let i = 0; i < wNum; i++) {
+                    const randIndex = Math.floor(Math.random() * poolCopy.length);
+                    eliminatedList.push(poolCopy[randIndex]);
+                    poolCopy.splice(randIndex, 1);
+                }
+
+                statusMsg.innerHTML = "🔥 **ELENEN KİŞİ LİSTEDEN DÜŞÜLDÜ!**";
+                winnerTitleEl.innerHTML = '<i class="fa-solid fa-fire" style="color:#ef4444;"></i> ELENEN KİŞİ';
+
+                let eliminatedHtml = "";
+                eliminatedList.forEach((e) => {
+                    eliminatedHtml += `
+                        <div class="eliminated-badge">
+                            <span><span class="eliminated-rank">ELENEN</span> ${escapeHtml(e.author)}</span>
+                            <i class="fa-solid fa-user-xmark"></i>
+                        </div>
+                    `;
+                });
+                winnerListEl.innerHTML = eliminatedHtml;
+                backupListEl.innerHTML = "";
+
+                finalParticipantsPool = poolCopy;
+                const remainingNames = finalParticipantsPool.map(p => p.author);
+                document.getElementById('manualCommentsText').value = remainingNames.join('\n');
+                
+                statusMsg.innerHTML = `✅ Katılımcı Listesi Güncellendi: <b>${finalParticipantsPool.length} Kişi Kaldı</b>`;
+
+                if (finalParticipantsPool.length === 1) {
+                    const championName = finalParticipantsPool[0].author;
+                    winnerTitleEl.innerHTML = '<i class="fa-solid fa-crown" style="color:var(--gold-primary);"></i> ŞAMPİYON BELLİ OLDU';
+                    winnerListEl.innerHTML = `
+                        <div class="winner-badge" style="background: linear-gradient(90deg, rgba(243, 195, 68, 0.4), rgba(0,0,0,0.6)); border-color: var(--gold-primary);">
+                            <span><span class="winner-rank">👑 ŞAMPİYON</span> ${escapeHtml(championName)}</span>
+                            <i class="fa-solid fa-crown" style="color:var(--gold-primary);"></i>
+                        </div>
+                    `;
+                }
+
+            } else {
+                const selectedList = [];
+                const backups = [];
+
+                for (let i = 0; i < wNum; i++) {
+                    const randIndex = Math.floor(Math.random() * poolCopy.length);
+                    selectedList.push(poolCopy[randIndex]);
+                    poolCopy.splice(randIndex, 1);
+                }
+
+                for (let j = 0; j < bNum; j++) {
+                    if (poolCopy.length === 0) break;
+                    const randIndex = Math.floor(Math.random() * poolCopy.length);
+                    backups.push(poolCopy[randIndex]);
+                    poolCopy.splice(randIndex, 1);
+                }
+
+                statusMsg.innerHTML = "🎉 **ÇEKİLİŞ BAŞARIYLA TAMAMLANDI!** 🎉";
+                winnerTitleEl.innerHTML = '<i class="fa-solid fa-crown"></i> ÇEKİLİŞ SONUÇLARI';
+
+                let winnersHtml = "<div style='color:var(--gold-primary); font-family:Cinzel; font-weight:bold; margin-bottom:5px; text-align:left;'>🏆 KAZANANLAR:</div>";
+                selectedList.forEach((w, idx) => {
+                    winnersHtml += `
+                        <div class="winner-badge">
+                            <span><span class="winner-rank">${idx + 1}. KAZANAN</span> ${escapeHtml(w.author)}</span>
+                            <i class="fa-solid fa-trophy" style="color:var(--gold-primary);"></i>
+                        </div>
+                    `;
+                });
+                winnerListEl.innerHTML = winnersHtml;
+
+                if (backups.length > 0) {
+                    let backupsHtml = "<div style='color:var(--text-muted); font-family:Cinzel; font-weight:bold; margin-top:10px; margin-bottom:5px; text-align:left;'>🛡️ YEDEKLER:</div>";
+                    backups.forEach((b, idx) => {
+                        backupsHtml += `
+                            <div class="backup-winner-badge">
+                                <span><strong>${idx + 1}. YEDEK:</strong> ${escapeHtml(b.author)}</span>
+                                <i class="fa-solid fa-user-clock"></i>
+                            </div>
+                        `;
+                    });
+                    backupListEl.innerHTML = backupsHtml;
+                }
+            }
+
+            winnerBox.style.display = 'flex';
+            winnerBox.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
