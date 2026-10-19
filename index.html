@@ -1076,9 +1076,31 @@
             color: #fff;
         }
 
+        .eliminated-badge {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, rgba(239, 68, 68, 0.25), rgba(0,0,0,0.5));
+            border: 1px solid #ef4444;
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-weight: 700;
+            color: #fca5a5;
+        }
+
         .winner-rank {
             background: var(--gold-primary);
             color: #000;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            font-family: 'Cinzel', serif;
+        }
+
+        .eliminated-rank {
+            background: #ef4444;
+            color: #fff;
             padding: 2px 8px;
             border-radius: 12px;
             font-size: 0.8rem;
@@ -1291,7 +1313,7 @@
             </div>
         </div>
 
-        <!-- YENİ: HERKESE AÇIK YOUTUBE ÇEKİLİŞ ALANI -->
+        <!-- HERKESE AÇIK YOUTUBE ÇEKİLİŞ ALANI -->
         <div class="section-divider">
             <div class="section-divider-inner">
                 <div class="divider-line"></div>
@@ -1305,7 +1327,7 @@
         <div class="giveaway-card">
             <div class="giveaway-header">
                 <h2><i class="fa-brands fa-youtube" style="color: var(--youtube-color);"></i> YOUTUBE YORUM ÇEKİLİŞİ</h2>
-                <p>YouTube video linkini girin, yorum yapan talihlileri anında çekin!</p>
+                <p>YouTube video linkini girin veya manuel listeyle anında çekiliş yapın!</p>
             </div>
 
             <div class="tab-toggle-box">
@@ -1330,14 +1352,22 @@
                 </div>
             </div>
 
-            <!-- YÖNTEM 2: MANUEL YORUM YAPISTIRMA (Sınırsız / API Yetkisiz Yedek Çözüm) -->
+            <!-- YÖNTEM 2: MANUEL YORUM YAPISTIRMA -->
             <div id="methodManualBox" style="display: none;">
                 <div class="form-group">
                     <label style="font-size:0.85rem; color:var(--gold-primary);">Katılımcı / Yorum Listesi (Her Satıra Bir İsim):</label>
-                    <textarea id="manualCommentsText" class="form-control" style="height: 100px; resize: vertical;" placeholder="Ahmet&#10;Mehmet&#10;Kullanici123&#10;Ahmet"></textarea>
-                    <button onclick="loadManualComments()" class="btn-gold" style="max-width: 180px; margin-top: 8px; padding: 8px 12px; font-size: 0.85rem;">
-                        <i class="fa-solid fa-list-check"></i> Listeyi Yükle
-                    </button>
+                    <textarea id="manualCommentsText" class="form-control" style="height: 100px; resize: vertical;" placeholder="Ahmet&#10;Mehmet&#10;Kullanici123&#10;Ayşe"></textarea>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                        <label class="giveaway-checkbox-label" style="color: #f87171;">
+                            <input type="checkbox" id="eliminationModeCheck">
+                            <span>🔥 Eleme Usulü (Çıkan Kişi Listeden Düşsün - Son Kalan Kazanır)</span>
+                        </label>
+
+                        <button onclick="loadManualComments()" class="btn-gold" style="max-width: 180px; padding: 8px 12px; font-size: 0.85rem;">
+                            <i class="fa-solid fa-list-check"></i> Listeyi Yükle
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -1349,10 +1379,10 @@
 
                 <div class="giveaway-numbers">
                     <div class="giveaway-number-input">
-                        <label for="winnerCount">Kazanan:</label>
+                        <label for="winnerCount" id="winnerCountLabel">Kazanan:</label>
                         <input type="number" id="winnerCount" class="form-control" value="1" min="1" max="50">
                     </div>
-                    <div class="giveaway-number-input">
+                    <div class="giveaway-number-input" id="backupInputGroup">
                         <label for="backupCount">Yedek:</label>
                         <input type="number" id="backupCount" class="form-control" value="1" min="0" max="50">
                     </div>
@@ -1360,7 +1390,7 @@
             </div>
 
             <div id="giveawayStatus" class="giveaway-status-msg">
-                Henüz yorum yüklenmedi.
+                Henüz yorum/katılımcı yüklenmedi.
             </div>
 
             <div id="participantsContainer" class="participants-box" style="display: none;">
@@ -1372,7 +1402,7 @@
             </button>
 
             <div id="winnerDisplayBox" class="winner-display-box">
-                <div class="winner-title"><i class="fa-solid fa-crown"></i> ÇEKİLİŞ SONUÇLARI</div>
+                <div class="winner-title" id="winnerDisplayTitle"><i class="fa-solid fa-crown"></i> ÇEKİLİŞ SONUÇLARI</div>
                 <div id="winnerList" class="winner-list"></div>
                 <div id="backupList" class="winner-list" style="margin-top: 10px;"></div>
             </div>
@@ -1545,8 +1575,9 @@
         let storedYoutubeApiKey = "";
 
         // Çekiliş verileri
-        let rawCommentsList = []; // ham gelen tüm yorumlar
-        let finalParticipantsPool = []; // çekilişte kullanılacak aktif çekiliş havuzu
+        let rawCommentsList = [];
+        let finalParticipantsPool = [];
+        let currentGiveawayMethod = 'link';
 
         document.getElementById('newItemCategory').addEventListener('change', function() {
             const val = this.value;
@@ -1698,14 +1729,14 @@
                     uploadLogoBtn.disabled = false;
                 }).catch((error) => {
                     console.error("Firebase kayıt hatası:", error);
-                    alert("Logo kaydedilirken hata oluştu (Dosya boyutu çok büyük olabilir).");
+                    alert("Logo kaydedilirken hata oluştu.");
                     uploadLogoBtn.innerHTML = '<i class="fa-solid fa-upload"></i> Logoyu Güncelle';
                     uploadLogoBtn.disabled = false;
                 });
             };
 
             reader.onerror = function () {
-                alert("Dosya okunamadı. Lütfen farklı bir JPG veya PNG görsel deneyin.");
+                alert("Dosya okunamadı.");
                 uploadLogoBtn.innerHTML = '<i class="fa-solid fa-upload"></i> Logoyu Güncelle';
                 uploadLogoBtn.disabled = false;
             };
@@ -2155,9 +2186,10 @@
             window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
         }
 
-        /* --- YOUTUBE ÇEKİLİŞ MANTIK VE FONKSİYONLARI --- */
+        /* --- YOUTUBE & MANUEL ÇEKİLİŞ MANTIK VE FONKSİYONLARI --- */
 
         function switchGiveawayMethod(method) {
+            currentGiveawayMethod = method;
             const linkBox = document.getElementById('methodLinkBox');
             const manualBox = document.getElementById('methodManualBox');
             const btnLink = document.getElementById('btnMethodLink');
@@ -2206,7 +2238,6 @@
 
             try {
                 if (storedYoutubeApiKey) {
-                    // API Key Varsa Direct Google Data API ile Sayfalayarak Bütün Yorumları Kaçırmadan Çek
                     let nextPageToken = "";
                     let fetchMore = true;
 
@@ -2217,9 +2248,7 @@
                         const res = await fetch(apiUrl);
                         const data = await res.json();
 
-                        if (data.error) {
-                            throw new Error(data.error.message || "API Hatası oluştu.");
-                        }
+                        if (data.error) throw new Error(data.error.message || "API Hatası oluştu.");
 
                         if (data.items) {
                             data.items.forEach(item => {
@@ -2238,13 +2267,16 @@
                         }
                     }
                 } else {
-                    // API Key Olmadığında CORS/Public API Üzerinden Çekim Denemesi
-                    const corsProxyUrl = `https://yt-comments-api.vercel.app/api/comments?videoId=${videoId}`;
-                    const res = await fetch(corsProxyUrl);
-                    if (!res.ok) {
-                        throw new Error("Yorumlar çekilemedi. API Key tanımlı değil veya servis meşgul. İsterseniz 'Manuel Listeyle Çek' sekmesini kullanabilirsiniz.");
-                    }
-                    const data = await res.json();
+                    // CORS engelsiz stabil proxy çekimi
+                    const targetUrl = `https://yt-comments-api.vercel.app/api/comments?videoId=${videoId}`;
+                    const corsProxy = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+                    
+                    const res = await fetch(corsProxy);
+                    if (!res.ok) throw new Error("Yorum servisine erişilemedi.");
+                    
+                    const wrapperData = await res.json();
+                    const data = JSON.parse(wrapperData.contents);
+
                     if (data.comments && data.comments.length > 0) {
                         data.comments.forEach(c => {
                             rawCommentsList.push({
@@ -2267,7 +2299,7 @@
             } catch (err) {
                 console.error(err);
                 statusMsg.innerHTML = `<span style="color:#ef4444;">❌ Hata: ${err.message}</span>`;
-                alert("Yorumlar çekilirken bir hata oluştu. Alternatif olarak üstteki 'Manuel Listeyle Çek' sekmesini kullanarak kopyalayıp yapıştırabilirsiniz.");
+                alert("Yorumlar otomatik çekilemedi. YouTube API Key ekleyebilir veya 'Manuel Listeyle Çek' sekmesini kullanabilirsiniz.");
             } finally {
                 btnFetch.innerHTML = '<i class="fa-solid fa-comments"></i> Yorumları Çek';
                 btnFetch.disabled = false;
@@ -2276,7 +2308,6 @@
 
         function loadManualComments() {
             const text = document.getElementById('manualCommentsText').value.trim();
-            const statusMsg = document.getElementById('giveawayStatus');
 
             if (!text) {
                 alert("Lütfen listeye en az bir isim yazın.");
@@ -2315,7 +2346,7 @@
                 finalParticipantsPool = [...rawCommentsList];
             }
 
-            statusMsg.innerHTML = `✅ Toplam <b>${rawCommentsList.length}</b> Yorum Çekildi. Çekiliş Havuzu: <b>${finalParticipantsPool.length} Hak/Katılımcı</b> (${isUnique ? 'Tekil Kişiler' : 'Tüm Yorumlar Hak Kazandı'})`;
+            statusMsg.innerHTML = `✅ Katılımcı Listesi Yüklendi: <b>${finalParticipantsPool.length} Kişi/Hak</b>`;
 
             container.style.display = 'flex';
             finalParticipantsPool.forEach((item, idx) => {
@@ -2336,8 +2367,9 @@
         }
 
         function startGiveawayDraw() {
+            const isElimination = currentGiveawayMethod === 'manual' && document.getElementById('eliminationModeCheck').checked;
             const winnerNum = parseInt(document.getElementById('winnerCount').value) || 1;
-            const backupNum = parseInt(document.getElementById('backupCount').value) || 0;
+            const backupNum = isElimination ? 0 : (parseInt(document.getElementById('backupCount').value) || 0);
             const statusMsg = document.getElementById('giveawayStatus');
             const winnerBox = document.getElementById('winnerDisplayBox');
             const winnerListEl = document.getElementById('winnerList');
@@ -2349,7 +2381,12 @@
                 return;
             }
 
-            if (winnerNum + backupNum > finalParticipantsPool.length) {
+            if (isElimination && winnerNum >= finalParticipantsPool.length) {
+                alert(`Eleme modunda elenecek kişi sayısı (${winnerNum}), listedeki toplam kişiden (${finalParticipantsPool.length}) az olmalıdır.`);
+                return;
+            }
+
+            if (!isElimination && (winnerNum + backupNum > finalParticipantsPool.length)) {
                 alert(`İstenen kazanan (${winnerNum}) ve yedek (${backupNum}) sayısı, toplam katılan kişi sayısından (${finalParticipantsPool.length}) fazla olamaz!`);
                 return;
             }
@@ -2359,70 +2396,101 @@
             winnerListEl.innerHTML = "";
             backupListEl.innerHTML = "";
 
-            let countdown = 20; // 2 saniye hızlı animasyon efekti
+            let countdown = 20;
             const interval = setInterval(() => {
                 const randomIdx = Math.floor(Math.random() * finalParticipantsPool.length);
-                statusMsg.innerHTML = `<i class="fa-solid fa-dice fa-spin" style="color:var(--gold-primary);"></i> Kazanan Belirleniyor: <span style="font-size:1.2rem; font-weight:bold; color:var(--gold-primary);">${escapeHtml(finalParticipantsPool[randomIdx].author)}</span>`;
+                statusMsg.innerHTML = `<i class="fa-solid fa-dice fa-spin" style="color:var(--gold-primary);"></i> ${isElimination ? 'Elenen Belirleniyor' : 'Kazanan Belirleniyor'}: <span style="font-size:1.2rem; font-weight:bold; color:var(--gold-primary);">${escapeHtml(finalParticipantsPool[randomIdx].author)}</span>`;
                 countdown--;
 
                 if (countdown <= 0) {
                     clearInterval(interval);
-                    executeFinalSelection(winnerNum, backupNum);
+                    executeFinalSelection(winnerNum, backupNum, isElimination);
                     btnDraw.disabled = false;
                 }
             }, 100);
         }
 
-        function executeFinalSelection(wNum, bNum) {
+        function executeFinalSelection(wNum, bNum, isElimination) {
             const poolCopy = [...finalParticipantsPool];
-            const winners = [];
+            const selectedList = [];
             const backups = [];
 
-            // Asıl kazananları rastgele seç
             for (let i = 0; i < wNum; i++) {
                 const randIndex = Math.floor(Math.random() * poolCopy.length);
-                winners.push(poolCopy[randIndex]);
+                selectedList.push(poolCopy[randIndex]);
                 poolCopy.splice(randIndex, 1);
             }
 
-            // Yedekleri rastgele seç
-            for (let j = 0; j < bNum; j++) {
-                if (poolCopy.length === 0) break;
-                const randIndex = Math.floor(Math.random() * poolCopy.length);
-                backups.push(poolCopy[randIndex]);
-                poolCopy.splice(randIndex, 1);
+            if (!isElimination) {
+                for (let j = 0; j < bNum; j++) {
+                    if (poolCopy.length === 0) break;
+                    const randIndex = Math.floor(Math.random() * poolCopy.length);
+                    backups.push(poolCopy[randIndex]);
+                    poolCopy.splice(randIndex, 1);
+                }
             }
 
-            // Sonuçları Ekrana Yazdır
             const winnerBox = document.getElementById('winnerDisplayBox');
             const winnerListEl = document.getElementById('winnerList');
             const backupListEl = document.getElementById('backupList');
             const statusMsg = document.getElementById('giveawayStatus');
+            const winnerTitleEl = document.getElementById('winnerDisplayTitle');
 
-            statusMsg.innerHTML = "🎉 **ÇEKİLİŞ BAŞARIYLA TAMAMLANDI!** 🎉";
+            if (isElimination) {
+                // ELEME USULÜ SONUÇLARI
+                statusMsg.innerHTML = "🔥 **ELENEN KİŞİ LİSTEDEN DÜŞÜLDÜ!**";
+                winnerTitleEl.innerHTML = '<i class="fa-solid fa-fire" style="color:#ef4444;"></i> ELENEN KİŞİ(LER)';
 
-            let winnersHtml = "<div style='color:var(--gold-primary); font-family:Cinzel; font-weight:bold; margin-bottom:5px; text-align:left;'>🏆 KAZANANLAR:</div>";
-            winners.forEach((w, idx) => {
-                winnersHtml += `
-                    <div class="winner-badge">
-                        <span><span class="winner-rank">${idx + 1}. KAZANAN</span> ${escapeHtml(w.author)}</span>
-                        <i class="fa-solid fa-trophy" style="color:var(--gold-primary);"></i>
-                    </div>
-                `;
-            });
-            winnerListEl.innerHTML = winnersHtml;
-
-            if (backups.length > 0) {
-                let backupsHtml = "<div style='color:var(--text-muted); font-family:Cinzel; font-weight:bold; margin-top:10px; margin-bottom:5px; text-align:left;'>🛡️ YEDEKLER:</div>";
-                backups.forEach((b, idx) => {
-                    backupsHtml += `
-                        <div class="backup-winner-badge">
-                            <span><strong>${idx + 1}. YEDEK:</strong> ${escapeHtml(b.author)}</span>
-                            <i class="fa-solid fa-user-clock"></i>
+                let eliminatedHtml = "";
+                selectedList.forEach((e, idx) => {
+                    eliminatedHtml += `
+                        <div class="eliminated-badge">
+                            <span><span class="eliminated-rank">${idx + 1}. ELENEN</span> ${escapeHtml(e.author)}</span>
+                            <i class="fa-solid fa-user-xmark"></i>
                         </div>
                     `;
                 });
-                backupListEl.innerHTML = backupsHtml;
+                winnerListEl.innerHTML = eliminatedHtml;
+
+                // Elenen kişileri kalan havuzdan ve Manuel Textarea kutusundan düş
+                const remainingNames = poolCopy.map(p => p.author);
+                document.getElementById('manualCommentsText').value = remainingNames.join('\n');
+                
+                // Havuz ve katılımcı listesini otomatik güncelle
+                loadManualComments();
+
+                if (remainingNames.length === 1) {
+                    alert(`🎉 TEBRİKLER! En sona kalan şampiyon: ${remainingNames[0]}`);
+                }
+
+            } else {
+                // NORMAL ÇEKİLİŞ SONUÇLARI
+                statusMsg.innerHTML = "🎉 **ÇEKİLİŞ BAŞARIYLA TAMAMLANDI!** 🎉";
+                winnerTitleEl.innerHTML = '<i class="fa-solid fa-crown"></i> ÇEKİLİŞ SONUÇLARI';
+
+                let winnersHtml = "<div style='color:var(--gold-primary); font-family:Cinzel; font-weight:bold; margin-bottom:5px; text-align:left;'>🏆 KAZANANLAR:</div>";
+                selectedList.forEach((w, idx) => {
+                    winnersHtml += `
+                        <div class="winner-badge">
+                            <span><span class="winner-rank">${idx + 1}. KAZANAN</span> ${escapeHtml(w.author)}</span>
+                            <i class="fa-solid fa-trophy" style="color:var(--gold-primary);"></i>
+                        </div>
+                    `;
+                });
+                winnerListEl.innerHTML = winnersHtml;
+
+                if (backups.length > 0) {
+                    let backupsHtml = "<div style='color:var(--text-muted); font-family:Cinzel; font-weight:bold; margin-top:10px; margin-bottom:5px; text-align:left;'>🛡️ YEDEKLER:</div>";
+                    backups.forEach((b, idx) => {
+                        backupsHtml += `
+                            <div class="backup-winner-badge">
+                                <span><strong>${idx + 1}. YEDEK:</strong> ${escapeHtml(b.author)}</span>
+                                <i class="fa-solid fa-user-clock"></i>
+                            </div>
+                        `;
+                    });
+                    backupListEl.innerHTML = backupsHtml;
+                }
             }
 
             winnerBox.style.display = 'flex';
