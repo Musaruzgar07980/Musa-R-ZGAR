@@ -1,0 +1,2433 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusaRUZGAR - Pazar Alanı & Çekiliş</title>
+
+    <link rel="icon" type="image/png" href="https://i.hizliresim.com/9tiys4o.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #08080a;
+            --card-bg: rgba(15, 14, 18, 0.95);
+            --card-border: rgba(212, 160, 23, 0.6);
+            --gold-primary: #f3c344;
+            --gold-secondary: #d49f17;
+            --gold-glow: rgba(243, 195, 68, 0.35);
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --twitch-color: #9146ff;
+            --youtube-color: #ff0000;
+            --green-dot: #25d366;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at center, rgba(20, 15, 10, 0.8) 0%, rgba(5, 5, 8, 0.98) 100%),
+                url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 15px 80px 15px;
+            position: relative;
+        }
+
+        .top-admin-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(18, 16, 20, 0.95);
+            border: 1px solid var(--gold-secondary);
+            color: var(--gold-primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+            text-transform: uppercase;
+        }
+
+        .top-admin-btn:hover {
+            background: rgba(212, 159, 23, 0.25);
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .custom-logo {
+            width: 100%;
+            max-height: 200px;
+            border-radius: 12px;
+            border: 2px solid var(--gold-secondary);
+            box-shadow: 0 0 25px rgba(212, 159, 23, 0.3);
+            margin-bottom: 12px;
+            object-fit: cover;
+            background-color: #121016;
+        }
+
+        .brand-domain {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            color: var(--gold-primary);
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(243, 195, 68, 0.4);
+        }
+
+        .game-tabs-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            width: 100%;
+            max-width: 550px;
+            margin-top: 5px;
+        }
+
+        .game-tab-btn {
+            flex: 1;
+            background: rgba(14, 12, 18, 0.85);
+            border: 2px solid var(--card-border);
+            border-radius: 14px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .game-tab-btn:hover {
+            border-color: var(--gold-secondary);
+            transform: translateY(-2px);
+        }
+
+        .game-tab-btn.active {
+            background: rgba(212, 159, 23, 0.15);
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 20px var(--gold-glow);
+        }
+
+        .game-tab-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--gold-secondary);
+            background: #000;
+        }
+
+        .game-tab-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .game-tab-btn.active .game-tab-title {
+            color: var(--gold-primary);
+            text-shadow: 0 0 8px rgba(243, 195, 68, 0.5);
+        }
+
+        .gb-banner-btn {
+            width: 100%;
+            max-width: 550px;
+            padding: 14px 20px;
+            background: rgba(14, 12, 18, 0.85);
+            border: 2px solid var(--card-border);
+            border-radius: 14px;
+            color: var(--gold-primary);
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            backdrop-filter: blur(5px);
+        }
+
+        .gb-banner-btn:hover {
+            background: rgba(212, 159, 23, 0.15);
+            border-color: var(--gold-primary);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px var(--gold-glow), 0 6px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .section-divider {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .section-divider-inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .divider-line {
+            height: 1px;
+            flex-grow: 1;
+            max-width: 200px;
+            background: linear-gradient(90deg, transparent, var(--gold-secondary), transparent);
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gold-primary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .title-dot {
+            color: var(--green-dot);
+            font-size: 0.55rem;
+            text-shadow: 0 0 4px rgba(37, 211, 102, 0.5);
+        }
+
+        .section-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            max-width: 250px;
+        }
+
+        .stat-card {
+            width: 100%;
+            background: rgba(14, 12, 18, 0.85);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .stat-card i {
+            color: var(--gold-primary);
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            font-family: 'Cinzel', serif;
+        }
+
+        .filter-container {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            max-width: 600px;
+            align-items: center;
+            justify-content: center;
+            margin-top: -10px;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            background: rgba(14, 12, 18, 0.9);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .search-input:focus {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 10px var(--gold-glow);
+        }
+
+        .sort-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(14, 12, 18, 0.9);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: var(--gold-primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .sort-checkbox-label input {
+            accent-color: var(--gold-primary);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .streamers-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .streamer-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+            width: 100px;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .streamer-card:hover {
+            transform: translateY(-6px);
+        }
+
+        .streamer-avatar-frame {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            padding: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .streamer-card.twitch .streamer-avatar-frame {
+            background: linear-gradient(135deg, var(--twitch-color), #5c16c5);
+            box-shadow: 0 0 10px rgba(145, 70, 255, 0.4);
+        }
+
+        .streamer-card.youtube .streamer-avatar-frame {
+            background: linear-gradient(135deg, var(--youtube-color), #800000);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+        }
+
+        .streamer-card:hover .streamer-avatar-frame {
+            transform: rotateY(360deg);
+        }
+
+        .streamer-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #121016;
+            border: 2px solid #000;
+        }
+
+        .platform-badge {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: #fff;
+            border: 2px solid #08080a;
+        }
+
+        .twitch-badge { background-color: var(--twitch-color); }
+        .youtube-badge { background-color: var(--youtube-color); }
+
+        .streamer-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .admin-streamer-btns {
+            display: flex;
+            gap: 4px;
+            margin-top: -2px;
+        }
+
+        .admin-edit-btn {
+            background: #1e3a8a;
+            color: #93c5fd;
+            border: 1px solid #1d4ed8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            display: none;
+        }
+
+        .admin-delete-btn {
+            background: #7f1d1d;
+            color: #fca5a5;
+            border: 1px solid #991b1b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            display: none;
+        }
+
+        .btn-gold {
+            width: 100%;
+            max-width: 420px;
+            padding: 12px 20px;
+            background: linear-gradient(180deg, #f5d77f 0%, #d49f17 50%, #996e06 100%);
+            border: 1px solid #ffe89e;
+            border-radius: 20px;
+            color: #1a0f00;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-gold:hover {
+            filter: brightness(1.1);
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        .btn-whatsapp {
+            width: 100%;
+            max-width: 420px;
+            padding: 12px 20px;
+            background: linear-gradient(180deg, #25d366 0%, #128c7e 100%);
+            border: 1px solid #69f0ae;
+            border-radius: 20px;
+            color: #ffffff;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .wa-groups-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .btn-group-card {
+            background: rgba(15, 25, 20, 0.85);
+            border: 1px solid rgba(37, 211, 102, 0.4);
+            border-radius: 12px;
+            padding: 10px 16px;
+            color: #25d366;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-group-card:hover {
+            background: rgba(37, 211, 102, 0.2);
+            border-color: #25d366;
+            color: #fff;
+        }
+
+        .items-grid, .equipments-grid {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            justify-content: center !important;
+            align-items: center !important;
+            gap: 16px;
+            width: 100% !important;
+            max-width: 1100px;
+            margin: 0 auto !important;
+        }
+
+        .item-card-container {
+            background: var(--card-bg);
+            border: 1.5px solid var(--gold-secondary);
+            border-radius: 12px;
+            width: 220px !important;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            backdrop-filter: blur(6px);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+        }
+
+        .item-card-container:hover {
+            border-color: var(--gold-primary);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), 0 0 12px var(--gold-glow);
+            transform: translateY(-3px);
+        }
+
+        .item-img-box {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            border: none;
+            background: #08070a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-bottom: 10px;
+            padding: 4px;
+        }
+
+        .item-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 50%;
+            transform: scale(1.3);
+            border-radius: 6px;
+        }
+
+        .item-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+        }
+
+        .item-price {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--gold-primary);
+            margin-bottom: 10px;
+        }
+
+        .item-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 7px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-wa { background: #25d366; color: #000; }
+        .btn-wa:hover { background: #1eb855; }
+        .btn-st { background: #e67e22; color: #fff; }
+        .btn-st:hover { background: #d35400; }
+        .btn-bng { background: #e74c3c; color: #fff; }
+        .btn-bng:hover { background: #c0392b; }
+        
+        .btn-edit-action { background: #1d4ed8; color: #fff; display: none; }
+        .btn-delete { background: #7f1d1d; color: #fca5a5; border: 1px solid #991b1b; display: none; }
+
+        /* EKİPMAN KARTI */
+        .eq-card-container {
+            background-color: transparent;
+            width: 220px !important;
+            height: 350px !important;
+            perspective: 1000px;
+            margin: 0 !important;
+        }
+
+        .eq-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        }
+
+        .eq-card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .eq-card-front, .eq-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            border: 2px solid var(--gold-secondary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px;
+            backdrop-filter: blur(8px);
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(212, 159, 23, 0.15);
+        }
+
+        .eq-card-front {
+            background: var(--card-bg);
+            color: white;
+            justify-content: flex-start;
+        }
+
+        .eq-card-front h3 {
+            font-size: 0.85rem;
+            color: var(--gold-primary);
+            font-family: 'Cinzel', serif;
+            margin-bottom: 6px;
+            line-height: 1.1;
+            height: 2.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .eq-card-front img {
+            width: 100% !important;
+            height: 155px !important;
+            object-fit: contain;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            background: #000;
+            padding: 2px;
+            border: none;
+        }
+
+        .eq-card-front .front-eq-price {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--gold-primary);
+            margin-bottom: 4px;
+        }
+
+        .item-stock {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #38bdf8;
+            margin-bottom: 4px;
+        }
+
+        .btn-detail-toggle {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(212, 159, 23, 0.2);
+            border: 1px solid var(--gold-secondary);
+            color: var(--gold-primary);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .btn-detail-toggle:hover {
+            background: var(--gold-primary);
+            color: #000;
+        }
+
+        .eq-card-back {
+            background: rgba(14, 12, 18, 0.98);
+            color: #ffffff;
+            transform: rotateY(180deg);
+            border-color: var(--gold-primary);
+            text-align: left;
+            justify-content: space-between;
+            overflow-y: auto;
+        }
+
+        .eq-card-back-content {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .eq-card-back h3 {
+            font-size: 0.8rem;
+            color: var(--gold-primary);
+            margin-bottom: 6px;
+            border-bottom: 2px solid var(--gold-secondary);
+            padding-bottom: 4px;
+            width: 100%;
+            text-align: center;
+            font-family: 'Cinzel', serif;
+        }
+
+        .eq-specs-list {
+            list-style: none;
+            width: 100%;
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .eq-specs-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed rgba(243, 195, 68, 0.3);
+            padding-bottom: 2px;
+        }
+
+        .eq-specs-list span.spec-label { color: #94a3b8; font-weight: 700; font-size: 0.7rem; }
+        .eq-specs-list span.spec-val { color: #ffffff; font-weight: 800; font-size: 0.75rem; }
+
+        .admin-panel {
+            display: none;
+            width: 100%;
+            max-width: 600px;
+            background: rgba(14, 12, 18, 0.95);
+            border: 1px solid var(--gold-primary);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        .admin-nav-btns {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .admin-nav-btn {
+            background: rgba(20, 18, 24, 0.9);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .admin-nav-btn.active {
+            background: var(--gold-secondary);
+            color: #000;
+            border-color: var(--gold-primary);
+        }
+        .admin-tab-content { display: none; }
+        .admin-tab-content.active { display: block; }
+        .admin-panel h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold-primary);
+            margin-bottom: 12px;
+            text-align: center;
+            font-size: 1rem;
+        }
+        .form-group {
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            text-align: left;
+        }
+        .form-group label {
+            font-size: 0.85rem;
+            color: var(--gold-primary);
+            font-weight: 600;
+        }
+        .form-control {
+            background: #08080a;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            padding: 8px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+        }
+        .admin-login-box {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .offer-section {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .offer-textarea {
+            width: 100%;
+            height: 80px;
+            background: rgba(12, 11, 16, 0.85);
+            border: 1px solid var(--gold-secondary);
+            border-radius: 10px;
+            padding: 12px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            resize: none;
+            outline: none;
+        }
+
+        /* --- ÇEKİLİŞ ALANI CSS BÖLÜMÜ --- */
+        .giveaway-card {
+            width: 100%;
+            max-width: 700px;
+            background: rgba(15, 14, 18, 0.95);
+            border: 2px solid var(--gold-secondary);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 159, 23, 0.15);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .giveaway-header {
+            text-align: center;
+            border-bottom: 1px solid rgba(212, 159, 23, 0.3);
+            padding-bottom: 12px;
+        }
+
+        .giveaway-header h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold-primary);
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .giveaway-header p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        .giveaway-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .giveaway-input-group input {
+            flex-grow: 1;
+        }
+
+        .giveaway-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            background: rgba(8, 8, 10, 0.6);
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px dashed rgba(212, 159, 23, 0.3);
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .giveaway-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gold-primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .giveaway-checkbox-label input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--gold-primary);
+            cursor: pointer;
+        }
+
+        .giveaway-numbers {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .giveaway-number-input {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .giveaway-number-input input {
+            width: 60px;
+            padding: 4px 8px;
+            text-align: center;
+        }
+
+        .participants-box {
+            max-height: 180px;
+            overflow-y: auto;
+            background: rgba(8, 8, 10, 0.9);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .participant-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            border-left: 3px solid var(--gold-secondary);
+        }
+
+        .participant-item span.comment-text {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .winner-display-box {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            background: rgba(212, 159, 23, 0.08);
+            border: 2px solid var(--gold-primary);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 0 20px var(--gold-glow);
+        }
+
+        .winner-title {
+            font-family: 'Cinzel', serif;
+            color: var(--gold-primary);
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .winner-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .winner-badge {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, rgba(243, 195, 68, 0.2), rgba(0,0,0,0.4));
+            border: 1px solid var(--gold-secondary);
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .winner-rank {
+            background: var(--gold-primary);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            font-family: 'Cinzel', serif;
+        }
+
+        .backup-winner-badge {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px dashed var(--text-muted);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .giveaway-status-msg {
+            font-size: 0.85rem;
+            color: var(--gold-primary);
+            text-align: center;
+            font-weight: 600;
+            min-height: 20px;
+        }
+
+        .tab-toggle-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        .tab-toggle-btn {
+            flex: 1;
+            padding: 6px 10px;
+            background: rgba(10, 10, 12, 0.8);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .tab-toggle-btn.active {
+            background: rgba(212, 159, 23, 0.2);
+            border-color: var(--gold-primary);
+            color: var(--gold-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <button onclick="toggleAdminPanel()" class="top-admin-btn">
+        <i class="fa-solid fa-lock"></i> Yönetici Girişi
+    </button>
+
+    <div class="container">
+        <div class="logo-container">
+            <img id="mainLogoImg" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=500&auto=format&fit=crop" alt="MusaRUZGAR Logo" class="custom-logo">
+            <div class="brand-domain">MUSA RÜZGAR PAZAR ALANI</div>
+        </div>
+
+        <div id="adminPanel" class="admin-panel">
+            <div id="loginSection">
+                <h3>YÖNETİCİ DOĞRULAMA</h3>
+                <div class="admin-login-box">
+                    <input type="password" id="adminPassword" class="form-control" placeholder="Admin Şifresi">
+                    <button onclick="checkAdminPassword()" class="btn-gold" style="max-width: 100px; padding: 8px;">Giriş</button>
+                </div>
+            </div>
+
+            <div id="addItemSection" style="display: none;">
+                <div class="admin-nav-btns">
+                    <button onclick="showAdminTab('tabLogo')" id="btnTabLogo" class="admin-nav-btn active">Logo & Oyun Görselleri</button>
+                    <button onclick="showAdminTab('tabStreamer')" id="btnTabStreamer" class="admin-nav-btn">Yayıncı Ekle</button>
+                    <button onclick="showAdminTab('tabItem')" id="btnTabItem" class="admin-nav-btn">İlan / Ekipman Ekle</button>
+                    <button onclick="showAdminTab('tabApi')" id="btnTabApi" class="admin-nav-btn">Çekiliş API Ayarı</button>
+                </div>
+
+                <div id="tabLogo" class="admin-tab-content active">
+                    <h3><i class="fa-solid fa-image"></i> PORTAL LOGOSU DEĞİŞTİR</h3>
+                    <div class="form-group">
+                        <label>Portal Logosu Dosyası (JPG, PNG önerilir)</label>
+                        <input type="file" id="newLogoImage" class="form-control" accept="image/*">
+                    </div>
+                    <button onclick="updateLogo()" id="uploadLogoBtn" class="btn-gold" style="max-width: 100%; margin-top: 5px;">
+                        <i class="fa-solid fa-upload"></i> Logoyu Güncelle
+                    </button>
+
+                    <hr style="border:0; border-top:1px solid var(--card-border); margin:15px 0;">
+
+                    <h3><i class="fa-solid fa-gamepad"></i> OYUN BUTON GÖRSELLERİ</h3>
+                    <div class="form-group">
+                        <label>Knight Online Görseli</label>
+                        <input type="file" id="knightImgFile" class="form-control" accept="image/*">
+                    </div>
+                    <div class="form-group">
+                        <label>Rise Online Görseli</label>
+                        <input type="file" id="riseImgFile" class="form-control" accept="image/*">
+                    </div>
+                    <button onclick="updateGameTabImages()" id="uploadGameImgsBtn" class="btn-gold" style="max-width: 100%; margin-top: 5px;">
+                        <i class="fa-solid fa-upload"></i> Oyun Logolarını Güncelle
+                    </button>
+                </div>
+
+                <div id="tabStreamer" class="admin-tab-content">
+                    <h3><i class="fa-solid fa-video"></i> YAYINCI EKLE (TWITCH / YOUTUBE)</h3>
+                    <div class="form-group">
+                        <label>Hangi Oyun Sekmesinde Görünsün?</label>
+                        <select id="newStreamerGame" class="form-control">
+                            <option value="knight">Knight Online</option>
+                            <option value="rise">Rise Online</option>
+                            <option value="both">İki Tarafa Da Ekle</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Platform</label>
+                        <select id="newStreamerPlatform" class="form-control">
+                            <option value="twitch">Twitch</option>
+                            <option value="youtube">YouTube</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Yayıncı Adı</label>
+                        <input type="text" id="newStreamerName" class="form-control" placeholder="Örn: milchmann">
+                    </div>
+                    <div class="form-group">
+                        <label>Kanal Linki</label>
+                        <input type="text" id="newStreamerUrl" class="form-control" placeholder="Örn: https://www.twitch.tv/milchmann">
+                    </div>
+                    <div class="form-group">
+                        <label>Profil Fotoğrafı Linki (URL)</label>
+                        <input type="text" id="newStreamerImageUrl" class="form-control" placeholder="Resim adresi">
+                    </div>
+                    <div class="form-group">
+                        <label>veya Fotoğraf Dosyası Seç</label>
+                        <input type="file" id="newStreamerImage" class="form-control" accept="image/*">
+                    </div>
+                    <button onclick="uploadNewStreamer()" id="uploadStreamerBtn" class="btn-gold" style="max-width: 100%; margin-top: 5px;">
+                        <i class="fa-solid fa-user-plus"></i> Yayıncıyı Kaydet
+                    </button>
+                </div>
+
+                <div id="tabItem" class="admin-tab-content">
+                    <h3><i class="fa-solid fa-plus-circle"></i> İLAN / EKİPMAN EKLE</h3>
+                    <div class="form-group">
+                        <label>Hangi Oyun İçin Eklenecek?</label>
+                        <select id="targetGame" class="form-control">
+                            <option value="knight">Knight Online</option>
+                            <option value="rise">Rise Online</option>
+                            <option value="both">İki Tarafa Da Ekle</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Eklenecek Tür</label>
+                        <select id="newItemCategory" class="form-control">
+                            <option value="own">Elimde Bulunan Eşyalar</option>
+                            <option value="consignment">Konsinye Eşyalar</option>
+                            <option value="equipment">Oyuncu Ekipmanı / Sistem</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>İsim / Başlık</label>
+                        <input type="text" id="newItemTitle" class="form-control" placeholder="Örn: Raptor +9">
+                    </div>
+                    <div class="form-group" id="priceGroup">
+                        <label>Fiyat (TL)</label>
+                        <input type="text" id="newItemPrice" class="form-control" placeholder="Örn: 4.799 TL (Kargo Dahil)">
+                    </div>
+                    <div class="form-group" id="stockGroup" style="display: none;">
+                        <label>Stok Adedi</label>
+                        <input type="text" id="newItemStock" class="form-control" placeholder="Örn: 2 Adet">
+                    </div>
+                    <div class="form-group" id="specsGroup" style="display: none;">
+                        <label>Ekipman Özellikleri (Örn: İŞLEMCİ: i5&#10;RAM: 16 GB)</label>
+                        <textarea id="newEqSpecs" class="form-control" style="height: 70px; resize: none;" placeholder="İŞLEMCİ: i5&#10;RAM: 16 GB"></textarea>
+                    </div>
+                    <div class="form-group" id="mainImgGroup">
+                        <label id="mainImgLabel">Görsel Seç</label>
+                        <input type="file" id="newItemImage" class="form-control" accept="image/*">
+                    </div>
+                    <button onclick="uploadNewRecord()" id="uploadBtn" class="btn-gold" style="max-width: 100%; margin-top: 5px;">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Seçilen Oyuna Ekle
+                    </button>
+                </div>
+
+                <div id="tabApi" class="admin-tab-content">
+                    <h3><i class="fa-brands fa-youtube"></i> YOUTUBE API KEY AYARI</h3>
+                    <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">
+                        Sınırsız ve otomatik YouTube yorumlarını çekmek için Google Cloud Console üzerinden aldığınız YouTube Data API Key anahtarınızı ekleyebilirsiniz.
+                    </p>
+                    <div class="form-group">
+                        <label>YouTube Data API Key</label>
+                        <input type="text" id="youtubeApiKeyInput" class="form-control" placeholder="AIzaSy...">
+                    </div>
+                    <button onclick="saveYoutubeApiKey()" class="btn-gold" style="max-width: 100%; margin-top: 5px;">
+                        <i class="fa-solid fa-save"></i> API Key'i Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <i class="fa-solid fa-users"></i>
+                <div class="stat-title">Toplam Ziyaretçi</div>
+                <div class="stat-value" id="totalVisitsCount">Yükleniyor...</div>
+            </div>
+        </div>
+
+        <!-- YENİ: HERKESE AÇIK YOUTUBE ÇEKİLİŞ ALANI -->
+        <div class="section-divider">
+            <div class="section-divider-inner">
+                <div class="divider-line"></div>
+                <div class="section-title">
+                    <i class="fa-solid fa-gift" style="color: var(--gold-primary);"></i> CANLI CANLI YOUTUBE ÇEKİLİŞ ALANI
+                </div>
+                <div class="divider-line"></div>
+            </div>
+        </div>
+
+        <div class="giveaway-card">
+            <div class="giveaway-header">
+                <h2><i class="fa-brands fa-youtube" style="color: var(--youtube-color);"></i> YOUTUBE YORUM ÇEKİLİŞİ</h2>
+                <p>YouTube video linkini girin, yorum yapan talihlileri anında çekin!</p>
+            </div>
+
+            <div class="tab-toggle-box">
+                <button onclick="switchGiveawayMethod('link')" id="btnMethodLink" class="tab-toggle-btn active">
+                    <i class="fa-solid fa-link"></i> YouTube Linki İle Çek
+                </button>
+                <button onclick="switchGiveawayMethod('manual')" id="btnMethodManual" class="tab-toggle-btn">
+                    <i class="fa-solid fa-paste"></i> Manuel Listeyle Çek
+                </button>
+            </div>
+
+            <!-- YÖNTEM 1: YOUTUBE LINKI ILE -->
+            <div id="methodLinkBox">
+                <div class="form-group">
+                    <label style="font-size:0.85rem; color:var(--gold-primary);">YouTube Video Linki:</label>
+                    <div class="giveaway-input-group">
+                        <input type="text" id="ytVideoUrl" class="form-control" placeholder="https://www.youtube.com/watch?v=XXXXXX veya https://youtu.be/XXXXXX">
+                        <button onclick="fetchYoutubeComments()" id="btnFetchComments" class="btn-gold" style="max-width: 160px; padding: 8px 12px; font-size: 0.85rem;">
+                            <i class="fa-solid fa-comments"></i> Yorumları Çek
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- YÖNTEM 2: MANUEL YORUM YAPISTIRMA (Sınırsız / API Yetkisiz Yedek Çözüm) -->
+            <div id="methodManualBox" style="display: none;">
+                <div class="form-group">
+                    <label style="font-size:0.85rem; color:var(--gold-primary);">Katılımcı / Yorum Listesi (Her Satıra Bir İsim):</label>
+                    <textarea id="manualCommentsText" class="form-control" style="height: 100px; resize: vertical;" placeholder="Ahmet&#10;Mehmet&#10;Kullanici123&#10;Ahmet"></textarea>
+                    <button onclick="loadManualComments()" class="btn-gold" style="max-width: 180px; margin-top: 8px; padding: 8px 12px; font-size: 0.85rem;">
+                        <i class="fa-solid fa-list-check"></i> Listeyi Yükle
+                    </button>
+                </div>
+            </div>
+
+            <div class="giveaway-options">
+                <label class="giveaway-checkbox-label">
+                    <input type="checkbox" id="uniqueUserCheck" checked onchange="processParticipantsList()">
+                    <span>Herkesi 1 defa al (Tek hak)</span>
+                </label>
+
+                <div class="giveaway-numbers">
+                    <div class="giveaway-number-input">
+                        <label for="winnerCount">Kazanan:</label>
+                        <input type="number" id="winnerCount" class="form-control" value="1" min="1" max="50">
+                    </div>
+                    <div class="giveaway-number-input">
+                        <label for="backupCount">Yedek:</label>
+                        <input type="number" id="backupCount" class="form-control" value="1" min="0" max="50">
+                    </div>
+                </div>
+            </div>
+
+            <div id="giveawayStatus" class="giveaway-status-msg">
+                Henüz yorum yüklenmedi.
+            </div>
+
+            <div id="participantsContainer" class="participants-box" style="display: none;">
+                <!-- Katılımcılar dinamik listelenecek -->
+            </div>
+
+            <button onclick="startGiveawayDraw()" id="btnStartDraw" class="btn-gold" style="max-width: 100%; font-size: 1.1rem; padding: 14px; margin-top: 5px;" disabled>
+                <i class="fa-solid fa-trophy"></i> ÇEKİLİŞİ BAŞLAT
+            </button>
+
+            <div id="winnerDisplayBox" class="winner-display-box">
+                <div class="winner-title"><i class="fa-solid fa-crown"></i> ÇEKİLİŞ SONUÇLARI</div>
+                <div id="winnerList" class="winner-list"></div>
+                <div id="backupList" class="winner-list" style="margin-top: 10px;"></div>
+            </div>
+        </div>
+
+        <div class="game-tabs-container">
+            <button onclick="switchGame('knight')" id="knightTabBtn" class="game-tab-btn active">
+                <img id="knightTabImg" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=100&auto=format&fit=crop" class="game-tab-img" alt="Knight Online">
+                <span class="game-tab-title">Knight Online</span>
+            </button>
+            <button onclick="switchGame('rise')" id="riseTabBtn" class="game-tab-btn">
+                <img id="riseTabImg" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=100&auto=format&fit=crop" class="game-tab-img" alt="Rise Online">
+                <span class="game-tab-title">Rise Online</span>
+            </button>
+        </div>
+
+        <a href="https://www.enucuzgb.com/rise-online/gb?d=1" target="_blank" class="gb-banner-btn">
+            <i class="fa-solid fa-coins" style="font-size: 1.2rem;"></i> GB FİYATLARI İÇİN TIKLAYIN
+        </a>
+
+        <div class="section-divider">
+            <div class="section-divider-inner">
+                <div class="divider-line"></div>
+                <div class="section-title">
+                    <i class="fa-solid fa-circle title-dot"></i>
+                    <i class="fa-brands fa-twitch" style="color: var(--twitch-color);"></i> TWITCH YAYINCILARI
+                    <i class="fa-solid fa-circle title-dot"></i>
+                </div>
+                <div class="divider-line"></div>
+            </div>
+        </div>
+        <div class="streamers-grid" id="twitchContainer">
+            <div style="color: var(--text-muted); font-size: 0.9rem;">Yükleniyor...</div>
+        </div>
+
+        <div class="section-divider">
+            <div class="section-divider-inner">
+                <div class="divider-line"></div>
+                <div class="section-title">
+                    <i class="fa-solid fa-circle title-dot"></i>
+                    <i class="fa-brands fa-youtube" style="color: var(--youtube-color);"></i> YOUTUBER'LAR
+                    <i class="fa-solid fa-circle title-dot"></i>
+                </div>
+                <div class="divider-line"></div>
+            </div>
+        </div>
+        <div class="streamers-grid" id="youtubeContainer">
+            <div style="color: var(--text-muted); font-size: 0.9rem;">Yükleniyor...</div>
+        </div>
+
+        <div class="section-divider">
+            <div class="section-divider-inner">
+                <div class="divider-line"></div>
+                <div class="section-title">
+                    <i class="fa-solid fa-circle title-dot"></i> GB ALIM SATIM <i class="fa-solid fa-circle title-dot"></i>
+                </div>
+                <div class="divider-line"></div>
+            </div>
+        </div>
+
+        <div class="wa-groups-grid">
+            <a href="https://wa.me/905393112169?text=Merhaba,%20Knight%20Online%20Yeni%20Server%20GB%20alım%20satımı%20için%20ulaşıyorum." target="_blank" class="btn-group-card">
+                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem; color: #25d366;"></i> Knight Online Yeni Server
+            </a>
+            <a href="https://wa.me/905067718812?text=Merhaba,%20Rise%20Online%20Galantis%20GB%20alım%20satımı%20için%20ulaşıyorum." target="_blank" class="btn-group-card">
+                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem; color: #25d366;"></i> Rise Online Galantis
+            </a>
+        </div>
+
+        <div class="section-divider">
+            <div class="section-divider-inner">
+                <div class="divider-line"></div>
+                <div class="section-title">
+                    <i class="fa-solid fa-circle title-dot"></i> WHATSAPP OYUNCU GRUPLARI <i class="fa-solid fa-circle title-dot"></i>
+                </div>
+                <div class="divider-line"></div>
+            </div>
+        </div>
+
+        <div class="wa-groups-grid">
+            <a href="https://chat.whatsapp.com/GqQdDxcYNj0DfJruk4RVyO" target="_blank" class="btn-group-card">
+                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem; color: #25d366;"></i> Rise Galantis Tıkla
+            </a>
+            <a href="https://chat.whatsapp.com/HEhizXzHOHX9wm26t3B4te?s=cl&p=a&mlu=4&ilr=4" target="_blank" class="btn-group-card">
+                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem; color: #25d366;"></i> Rise Mobil Tıkla
+            </a>
+            <a href="https://chat.whatsapp.com/I84huNYeVwaJkigmmq8rXg?s=cl&p=a&mlu=4&ilr=4" target="_blank" class="btn-group-card">
+                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem; color: #25d366;"></i> Knight Yeni Server Tıkla
+            </a>
+        </div>
+
+        <div class="filter-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Örnek: Raptor(+9)" oninput="filterAndSortAll()">
+            <label class="sort-checkbox-label">
+                <input type="checkbox" id="sortPriceCheck" onchange="filterAndSortAll()"> Ucuzdan Pahalıya Sırala
+            </label>
+        </div>
+
+        <div class="section-divider">
+            <div class="section-divider-inner">
+                <div class="divider-line"></div>
+                <div class="section-title">
+                    <i class="fa-solid fa-circle title-dot"></i> ELİMDE BULUNAN EŞYALAR <i class="fa-solid fa-circle title-dot"></i>
+                </div>
+                <div class="divider-line"></div>
+            </div>
+        </div>
+        <div class="items-grid" id="itemsContainer"></div>
+
+        <div class="section-divider">
+            <div class="section-divider-inner">
+                <div class="divider-line"></div>
+                <div class="section-title">
+                    <i class="fa-solid fa-circle title-dot"></i> KONSİNYE EŞYALARIMIZ <i class="fa-solid fa-circle title-dot"></i>
+                </div>
+                <div class="divider-line"></div>
+            </div>
+            <div class="section-subtitle">(Sizin Satılık Eşyalarınız)</div>
+        </div>
+        <div class="items-grid" id="consignmentContainer"></div>
+
+        <div class="section-divider">
+            <div class="section-divider-inner">
+                <div class="divider-line"></div>
+                <div class="section-title">
+                    <i class="fa-solid fa-circle title-dot"></i> OYUNCU EKİPMANLARIM / SİSTEM <i class="fa-solid fa-circle title-dot"></i>
+                </div>
+                <div class="divider-line"></div>
+            </div>
+        </div>
+        <div class="equipments-grid" id="equipmentsContainer"></div>
+
+        <div class="section-divider">
+            <div class="section-divider-inner">
+                <div class="divider-line"></div>
+                <div class="section-title">
+                    <i class="fa-solid fa-circle title-dot"></i> SİPARİŞ İTEM OLUŞTUR <i class="fa-solid fa-circle title-dot"></i>
+                </div>
+                <div class="divider-line"></div>
+            </div>
+        </div>
+
+        <div class="offer-section">
+            <textarea id="offerText" class="offer-textarea" placeholder="Örn: Mythril Pad +1 (Reverse), Blue Dragon Necklace +2..."></textarea>
+            <button onclick="sendOffer()" class="btn-whatsapp" style="max-width: 100%;">
+                <i class="fa-brands fa-whatsapp"></i> TEKLİF AL / SİPARİŞ VER
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCigD_pzl2aDUbjg1GXgDXIFWuEABa9Gmo",
+            authDomain: "musaruzgarportal.firebaseapp.com",
+            projectId: "musaruzgarportal",
+            storageBucket: "musaruzgarportal.firebasestorage.app",
+            messagingSenderId: "247941006757",
+            appId: "1:247941006757:web:0de22993f9274290e1144c",
+            measurementId: "G-4QJ7S73TJ5"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let isAdminLoggedIn = false;
+        let currentSelectedGame = 'knight';
+        let globalItemsData = [];
+        let globalEquipmentsData = [];
+        let globalStreamersData = [];
+        let storedYoutubeApiKey = "";
+
+        // Çekiliş verileri
+        let rawCommentsList = []; // ham gelen tüm yorumlar
+        let finalParticipantsPool = []; // çekilişte kullanılacak aktif çekiliş havuzu
+
+        document.getElementById('newItemCategory').addEventListener('change', function() {
+            const val = this.value;
+            const specsGroup = document.getElementById('specsGroup');
+            const stockGroup = document.getElementById('stockGroup');
+            const mainImgLabel = document.getElementById('mainImgLabel');
+
+            if (val === 'equipment') {
+                specsGroup.style.display = 'flex';
+                stockGroup.style.display = 'flex';
+                mainImgLabel.innerText = "Ekipman Görseli";
+            } else {
+                specsGroup.style.display = 'none';
+                stockGroup.style.display = 'none';
+                mainImgLabel.innerText = "Eşya Görseli";
+            }
+        });
+
+        function showAdminTab(tabId) {
+            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.admin-nav-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            if(tabId === 'tabLogo') document.getElementById('btnTabLogo').classList.add('active');
+            if(tabId === 'tabStreamer') document.getElementById('btnTabStreamer').classList.add('active');
+            if(tabId === 'tabItem') document.getElementById('btnTabItem').classList.add('active');
+            if(tabId === 'tabApi') document.getElementById('btnTabApi').classList.add('active');
+        }
+
+        function switchGame(gameKey) {
+            currentSelectedGame = gameKey;
+            document.getElementById('knightTabBtn').classList.toggle('active', gameKey === 'knight');
+            document.getElementById('riseTabBtn').classList.toggle('active', gameKey === 'rise');
+
+            const searchInput = document.getElementById('searchInput');
+            const offerText = document.getElementById('offerText');
+
+            if (gameKey === 'rise') {
+                searchInput.placeholder = "Örnek: Vixen +9";
+                offerText.placeholder = "Örn: 7 Rogue Radiant Set +2 Blue Dragon Ring...";
+            } else {
+                searchInput.placeholder = "Örnek: Raptor(+9)";
+                offerText.placeholder = "Örn: Mythril Pad +1 (Reverse), Blue Dragon Necklace +2...";
+            }
+
+            filterAndSortAll();
+            renderStreamers();
+        }
+
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            if (panel) {
+                if (panel.style.display === 'block') {
+                    panel.style.display = 'none';
+                } else {
+                    panel.style.display = 'block';
+                    panel.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }
+
+        function checkAdminPassword() {
+            const pass = document.getElementById('adminPassword').value;
+            if (pass === "musaruzgar123") {
+                isAdminLoggedIn = true;
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('addItemSection').style.display = 'block';
+                loadSettings();
+                loadDataFromFirebase();
+                loadStreamers();
+                alert('Yönetici girişi başarılı!');
+            } else {
+                alert('Hatalı şifre!');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
+            loadDataFromFirebase();
+            loadStreamers();
+            incrementAndGetVisitorStats();
+        });
+
+        function incrementAndGetVisitorStats() {
+            const statsRef = db.collection("settings").doc("visitorStats");
+            
+            db.runTransaction((transaction) => {
+                return transaction.get(statsRef).then((doc) => {
+                    let newCount = 1;
+                    if (doc.exists) {
+                        newCount = (doc.data().totalVisits || 0) + 1;
+                    }
+                    transaction.set(statsRef, { totalVisits: newCount }, { merge: true });
+                    return newCount;
+                });
+            }).then((total) => {
+                document.getElementById('totalVisitsCount').innerText = total.toLocaleString('tr-TR');
+            }).catch((error) => {
+                console.error("Ziyaretçi sayaç hatası:", error);
+                document.getElementById('totalVisitsCount').innerText = "1";
+            });
+        }
+
+        function loadSettings() {
+            db.collection("settings").doc("portalSettings").get().then((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (data.logoUrl) document.getElementById('mainLogoImg').src = data.logoUrl;
+                    if (data.knightImg) document.getElementById('knightTabImg').src = data.knightImg;
+                    if (data.riseImg) document.getElementById('riseTabImg').src = data.riseImg;
+                    if (data.youtubeApiKey) {
+                        storedYoutubeApiKey = data.youtubeApiKey;
+                        document.getElementById('youtubeApiKeyInput').value = data.youtubeApiKey;
+                    }
+                }
+            }).catch((error) => console.error("Ayarlar yükleme hatası:", error));
+        }
+
+        function saveYoutubeApiKey() {
+            const key = document.getElementById('youtubeApiKeyInput').value.trim();
+            db.collection("settings").doc("portalSettings").set({
+                youtubeApiKey: key
+            }, { merge: true }).then(() => {
+                storedYoutubeApiKey = key;
+                alert("YouTube API Key başarıyla kaydedildi!");
+            }).catch(err => alert("Kayıt hatası: " + err.message));
+        }
+
+        function updateLogo() {
+            const imageFile = document.getElementById('newLogoImage').files[0];
+            const uploadLogoBtn = document.getElementById('uploadLogoBtn');
+
+            if (!imageFile) { alert('Lütfen bir logo görseli seçin.'); return; }
+
+            uploadLogoBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Yükleniyor...';
+            uploadLogoBtn.disabled = true;
+
+            const reader = new FileReader();
+            reader.readAsDataURL(imageFile);
+            
+            reader.onload = function () {
+                db.collection("settings").doc("portalSettings").set({
+                    logoUrl: reader.result
+                }, { merge: true }).then(() => {
+                    alert('Portal logosu başarıyla güncellendi!');
+                    document.getElementById('mainLogoImg').src = reader.result;
+                    document.getElementById('newLogoImage').value = '';
+                    uploadLogoBtn.innerHTML = '<i class="fa-solid fa-upload"></i> Logoyu Güncelle';
+                    uploadLogoBtn.disabled = false;
+                }).catch((error) => {
+                    console.error("Firebase kayıt hatası:", error);
+                    alert("Logo kaydedilirken hata oluştu (Dosya boyutu çok büyük olabilir).");
+                    uploadLogoBtn.innerHTML = '<i class="fa-solid fa-upload"></i> Logoyu Güncelle';
+                    uploadLogoBtn.disabled = false;
+                });
+            };
+
+            reader.onerror = function () {
+                alert("Dosya okunamadı. Lütfen farklı bir JPG veya PNG görsel deneyin.");
+                uploadLogoBtn.innerHTML = '<i class="fa-solid fa-upload"></i> Logoyu Güncelle';
+                uploadLogoBtn.disabled = false;
+            };
+        }
+
+        function updateGameTabImages() {
+            const knightFile = document.getElementById('knightImgFile').files[0];
+            const riseFile = document.getElementById('riseImgFile').files[0];
+
+            if (!knightFile && !riseFile) {
+                alert('En az bir oyun görseli seçin.');
+                return;
+            }
+
+            const updateData = {};
+            let processed = 0;
+            let totalToProcess = (knightFile ? 1 : 0) + (riseFile ? 1 : 0);
+
+            const checkAndSave = () => {
+                processed++;
+                if (processed === totalToProcess) {
+                    db.collection("settings").doc("portalSettings").set(updateData, { merge: true }).then(() => {
+                        alert('Oyun buton görselleri güncellendi!');
+                        loadSettings();
+                    });
+                }
+            };
+
+            if (knightFile) {
+                const r1 = new FileReader();
+                r1.readAsDataURL(knightFile);
+                r1.onload = function() {
+                    updateData.knightImg = r1.result;
+                    document.getElementById('knightTabImg').src = r1.result;
+                    checkAndSave();
+                };
+            }
+
+            if (riseFile) {
+                const r2 = new FileReader();
+                r2.readAsDataURL(riseFile);
+                r2.onload = function() {
+                    updateData.riseImg = r2.result;
+                    document.getElementById('riseTabImg').src = r2.result;
+                    checkAndSave();
+                };
+            }
+        }
+
+        function loadStreamers() {
+            db.collection("streamers").orderBy("createdAt", "desc").get().then((snapshot) => {
+                globalStreamersData = [];
+                snapshot.forEach(doc => {
+                    globalStreamersData.push({ id: doc.id, ...doc.data() });
+                });
+                renderStreamers();
+            });
+        }
+
+        function renderStreamers() {
+            const twitchContainer = document.getElementById('twitchContainer');
+            const youtubeContainer = document.getElementById('youtubeContainer');
+
+            twitchContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.9rem;">Yükleniyor...</div>';
+            youtubeContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.9rem;">Yükleniyor...</div>';
+
+            let twitchHtml = "";
+            let youtubeHtml = "";
+            let twitchCount = 0;
+            let youtubeCount = 0;
+
+            globalStreamersData.forEach(data => {
+                if (data.game === currentSelectedGame || data.game === 'both' || (!data.game && currentSelectedGame === 'knight')) {
+                    const cardHtml = `
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                            <a href="${data.url}" target="_blank" class="streamer-card ${data.platform}">
+                                <div class="streamer-avatar-frame">
+                                    <img src="${data.imageUrl}" alt="${data.name}" class="streamer-avatar">
+                                    <div class="platform-badge ${data.platform}-badge">
+                                        <i class="fa-brands fa-${data.platform}"></i>
+                                    </div>
+                                </div>
+                                <div class="streamer-name">${data.name}</div>
+                            </a>
+                            <div class="admin-streamer-btns">
+                                <button onclick="editStreamer('${data.id}', '${data.name}', '${data.url}')" class="admin-edit-btn" style="display: ${isAdminLoggedIn ? 'block' : 'none'};">Düzenle</button>
+                                <button onclick="deleteStreamer('${data.id}')" class="admin-delete-btn" style="display: ${isAdminLoggedIn ? 'block' : 'none'};">Sil</button>
+                            </div>
+                        </div>
+                    `;
+
+                    if (data.platform === "twitch") {
+                        twitchHtml += cardHtml;
+                        twitchCount++;
+                    } else if (data.platform === "youtube") {
+                        youtubeHtml += cardHtml;
+                        youtubeCount++;
+                    }
+                }
+            });
+
+            twitchContainer.innerHTML = twitchCount > 0 ? twitchHtml : '<div style="color: var(--text-muted); font-size: 0.9rem;">Henüz Twitch yayıncısı eklenmedi.</div>';
+            youtubeContainer.innerHTML = youtubeCount > 0 ? youtubeHtml : '<div style="color: var(--text-muted); font-size: 0.9rem;">Henüz YouTuber eklenmedi.</div>';
+        }
+
+        function uploadNewStreamer() {
+            const game = document.getElementById('newStreamerGame').value;
+            const platform = document.getElementById('newStreamerPlatform').value;
+            const name = document.getElementById('newStreamerName').value.trim();
+            const url = document.getElementById('newStreamerUrl').value.trim();
+            const imageUrlInput = document.getElementById('newStreamerImageUrl').value.trim();
+            const imageFile = document.getElementById('newStreamerImage').files[0];
+
+            if (!name || !url || (!imageUrlInput && !imageFile)) {
+                alert('Lütfen bilgileri eksiksiz doldurun.');
+                return;
+            }
+
+            const saveStreamer = (finalImgUrl) => {
+                db.collection("streamers").add({
+                    game, platform, name, url, imageUrl: finalImgUrl,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                }).then(() => {
+                    alert('Yayıncı eklendi!');
+                    document.getElementById('newStreamerName').value = '';
+                    document.getElementById('newStreamerUrl').value = '';
+                    document.getElementById('newStreamerImageUrl').value = '';
+                    document.getElementById('newStreamerImage').value = '';
+                    toggleAdminPanel();
+                    loadStreamers();
+                });
+            };
+
+            if (imageUrlInput) {
+                saveStreamer(imageUrlInput);
+            } else {
+                const reader = new FileReader();
+                reader.readAsDataURL(imageFile);
+                reader.onload = function () { saveStreamer(reader.result); };
+            }
+        }
+
+        function editStreamer(docId, oldName, oldUrl) {
+            const newName = prompt("Yayıncı Adını Güncelleyin:", oldName);
+            if (newName === null) return;
+            const newUrl = prompt("Kanal Linkini Güncelleyin:", oldUrl);
+            if (newUrl === null) return;
+
+            db.collection("streamers").doc(docId).update({
+                name: newName,
+                url: newUrl
+            }).then(() => {
+                alert("Yayıncı bilgileri güncellendi!");
+                loadStreamers();
+            });
+        }
+
+        function deleteStreamer(docId) {
+            if (!confirm('Silmek istediğinize emin misiniz?')) return;
+            db.collection("streamers").doc(docId).delete().then(() => loadStreamers());
+        }
+
+        function loadDataFromFirebase() {
+            Promise.all([
+                db.collection("items").orderBy("createdAt", "desc").get(),
+                db.collection("equipments").orderBy("createdAt", "desc").get()
+            ]).then(([itemsSnap, eqSnap]) => {
+                globalItemsData = [];
+                itemsSnap.forEach(doc => globalItemsData.push({ id: doc.id, ...doc.data() }));
+
+                globalEquipmentsData = [];
+                eqSnap.forEach(doc => globalEquipmentsData.push({ id: doc.id, ...doc.data() }));
+
+                filterAndSortAll();
+            });
+        }
+
+        function parsePrice(priceStr) {
+            if (!priceStr) return 0;
+            let clean = priceStr.replace(/[^\d,.-]/g, '');
+            clean = clean.replace(/\./g, '').replace(',', '.');
+            const num = parseFloat(clean);
+            return isNaN(num) ? 0 : num;
+        }
+
+        function filterAndSortAll() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const sortChecked = document.getElementById('sortPriceCheck').checked;
+
+            let filteredItems = globalItemsData.filter(item => 
+                (item.game === currentSelectedGame || item.game === 'both' || (!item.game && currentSelectedGame === 'knight')) &&
+                (item.title.toLowerCase().includes(query) || (item.price && item.price.toLowerCase().includes(query)))
+            );
+
+            let filteredEq = globalEquipmentsData.filter(eq => 
+                (eq.game === currentSelectedGame || eq.game === 'both' || (!eq.game && currentSelectedGame === 'knight')) &&
+                (eq.title.toLowerCase().includes(query) || (eq.specs && eq.specs.toLowerCase().includes(query)) || (eq.price && eq.price.toLowerCase().includes(query)))
+            );
+
+            if (sortChecked) {
+                filteredItems.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
+                filteredEq.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
+            }
+
+            renderItems(filteredItems);
+            renderEquipments(filteredEq);
+        }
+
+        function renderItems(items) {
+            const itemsContainer = document.getElementById('itemsContainer');
+            const consignmentContainer = document.getElementById('consignmentContainer');
+
+            itemsContainer.innerHTML = "";
+            consignmentContainer.innerHTML = "";
+
+            const ownItems = items.filter(i => !i.category || i.category === 'own');
+            const consignmentItems = items.filter(i => i.category === 'consignment');
+
+            if (ownItems.length === 0) {
+                itemsContainer.innerHTML = '<div style="width: 100%; text-align:center; color:var(--text-muted);">Elimde bulunan eşya yok.</div>';
+            } else {
+                ownItems.forEach(item => itemsContainer.appendChild(createItemCard(item)));
+            }
+
+            if (consignmentItems.length === 0) {
+                consignmentContainer.innerHTML = '<div style="width: 100%; text-align:center; color:var(--text-muted);">Konsinye eşya bulunmuyor.</div>';
+            } else {
+                consignmentItems.forEach(item => consignmentContainer.appendChild(createItemCard(item)));
+            }
+        }
+
+        function createItemCard(item) {
+            const cardEl = document.createElement('div');
+            cardEl.className = 'item-card-container';
+
+            cardEl.innerHTML = `
+                <div class="item-img-box">
+                    <img src="${item.imageUrl}" alt="${item.title}">
+                </div>
+                <div class="item-title">${item.title}</div>
+                <div class="item-price">${item.price}</div>
+                <div class="item-actions">
+                    <a href="https://wa.me/905393112169?text=Merhaba%20MusaRUZGAR,%20${encodeURIComponent(item.title)}%20ürününü%20satın%20almak%20istiyorum." target="_blank" class="action-btn btn-wa">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp ile Al
+                    </a>
+                    <a href="https://www.sonteklif.com" target="_blank" class="action-btn btn-st">
+                        <i class="fa-solid fa-shopping-cart"></i> SonTeklif İlanı
+                    </a>
+                    <a href="https://www.bynogame.com" target="_blank" class="action-btn btn-bng">
+                        <i class="fa-solid fa-store"></i> ByNoGame İlanı
+                    </a>
+                    <button onclick="editItem('${item.id}', '${item.title}', '${item.price || ''}')" class="action-btn btn-edit-action" style="display: ${isAdminLoggedIn ? 'flex' : 'none'};">
+                        <i class="fa-solid fa-pen-to-square"></i> Düzenle
+                    </button>
+                    <button onclick="deleteItem('${item.id}')" class="action-btn btn-delete" style="display: ${isAdminLoggedIn ? 'flex' : 'none'};">
+                        <i class="fa-solid fa-trash"></i> İlanı Kaldır
+                    </button>
+                </div>
+            `;
+            return cardEl;
+        }
+
+        function renderEquipments(equipments) {
+            const container = document.getElementById('equipmentsContainer');
+            container.innerHTML = "";
+
+            if (equipments.length === 0) {
+                container.innerHTML = '<div style="width: 100%; text-align:center; color:var(--text-muted);">Ekipman bulunamadı.</div>';
+                return;
+            }
+
+            equipments.forEach((eq, index) => {
+                let specsHtml = '';
+                if (eq.specs) {
+                    const lines = eq.specs.split('\n');
+                    lines.forEach(line => {
+                        if (line.includes(':')) {
+                            const parts = line.split(':');
+                            specsHtml += `<li><span class="spec-label">${parts[0].trim()}:</span><span class="spec-val">${parts[1].trim()}</span></li>`;
+                        } else if (line.trim() !== '') {
+                            specsHtml += `<li><span class="spec-val" style="width:100%; text-align:center;">${line.trim()}</span></li>`;
+                        }
+                    });
+                }
+
+                const stockText = eq.stock ? eq.stock : "1 Adet";
+                const innerId = `eqCardInner_${index}`;
+
+                const eqCard = document.createElement('div');
+                eqCard.className = 'eq-card-container';
+                eqCard.innerHTML = `
+                    <div class="eq-card-inner" id="${innerId}">
+                        <div class="eq-card-front">
+                            <h3>${eq.title}</h3>
+                            <img src="${eq.imageUrl}" alt="${eq.title}">
+                            <div class="front-eq-price">${eq.price || ''}</div>
+                            <div class="item-stock">Stok: ${stockText}</div>
+                            <button onclick="toggleCardFlip('${innerId}')" class="btn-detail-toggle">Ürün Detayı</button>
+                        </div>
+                        <div class="eq-card-back">
+                            <div class="eq-card-back-content">
+                                <h3>${eq.title} ÖZELLİKLERİ</h3>
+                                <ul class="eq-specs-list">${specsHtml || '<li style="color:var(--text-muted); font-size:0.75rem; text-align:center;">Özellik eklenmemiş.</li>'}</ul>
+                            </div>
+                            <div style="width: 100%; margin-top: auto;">
+                                <div class="item-price" style="margin-bottom: 4px; font-size: 0.9rem; text-align:center;">${eq.price || ''}</div>
+                                <div class="item-stock" style="margin-bottom: 4px; text-align:center;">Stok: ${stockText}</div>
+                                <div class="item-actions">
+                                    <a href="https://wa.me/905393112169?text=Merhaba%20MusaRUZGAR,%20${encodeURIComponent(eq.title)}%20ekipmanını%20satın%20almak%20istiyorum." target="_blank" class="action-btn btn-wa">
+                                        <i class="fa-brands fa-whatsapp"></i> WhatsApp ile Al
+                                    </a>
+                                </div>
+                                <button onclick="toggleCardFlip('${innerId}')" class="action-btn" style="background: rgba(212,159,23,0.2); color:var(--gold-primary); margin-top: 4px; border:1px solid var(--gold-secondary);">
+                                    <i class="fa-solid fa-arrow-rotate-left"></i> Geri Dön
+                                </button>
+                                <button onclick="editEquipment('${eq.id}', '${eq.title}', '${eq.price || ''}', '${eq.stock || ''}', \`${eq.specs || ''}\`)" class="action-btn btn-edit-action" style="display: ${isAdminLoggedIn ? 'flex' : 'none'}; margin-top: 4px;">
+                                    <i class="fa-solid fa-pen-to-square"></i> Düzenle
+                                </button>
+                                <button onclick="deleteEquipment('${eq.id}')" class="action-btn btn-delete" style="display: ${isAdminLoggedIn ? 'flex' : 'none'}; margin-top: 2px;">
+                                    <i class="fa-solid fa-trash"></i> Kaldır
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(eqCard);
+            });
+        }
+
+        function toggleCardFlip(innerId) {
+            const innerEl = document.getElementById(innerId);
+            if (innerEl) {
+                innerEl.classList.toggle('flipped');
+            }
+        }
+
+        function uploadNewRecord() {
+            const game = document.getElementById('targetGame').value;
+            const category = document.getElementById('newItemCategory').value;
+            const title = document.getElementById('newItemTitle').value.trim();
+            const price = document.getElementById('newItemPrice').value.trim();
+            const stock = document.getElementById('newItemStock').value.trim();
+            const mainFile = document.getElementById('newItemImage').files[0];
+            const uploadBtn = document.getElementById('uploadBtn');
+
+            if (!title || !mainFile) {
+                alert('Lütfen başlık yazın ve bir görsel seçin.');
+                return;
+            }
+
+            uploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Yükleniyor...';
+            uploadBtn.disabled = true;
+
+            const readerMain = new FileReader();
+            readerMain.readAsDataURL(mainFile);
+            readerMain.onload = function () {
+                const base64Main = readerMain.result;
+
+                if (category === 'equipment') {
+                    const specs = document.getElementById('newEqSpecs').value.trim();
+                    db.collection("equipments").add({
+                        game, title, price, stock, specs, imageUrl: base64Main,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }).then(() => finishUpload());
+                } else {
+                    saveItemToDb(game, category, title, price, base64Main);
+                }
+            };
+        }
+
+        function saveItemToDb(game, category, title, price, imageUrl) {
+            db.collection("items").add({
+                game, category, title, price, imageUrl,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => finishUpload());
+        }
+
+        function finishUpload() {
+            alert('Başarıyla eklendi!');
+            document.getElementById('newItemTitle').value = '';
+            document.getElementById('newItemPrice').value = '';
+            document.getElementById('newItemStock').value = '';
+            document.getElementById('newEqSpecs').value = '';
+            document.getElementById('newItemImage').value = '';
+            document.getElementById('uploadBtn').innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Seçilen Oyuna Ekle';
+            document.getElementById('uploadBtn').disabled = false;
+            toggleAdminPanel();
+            loadDataFromFirebase();
+        }
+
+        function editItem(docId, oldTitle, oldPrice) {
+            const newTitle = prompt("Yeni Başlık / İtem Adı:", oldTitle);
+            if (newTitle === null) return;
+            const newPrice = prompt("Yeni Fiyat:", oldPrice);
+            if (newPrice === null) return;
+
+            db.collection("items").doc(docId).update({
+                title: newTitle,
+                price: newPrice
+            }).then(() => {
+                alert("İlan güncellendi!");
+                loadDataFromFirebase();
+            });
+        }
+
+        function editEquipment(docId, oldTitle, oldPrice, oldStock, oldSpecs) {
+            const newTitle = prompt("Yeni Ekipman Başlığı:", oldTitle);
+            if (newTitle === null) return;
+            const newPrice = prompt("Yeni Fiyat:", oldPrice);
+            if (newPrice === null) return;
+            const newStock = prompt("Yeni Stok Adedi:", oldStock);
+            if (newStock === null) return;
+            const newSpecs = prompt("Yeni Özellikler:", oldSpecs);
+            if (newSpecs === null) return;
+
+            db.collection("equipments").doc(docId).update({
+                title: newTitle,
+                price: newPrice,
+                stock: newStock,
+                specs: newSpecs
+            }).then(() => {
+                alert("Ekipman ve stok güncellendi!");
+                loadDataFromFirebase();
+            });
+        }
+
+        function deleteItem(docId) {
+            if (!confirm('İlanı silmek istediğinize emin misiniz?')) return;
+            db.collection("items").doc(docId).delete().then(() => loadDataFromFirebase());
+        }
+
+        function deleteEquipment(docId) {
+            if (!confirm('Ekipmanı silmek istediğinize emin misiniz?')) return;
+            db.collection("equipments").doc(docId).delete().then(() => loadDataFromFirebase());
+        }
+
+        function sendOffer() {
+            const offerMsg = document.getElementById('offerText').value.trim();
+            const phone = "905393112169";
+            
+            if (!offerMsg) {
+                alert('Lütfen sipariş/teklif mesajınızı yazınız.');
+                return;
+            }
+
+            const text = encodeURIComponent(`Merhaba MusaRUZGAR, teklif/sipariş mesajım (${currentSelectedGame === 'knight' ? 'Knight Online' : 'Rise Online'}): \n\n${offerMsg}`);
+            window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+        }
+
+        /* --- YOUTUBE ÇEKİLİŞ MANTIK VE FONKSİYONLARI --- */
+
+        function switchGiveawayMethod(method) {
+            const linkBox = document.getElementById('methodLinkBox');
+            const manualBox = document.getElementById('methodManualBox');
+            const btnLink = document.getElementById('btnMethodLink');
+            const btnManual = document.getElementById('btnMethodManual');
+
+            if (method === 'link') {
+                linkBox.style.display = 'block';
+                manualBox.style.display = 'none';
+                btnLink.classList.add('active');
+                btnManual.classList.remove('active');
+            } else {
+                linkBox.style.display = 'none';
+                manualBox.style.display = 'block';
+                btnLink.classList.remove('active');
+                btnManual.classList.add('active');
+            }
+        }
+
+        function extractVideoId(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        async function fetchYoutubeComments() {
+            const urlInput = document.getElementById('ytVideoUrl').value.trim();
+            const statusMsg = document.getElementById('giveawayStatus');
+            const btnFetch = document.getElementById('btnFetchComments');
+
+            if (!urlInput) {
+                alert("Lütfen geçerli bir YouTube video linki yazın.");
+                return;
+            }
+
+            const videoId = extractVideoId(urlInput);
+            if (!videoId) {
+                alert("YouTube Video ID'si bulunamadı. Lütfen geçerli bir link girin.");
+                return;
+            }
+
+            btnFetch.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Çekiliyor...';
+            btnFetch.disabled = true;
+            statusMsg.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Yorumlar YouTube üzerinden toplanıyor, lütfen bekleyin...';
+
+            rawCommentsList = [];
+
+            try {
+                if (storedYoutubeApiKey) {
+                    // API Key Varsa Direct Google Data API ile Sayfalayarak Bütün Yorumları Kaçırmadan Çek
+                    let nextPageToken = "";
+                    let fetchMore = true;
+
+                    while (fetchMore) {
+                        let apiUrl = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=100&key=${storedYoutubeApiKey}`;
+                        if (nextPageToken) apiUrl += `&pageToken=${nextPageToken}`;
+
+                        const res = await fetch(apiUrl);
+                        const data = await res.json();
+
+                        if (data.error) {
+                            throw new Error(data.error.message || "API Hatası oluştu.");
+                        }
+
+                        if (data.items) {
+                            data.items.forEach(item => {
+                                const topComment = item.snippet.topLevelComment.snippet;
+                                rawCommentsList.push({
+                                    author: topComment.authorDisplayName,
+                                    text: topComment.textDisplay
+                                });
+                            });
+                        }
+
+                        if (data.nextPageToken) {
+                            nextPageToken = data.nextPageToken;
+                        } else {
+                            fetchMore = false;
+                        }
+                    }
+                } else {
+                    // API Key Olmadığında CORS/Public API Üzerinden Çekim Denemesi
+                    const corsProxyUrl = `https://yt-comments-api.vercel.app/api/comments?videoId=${videoId}`;
+                    const res = await fetch(corsProxyUrl);
+                    if (!res.ok) {
+                        throw new Error("Yorumlar çekilemedi. API Key tanımlı değil veya servis meşgul. İsterseniz 'Manuel Listeyle Çek' sekmesini kullanabilirsiniz.");
+                    }
+                    const data = await res.json();
+                    if (data.comments && data.comments.length > 0) {
+                        data.comments.forEach(c => {
+                            rawCommentsList.push({
+                                author: c.author || c.authorDisplayName || "Kullanıcı",
+                                text: c.text || c.textDisplay || ""
+                            });
+                        });
+                    } else {
+                        throw new Error("Yorum bulunamadı veya video yoruma kapalı.");
+                    }
+                }
+
+                if (rawCommentsList.length === 0) {
+                    statusMsg.innerHTML = "❌ Bu videoda hiç yorum bulunamadı.";
+                    document.getElementById('btnStartDraw').disabled = true;
+                } else {
+                    processParticipantsList();
+                }
+
+            } catch (err) {
+                console.error(err);
+                statusMsg.innerHTML = `<span style="color:#ef4444;">❌ Hata: ${err.message}</span>`;
+                alert("Yorumlar çekilirken bir hata oluştu. Alternatif olarak üstteki 'Manuel Listeyle Çek' sekmesini kullanarak kopyalayıp yapıştırabilirsiniz.");
+            } finally {
+                btnFetch.innerHTML = '<i class="fa-solid fa-comments"></i> Yorumları Çek';
+                btnFetch.disabled = false;
+            }
+        }
+
+        function loadManualComments() {
+            const text = document.getElementById('manualCommentsText').value.trim();
+            const statusMsg = document.getElementById('giveawayStatus');
+
+            if (!text) {
+                alert("Lütfen listeye en az bir isim yazın.");
+                return;
+            }
+
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            rawCommentsList = lines.map(line => ({
+                author: line,
+                text: "Manuel Eklendi"
+            }));
+
+            processParticipantsList();
+        }
+
+        function processParticipantsList() {
+            const isUnique = document.getElementById('uniqueUserCheck').checked;
+            const statusMsg = document.getElementById('giveawayStatus');
+            const container = document.getElementById('participantsContainer');
+            const btnDraw = document.getElementById('btnStartDraw');
+
+            if (rawCommentsList.length === 0) return;
+
+            finalParticipantsPool = [];
+            container.innerHTML = "";
+
+            if (isUnique) {
+                const uniqueAuthors = new Set();
+                rawCommentsList.forEach(c => {
+                    if (!uniqueAuthors.has(c.author)) {
+                        uniqueAuthors.add(c.author);
+                        finalParticipantsPool.push(c);
+                    }
+                });
+            } else {
+                finalParticipantsPool = [...rawCommentsList];
+            }
+
+            statusMsg.innerHTML = `✅ Toplam <b>${rawCommentsList.length}</b> Yorum Çekildi. Çekiliş Havuzu: <b>${finalParticipantsPool.length} Hak/Katılımcı</b> (${isUnique ? 'Tekil Kişiler' : 'Tüm Yorumlar Hak Kazandı'})`;
+
+            container.style.display = 'flex';
+            finalParticipantsPool.forEach((item, idx) => {
+                const row = document.createElement('div');
+                row.className = 'participant-item';
+                row.innerHTML = `
+                    <div><strong>${idx + 1}. ${escapeHtml(item.author)}</strong></div>
+                    <span class="comment-text">${escapeHtml(item.text)}</span>
+                `;
+                container.appendChild(row);
+            });
+
+            btnDraw.disabled = false;
+        }
+
+        function escapeHtml(str) {
+            return str ? str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;") : '';
+        }
+
+        function startGiveawayDraw() {
+            const winnerNum = parseInt(document.getElementById('winnerCount').value) || 1;
+            const backupNum = parseInt(document.getElementById('backupCount').value) || 0;
+            const statusMsg = document.getElementById('giveawayStatus');
+            const winnerBox = document.getElementById('winnerDisplayBox');
+            const winnerListEl = document.getElementById('winnerList');
+            const backupListEl = document.getElementById('backupList');
+            const btnDraw = document.getElementById('btnStartDraw');
+
+            if (finalParticipantsPool.length === 0) {
+                alert("Çekiliş yapılacak katılımcı listesi boş!");
+                return;
+            }
+
+            if (winnerNum + backupNum > finalParticipantsPool.length) {
+                alert(`İstenen kazanan (${winnerNum}) ve yedek (${backupNum}) sayısı, toplam katılan kişi sayısından (${finalParticipantsPool.length}) fazla olamaz!`);
+                return;
+            }
+
+            btnDraw.disabled = true;
+            winnerBox.style.display = 'none';
+            winnerListEl.innerHTML = "";
+            backupListEl.innerHTML = "";
+
+            let countdown = 20; // 2 saniye hızlı animasyon efekti
+            const interval = setInterval(() => {
+                const randomIdx = Math.floor(Math.random() * finalParticipantsPool.length);
+                statusMsg.innerHTML = `<i class="fa-solid fa-dice fa-spin" style="color:var(--gold-primary);"></i> Kazanan Belirleniyor: <span style="font-size:1.2rem; font-weight:bold; color:var(--gold-primary);">${escapeHtml(finalParticipantsPool[randomIdx].author)}</span>`;
+                countdown--;
+
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    executeFinalSelection(winnerNum, backupNum);
+                    btnDraw.disabled = false;
+                }
+            }, 100);
+        }
+
+        function executeFinalSelection(wNum, bNum) {
+            const poolCopy = [...finalParticipantsPool];
+            const winners = [];
+            const backups = [];
+
+            // Asıl kazananları rastgele seç
+            for (let i = 0; i < wNum; i++) {
+                const randIndex = Math.floor(Math.random() * poolCopy.length);
+                winners.push(poolCopy[randIndex]);
+                poolCopy.splice(randIndex, 1);
+            }
+
+            // Yedekleri rastgele seç
+            for (let j = 0; j < bNum; j++) {
+                if (poolCopy.length === 0) break;
+                const randIndex = Math.floor(Math.random() * poolCopy.length);
+                backups.push(poolCopy[randIndex]);
+                poolCopy.splice(randIndex, 1);
+            }
+
+            // Sonuçları Ekrana Yazdır
+            const winnerBox = document.getElementById('winnerDisplayBox');
+            const winnerListEl = document.getElementById('winnerList');
+            const backupListEl = document.getElementById('backupList');
+            const statusMsg = document.getElementById('giveawayStatus');
+
+            statusMsg.innerHTML = "🎉 **ÇEKİLİŞ BAŞARIYLA TAMAMLANDI!** 🎉";
+
+            let winnersHtml = "<div style='color:var(--gold-primary); font-family:Cinzel; font-weight:bold; margin-bottom:5px; text-align:left;'>🏆 KAZANANLAR:</div>";
+            winners.forEach((w, idx) => {
+                winnersHtml += `
+                    <div class="winner-badge">
+                        <span><span class="winner-rank">${idx + 1}. KAZANAN</span> ${escapeHtml(w.author)}</span>
+                        <i class="fa-solid fa-trophy" style="color:var(--gold-primary);"></i>
+                    </div>
+                `;
+            });
+            winnerListEl.innerHTML = winnersHtml;
+
+            if (backups.length > 0) {
+                let backupsHtml = "<div style='color:var(--text-muted); font-family:Cinzel; font-weight:bold; margin-top:10px; margin-bottom:5px; text-align:left;'>🛡️ YEDEKLER:</div>";
+                backups.forEach((b, idx) => {
+                    backupsHtml += `
+                        <div class="backup-winner-badge">
+                            <span><strong>${idx + 1}. YEDEK:</strong> ${escapeHtml(b.author)}</span>
+                            <i class="fa-solid fa-user-clock"></i>
+                        </div>
+                    `;
+                });
+                backupListEl.innerHTML = backupsHtml;
+            }
+
+            winnerBox.style.display = 'flex';
+            winnerBox.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
