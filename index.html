@@ -1289,10 +1289,10 @@
 
             <div id="addItemSection" style="display: none;">
                 <div class="admin-nav-btns">
-                    <button onclick="showAdminTab('tabLogo')" id="btnTabLogo" class="admin-nav-btn active">Logo & Oyun Görselleri</button>
+                    <button onclick="showAdminTab('tabLogo')" id="btnTabLogo" class="admin-nav-btn active">Logo & Oyun</button>
                     <button onclick="showAdminTab('tabStreamer')" id="btnTabStreamer" class="admin-nav-btn">Yayıncı Ekle</button>
-                    <button onclick="showAdminTab('tabItem')" id="btnTabItem" class="admin-nav-btn">İlan / Ekipman Ekle</button>
-                    <button onclick="showAdminTab('tabApi')" id="btnTabApi" class="admin-nav-btn">Çekiliş API Ayarı</button>
+                    <button onclick="showAdminTab('tabItem')" id="btnTabItem" class="admin-nav-btn">İlan Ekle</button>
+                    <button onclick="showAdminTab('tabApi')" id="btnTabApi" class="admin-nav-btn">API Ayarları</button>
                 </div>
 
                 <div id="tabLogo" class="admin-tab-content active">
@@ -1339,12 +1339,16 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Yayıncı Adı</label>
+                        <label>Yayıncı / Kanal Adı (Twitch için kullanıcı adı)</label>
                         <input type="text" id="newStreamerName" class="form-control" placeholder="Örn: milchmann">
                     </div>
                     <div class="form-group">
                         <label>Kanal Linki</label>
                         <input type="text" id="newStreamerUrl" class="form-control" placeholder="Örn: https://www.twitch.tv/milchmann">
+                    </div>
+                    <div class="form-group">
+                        <label>Takipçi / Abone Sayısı (Sıralama İçin)</label>
+                        <input type="number" id="newStreamerFollowers" class="form-control" placeholder="Örn: 15400">
                     </div>
                     <div class="form-group">
                         <label>Profil Fotoğrafı Linki (URL)</label>
@@ -1405,16 +1409,21 @@
                 </div>
 
                 <div id="tabApi" class="admin-tab-content">
-                    <h3><i class="fa-brands fa-youtube"></i> YOUTUBE API KEY AYARI</h3>
-                    <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">
-                        Sınırsız ve otomatik YouTube yorumlarını çekmek için Google Cloud Console üzerinden aldığınız YouTube Data API Key anahtarınızı ekleyebilirsiniz.
-                    </p>
+                    <h3><i class="fa-solid fa-key"></i> API AYARLARI</h3>
                     <div class="form-group">
-                        <label>YouTube Data API Key</label>
+                        <label><i class="fa-brands fa-youtube" style="color:var(--youtube-color);"></i> YouTube Data API Key</label>
                         <input type="text" id="youtubeApiKeyInput" class="form-control" placeholder="AIzaSy...">
                     </div>
-                    <button onclick="saveYoutubeApiKey()" class="btn-gold" style="max-width: 100%; margin-top: 5px;">
-                        <i class="fa-solid fa-save"></i> API Key'i Kaydet
+                    <div class="form-group" style="margin-top: 10px;">
+                        <label><i class="fa-brands fa-twitch" style="color:var(--twitch-color);"></i> Twitch Client ID</label>
+                        <input type="text" id="twitchClientIdInput" class="form-control" placeholder="Twitch Client ID">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fa-brands fa-twitch" style="color:var(--twitch-color);"></i> Twitch Client Secret</label>
+                        <input type="password" id="twitchSecretInput" class="form-control" placeholder="Twitch Client Secret">
+                    </div>
+                    <button onclick="saveApiKeys()" class="btn-gold" style="max-width: 100%; margin-top: 5px;">
+                        <i class="fa-solid fa-save"></i> API Bilgilerini Kaydet
                     </button>
                 </div>
             </div>
@@ -1443,27 +1452,45 @@
             <i class="fa-solid fa-coins" style="font-size: 1.2rem;"></i> GB FİYATLARI İÇİN TIKLAYIN
         </a>
 
+        <!-- TWITCH ONLINE YAYINCILAR -->
         <div class="section-divider">
             <div class="section-divider-inner">
                 <div class="divider-line"></div>
                 <div class="section-title">
-                    <i class="fa-solid fa-circle title-dot"></i>
-                    <i class="fa-brands fa-twitch" style="color: var(--twitch-color);"></i> TWITCH YAYINCILARI
-                    <i class="fa-solid fa-circle title-dot"></i>
+                    <i class="fa-solid fa-circle title-dot" style="color: #25d366;"></i>
+                    <i class="fa-brands fa-twitch" style="color: var(--twitch-color);"></i> TWITCH - 🟢 ONLINE YAYINCILAR
+                    <i class="fa-solid fa-circle title-dot" style="color: #25d366;"></i>
                 </div>
                 <div class="divider-line"></div>
             </div>
         </div>
-        <div class="streamers-grid" id="twitchContainer">
+        <div class="streamers-grid" id="twitchOnlineContainer">
             <div style="color: var(--text-muted); font-size: 0.9rem;">Yükleniyor...</div>
         </div>
 
+        <!-- TWITCH OFFLINE YAYINCILAR -->
+        <div class="section-divider">
+            <div class="section-divider-inner">
+                <div class="divider-line"></div>
+                <div class="section-title">
+                    <i class="fa-solid fa-circle title-dot" style="color: #94a3b8;"></i>
+                    <i class="fa-brands fa-twitch" style="color: var(--twitch-color);"></i> TWITCH - ⚫ OFFLINE YAYINCILAR
+                    <i class="fa-solid fa-circle title-dot" style="color: #94a3b8;"></i>
+                </div>
+                <div class="divider-line"></div>
+            </div>
+        </div>
+        <div class="streamers-grid" id="twitchOfflineContainer">
+            <div style="color: var(--text-muted); font-size: 0.9rem;">Yükleniyor...</div>
+        </div>
+
+        <!-- YOUTUBER'LAR (ABONE SIRALI) -->
         <div class="section-divider">
             <div class="section-divider-inner">
                 <div class="divider-line"></div>
                 <div class="section-title">
                     <i class="fa-solid fa-circle title-dot"></i>
-                    <i class="fa-brands fa-youtube" style="color: var(--youtube-color);"></i> YOUTUBER'LAR
+                    <i class="fa-brands fa-youtube" style="color: var(--youtube-color);"></i> YOUTUBER'LAR (ABONE SIRALI)
                     <i class="fa-solid fa-circle title-dot"></i>
                 </div>
                 <div class="divider-line"></div>
@@ -1681,7 +1708,7 @@
                 Henüz yorum/katılımcı yüklenmedi.
             </div>
 
-            <!-- YÜKLENEN YORUMLAR LİSTESİ (SADECE YOUTUBE TARAFINDA GÖRÜNECEK) -->
+            <!-- YÜKLENEN YORUMLAR LİSTESİ -->
             <div id="participantsContainer" class="participants-box" style="display: none;"></div>
 
             <button onclick="startGiveawayDraw()" id="btnStartDraw" class="btn-gold" style="max-width: 100%; font-size: 1.1rem; padding: 14px; margin-top: 5px;" disabled>
@@ -1725,6 +1752,8 @@
         let globalEquipmentsData = [];
         let globalStreamersData = [];
         let storedYoutubeApiKey = "";
+        let storedTwitchClientId = "";
+        let storedTwitchSecret = "";
 
         let rawCommentsList = [];
         let finalParticipantsPool = [];
@@ -1844,17 +1873,33 @@
                         storedYoutubeApiKey = data.youtubeApiKey;
                         document.getElementById('youtubeApiKeyInput').value = data.youtubeApiKey;
                     }
+                    if (data.twitchClientId) {
+                        storedTwitchClientId = data.twitchClientId;
+                        document.getElementById('twitchClientIdInput').value = data.twitchClientId;
+                    }
+                    if (data.twitchSecret) {
+                        storedTwitchSecret = data.twitchSecret;
+                        document.getElementById('twitchSecretInput').value = data.twitchSecret;
+                    }
                 }
             }).catch((error) => console.error("Ayarlar yükleme hatası:", error));
         }
 
-        function saveYoutubeApiKey() {
-            const key = document.getElementById('youtubeApiKeyInput').value.trim();
+        function saveApiKeys() {
+            const ytKey = document.getElementById('youtubeApiKeyInput').value.trim();
+            const twId = document.getElementById('twitchClientIdInput').value.trim();
+            const twSec = document.getElementById('twitchSecretInput').value.trim();
+
             db.collection("settings").doc("portalSettings").set({
-                youtubeApiKey: key
+                youtubeApiKey: ytKey,
+                twitchClientId: twId,
+                twitchSecret: twSec
             }, { merge: true }).then(() => {
-                storedYoutubeApiKey = key;
-                showCustomAlert("YouTube API Key başarıyla kaydedildi!", "BAŞARILI");
+                storedYoutubeApiKey = ytKey;
+                storedTwitchClientId = twId;
+                storedTwitchSecret = twSec;
+                showCustomAlert("API Ayarları başarıyla kaydedildi!", "BAŞARILI");
+                loadStreamers();
             }).catch(err => showCustomAlert("Kayıt hatası: " + err.message, "HATA"));
         }
 
@@ -1938,54 +1983,142 @@
                 snapshot.forEach(doc => {
                     globalStreamersData.push({ id: doc.id, ...doc.data() });
                 });
-                renderStreamers();
+                renderStreamersWithApiCheck();
             });
         }
 
-        function renderStreamers() {
-            const twitchContainer = document.getElementById('twitchContainer');
+        async function renderStreamersWithApiCheck() {
+            const twitchOnlineContainer = document.getElementById('twitchOnlineContainer');
+            const twitchOfflineContainer = document.getElementById('twitchOfflineContainer');
             const youtubeContainer = document.getElementById('youtubeContainer');
 
-            twitchContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.9rem;">Yükleniyor...</div>';
+            twitchOnlineContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.9rem;">Yükleniyor...</div>';
+            twitchOfflineContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.9rem;">Yükleniyor...</div>';
             youtubeContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.9rem;">Yükleniyor...</div>';
 
-            let twitchHtml = "";
-            let youtubeHtml = "";
-            let twitchCount = 0;
-            let youtubeCount = 0;
+            let twitchList = [];
+            let youtubeList = [];
 
-            globalStreamersData.forEach(data => {
-                if (data.game === currentSelectedGame || data.game === 'both' || (!data.game && currentSelectedGame === 'knight')) {
-                    const cardHtml = `
-                        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
-                            <a href="${data.url}" target="_blank" class="streamer-card ${data.platform}">
-                                <div class="streamer-avatar-frame">
-                                    <img src="${data.imageUrl}" alt="${data.name}" class="streamer-avatar">
-                                    <div class="platform-badge ${data.platform}-badge">
-                                        <i class="fa-brands fa-${data.platform}"></i>
-                                    </div>
-                                </div>
-                                <div class="streamer-name">${data.name}</div>
-                            </a>
-                            <div class="admin-streamer-btns">
-                                <button onclick="editStreamer('${data.id}', '${data.name}', '${data.url}')" class="admin-edit-btn" style="display: ${isAdminLoggedIn ? 'block' : 'none'};">Düzenle</button>
-                                <button onclick="deleteStreamer('${data.id}')" class="admin-delete-btn" style="display: ${isAdminLoggedIn ? 'block' : 'none'};">Sil</button>
-                            </div>
-                        </div>
-                    `;
+            // Eğer Twitch API anahtarları varsa canlı durumlarını API'den çekelim
+            let twitchTokensValid = false;
+            let accessToken = "";
 
-                    if (data.platform === "twitch") {
-                        twitchHtml += cardHtml;
-                        twitchCount++;
-                    } else if (data.platform === "youtube") {
-                        youtubeHtml += cardHtml;
-                        youtubeCount++;
+            if (storedTwitchClientId && storedTwitchSecret) {
+                try {
+                    const tokenRes = await fetch(`https://id.twitch.tv/oauth2/token?client_id=${storedTwitchClientId}&client_secret=${storedTwitchSecret}&grant_type=client_credentials`, { method: 'POST' });
+                    const tokenData = await tokenRes.json();
+                    if (tokenData.access_token) {
+                        accessToken = tokenData.access_token;
+                        twitchTokensValid = true;
                     }
+                } catch(e) { console.error("Twitch token hatası", e); }
+            }
+
+            for (let data of globalStreamersData) {
+                if (data.game === currentSelectedGame || data.game === 'both' || (!data.game && currentSelectedGame === 'knight')) {
+                    
+                    let isLive = false;
+                    if (data.platform === 'twitch' && twitchTokensValid) {
+                        try {
+                            const streamRes = await fetch(`https://api.twitch.tv/helix/streams?user_login=${encodeURIComponent(data.name)}`, {
+                                headers: {
+                                    'Client-ID': storedTwitchClientId,
+                                    'Authorization': `Bearer ${accessToken}`
+                                }
+                            });
+                            const streamData = await streamRes.json();
+                            if (streamData.data && streamData.data.length > 0) {
+                                isLive = true;
+                            }
+                        } catch(e) { console.error("Stream check error", e); }
+                    }
+
+                    const streamerObj = {
+                        ...data,
+                        followers: parseInt(data.followers) || 0,
+                        isLive: isLive
+                    };
+
+                    if (data.platform === 'twitch') {
+                        twitchList.push(streamerObj);
+                    } else if (data.platform === 'youtube') {
+                        youtubeList.push(streamerObj);
+                    }
+                }
+            }
+
+            // Twitch sıralama: Önce online olanlar, sonra offline olanlar. Kendi içlerinde takipçi sayısına göre azalan.
+            twitchList.sort((a, b) => {
+                if (a.isLive !== b.isLive) {
+                    return b.isLive ? 1 : -1; // Canlıda olanlar en başa
+                }
+                return b.followers - a.followers; // Takipçiye göre çoktan aza
+            });
+
+            // YouTube sıralama: Sadece abone (followers) sayısına göre çoktan aza
+            youtubeList.sort((a, b) => b.followers - a.followers);
+
+            let twitchOnlineHtml = "";
+            let twitchOfflineHtml = "";
+            let onlineCount = 0;
+            let offlineCount = 0;
+
+            twitchList.forEach(data => {
+                const cardHtml = `
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                        <a href="${data.url}" target="_blank" class="streamer-card twitch">
+                            <div class="streamer-avatar-frame" style="${data.isLive ? 'border: 2px solid #25d366; box-shadow: 0 0 15px #25d366;' : ''}">
+                                <img src="${data.imageUrl}" alt="${data.name}" class="streamer-avatar">
+                                <div class="platform-badge twitch-badge">
+                                    <i class="fa-brands fa-twitch"></i>
+                                </div>
+                            </div>
+                            <div class="streamer-name">${data.name}</div>
+                        </a>
+                        <div class="admin-streamer-btns">
+                            <button onclick="editStreamer('${data.id}', '${data.name}', '${data.url}', '${data.followers}')" class="admin-edit-btn" style="display: ${isAdminLoggedIn ? 'block' : 'none'};">Düzenle</button>
+                            <button onclick="deleteStreamer('${data.id}')" class="admin-delete-btn" style="display: ${isAdminLoggedIn ? 'block' : 'none'};">Sil</button>
+                        </div>
+                    </div>
+                `;
+
+                if (data.isLive) {
+                    twitchOnlineHtml += cardHtml;
+                    onlineCount++;
+                } else {
+                    twitchOfflineHtml += cardHtml;
+                    offlineCount++;
                 }
             });
 
-            twitchContainer.innerHTML = twitchCount > 0 ? twitchHtml : '<div style="color: var(--text-muted); font-size: 0.9rem;">Henüz Twitch yayıncısı eklenmedi.</div>';
-            youtubeContainer.innerHTML = youtubeCount > 0 ? youtubeHtml : '<div style="color: var(--text-muted); font-size: 0.9rem;">Henüz YouTuber eklenmedi.</div>';
+            let youtubeHtml = "";
+            youtubeList.forEach(data => {
+                youtubeHtml += `
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                        <a href="${data.url}" target="_blank" class="streamer-card youtube">
+                            <div class="streamer-avatar-frame">
+                                <img src="${data.imageUrl}" alt="${data.name}" class="streamer-avatar">
+                                <div class="platform-badge youtube-badge">
+                                    <i class="fa-brands fa-youtube"></i>
+                                </div>
+                            </div>
+                            <div class="streamer-name">${data.name}</div>
+                        </a>
+                        <div class="admin-streamer-btns">
+                            <button onclick="editStreamer('${data.id}', '${data.name}', '${data.url}', '${data.followers}')" class="admin-edit-btn" style="display: ${isAdminLoggedIn ? 'block' : 'none'};">Düzenle</button>
+                            <button onclick="deleteStreamer('${data.id}')" class="admin-delete-btn" style="display: ${isAdminLoggedIn ? 'block' : 'none'};">Sil</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            twitchOnlineContainer.innerHTML = onlineCount > 0 ? twitchOnlineHtml : '<div style="color: var(--text-muted); font-size: 0.9rem;">Şu an canlıda olan yayıncı yok.</div>';
+            twitchOfflineContainer.innerHTML = offlineCount > 0 ? twitchOfflineHtml : '<div style="color: var(--text-muted); font-size: 0.9rem;">Çevrimdışı yayıncı bulunmuyor.</div>';
+            youtubeContainer.innerHTML = youtubeList.length > 0 ? youtubeHtml : '<div style="color: var(--text-muted); font-size: 0.9rem;">Henüz YouTuber eklenmedi.</div>';
+        }
+
+        function renderStreamers() {
+            renderStreamersWithApiCheck();
         }
 
         function uploadNewStreamer() {
@@ -1993,6 +2126,7 @@
             const platform = document.getElementById('newStreamerPlatform').value;
             const name = document.getElementById('newStreamerName').value.trim();
             const url = document.getElementById('newStreamerUrl').value.trim();
+            const followers = document.getElementById('newStreamerFollowers').value.trim() || "0";
             const imageUrlInput = document.getElementById('newStreamerImageUrl').value.trim();
             const imageFile = document.getElementById('newStreamerImage').files[0];
 
@@ -2003,12 +2137,13 @@
 
             const saveStreamer = (finalImgUrl) => {
                 db.collection("streamers").add({
-                    game, platform, name, url, imageUrl: finalImgUrl,
+                    game, platform, name, url, followers, imageUrl: finalImgUrl,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 }).then(() => {
                     showCustomAlert('Yayıncı eklendi!', 'BAŞARILI');
                     document.getElementById('newStreamerName').value = '';
                     document.getElementById('newStreamerUrl').value = '';
+                    document.getElementById('newStreamerFollowers').value = '';
                     document.getElementById('newStreamerImageUrl').value = '';
                     document.getElementById('newStreamerImage').value = '';
                     toggleAdminPanel();
@@ -2025,15 +2160,18 @@
             }
         }
 
-        function editStreamer(docId, oldName, oldUrl) {
+        function editStreamer(docId, oldName, oldUrl, oldFollowers) {
             const newName = prompt("Yayıncı Adını Güncelleyin:", oldName);
             if (newName === null) return;
             const newUrl = prompt("Kanal Linkini Güncelleyin:", oldUrl);
             if (newUrl === null) return;
+            const newFollowers = prompt("Takipçi/Abone Sayısını Güncelleyin:", oldFollowers || "0");
+            if (newFollowers === null) return;
 
             db.collection("streamers").doc(docId).update({
                 name: newName,
-                url: newUrl
+                url: newUrl,
+                followers: newFollowers
             }).then(() => {
                 showCustomAlert("Yayıncı bilgileri güncellendi!", "BAŞARILI");
                 loadStreamers();
@@ -2366,14 +2504,12 @@
                 manualBox.style.display = 'none';
                 btnLink.classList.add('active');
                 btnManual.classList.remove('active');
-                // Eğer havuzda YouTube verisi varsa listeyi tekrar göster
                 if (finalParticipantsPool.length > 0) participantsContainer.style.display = 'flex';
             } else {
                 linkBox.style.display = 'none';
                 manualBox.style.display = 'block';
                 btnLink.classList.remove('active');
                 btnManual.classList.add('active');
-                // Twitch sekmesinde liste kutusunu gizle
                 participantsContainer.style.display = 'none';
             }
         }
@@ -2516,7 +2652,6 @@
 
             statusMsg.innerHTML = `✅ Katılımcı Listesi Yüklendi: <b>${finalParticipantsPool.length} Kişi/Hak</b>`;
 
-            // Yüklenen listeyi alt alta kutucuk içerisinde gösterelim (Sadece YouTube sekmesindeyken)
             let listHtml = "";
             finalParticipantsPool.forEach((p, idx) => {
                 listHtml += `
