@@ -157,8 +157,8 @@
             border-color: var(--gold-primary);
             box-shadow: 0 0 20px var(--gold-glow);
         }
-
-        .game-tab-img {
+	
+	.game-tab-img {
             width: 50px;
             height: 50px;
             border-radius: 50%;
@@ -1437,9 +1437,7 @@
 
         <a href="https://www.enucuzgb.com/rise-online/gb?d=1" target="_blank" class="gb-banner-btn">
             <i class="fa-solid fa-coins" style="font-size: 1.2rem;"></i> GB FİYATLARI İÇİN TIKLAYIN
-        </a>
-
-        <div class="section-divider">
+        </a><div class="section-divider">
             <div class="section-divider-inner">
                 <div class="divider-line"></div>
                 <div class="section-title">
@@ -1510,6 +1508,7 @@
             </a>
         </div>
 
+        <!-- ARAMA / FİLTRELEME ALANI -->
         <div class="filter-container">
             <input type="text" id="searchInput" class="search-input" placeholder="Örnek: Raptor(+9)" oninput="filterAndSortAll()">
             <label class="sort-checkbox-label">
@@ -1517,43 +1516,7 @@
             </label>
         </div>
 
-        <!-- 1. BİLGİSAYAR BÖLÜMÜ -->
-        <div class="section-divider">
-            <div class="section-divider-inner">
-                <div class="divider-line"></div>
-                <div class="section-title">
-                    <i class="fa-solid fa-circle title-dot"></i> BİLGİSAYAR <i class="fa-solid fa-circle title-dot"></i>
-                </div>
-                <div class="divider-line"></div>
-            </div>
-        </div>
-        <div class="equipments-grid" id="computersContainer"></div>
-
-        <!-- 2. TABLET BÖLÜMÜ -->
-        <div class="section-divider">
-            <div class="section-divider-inner">
-                <div class="divider-line"></div>
-                <div class="section-title">
-                    <i class="fa-solid fa-circle title-dot"></i> TABLET <i class="fa-solid fa-circle title-dot"></i>
-                </div>
-                <div class="divider-line"></div>
-            </div>
-        </div>
-        <div class="equipments-grid" id="tabletsContainer"></div>
-
-        <!-- 3. OYUNCU VE YAYINCI EKİPMANLARI BÖLÜMÜ -->
-        <div class="section-divider">
-            <div class="section-divider-inner">
-                <div class="divider-line"></div>
-                <div class="section-title">
-                    <i class="fa-solid fa-circle title-dot"></i> OYUNCU VE YAYINCI EKİPMANLARI <i class="fa-solid fa-circle title-dot"></i>
-                </div>
-                <div class="divider-line"></div>
-            </div>
-        </div>
-        <div class="equipments-grid" id="equipmentsContainer"></div>
-
-        <!-- DİĞER İLAN BÖLÜMLERİ -->
+        <!-- ELİMDE BULUNAN EŞYALAR -->
         <div class="section-divider">
             <div class="section-divider-inner">
                 <div class="divider-line"></div>
@@ -1565,6 +1528,7 @@
         </div>
         <div class="items-grid" id="itemsContainer"></div>
 
+        <!-- KONSİNYE EŞYALARIMIZ -->
         <div class="section-divider">
             <div class="section-divider-inner">
                 <div class="divider-line"></div>
@@ -1576,6 +1540,42 @@
             <div class="section-subtitle">(Sizin Satılık Eşyalarınız)</div>
         </div>
         <div class="items-grid" id="consignmentContainer"></div>
+
+        <!-- BİLGİSAYAR BÖLÜMÜ -->
+        <div class="section-divider">
+            <div class="section-divider-inner">
+                <div class="divider-line"></div>
+                <div class="section-title">
+                    <i class="fa-solid fa-circle title-dot"></i> BİLGİSAYAR <i class="fa-solid fa-circle title-dot"></i>
+                </div>
+                <div class="divider-line"></div>
+            </div>
+        </div>
+        <div class="equipments-grid" id="computersContainer"></div>
+
+        <!-- TABLET BÖLÜMÜ -->
+        <div class="section-divider">
+            <div class="section-divider-inner">
+                <div class="divider-line"></div>
+                <div class="section-title">
+                    <i class="fa-solid fa-circle title-dot"></i> TABLET <i class="fa-solid fa-circle title-dot"></i>
+                </div>
+                <div class="divider-line"></div>
+            </div>
+        </div>
+        <div class="equipments-grid" id="tabletsContainer"></div>
+
+        <!-- OYUNCU VE YAYINCI EKİPMANLARI BÖLÜMÜ -->
+        <div class="section-divider">
+            <div class="section-divider-inner">
+                <div class="divider-line"></div>
+                <div class="section-title">
+                    <i class="fa-solid fa-circle title-dot"></i> OYUNCU VE YAYINCI EKİPMANLARI <i class="fa-solid fa-circle title-dot"></i>
+                </div>
+                <div class="divider-line"></div>
+            </div>
+        </div>
+        <div class="equipments-grid" id="equipmentsContainer"></div>
 
         <div class="section-divider">
             <div class="section-divider-inner">
@@ -1594,12 +1594,11 @@
             </button>
         </div>
 
+        <!-- ÇEKİLİŞ BUTONU -->
         <button onclick="openGiveawayModal()" class="open-giveaway-trigger-btn">
             <i class="fa-solid fa-gift" style="font-size: 1.4rem;"></i> YOUTUBE ÇEKİLİŞ ALANINI AÇ
         </button>
-    </div>
-
-    <!-- ÇEKİLİŞ MODAL (POP-UP) PENCERESİ -->
+    </div><!-- ÇEKİLİŞ MODAL (POP-UP) PENCERESİ -->
     <div id="giveawayModalOverlay" class="custom-modal-overlay">
         <div class="giveaway-card">
             <button onclick="closeGiveawayModal()" class="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
@@ -2488,7 +2487,6 @@
             if (rawCommentsList.length === 0) return;
 
             finalParticipantsPool = [];
-            container.innerHTML = "";
 
             if (isUnique) {
                 const uniqueAuthors = new Set();
@@ -2504,16 +2502,8 @@
 
             statusMsg.innerHTML = `✅ Katılımcı Listesi Yüklendi: <b>${finalParticipantsPool.length} Kişi/Hak</b>`;
 
-            container.style.display = 'flex';
-            finalParticipantsPool.forEach((item, idx) => {
-                const row = document.createElement('div');
-                row.className = 'participant-item';
-                row.innerHTML = `
-                    <div><strong>${idx + 1}. ${escapeHtml(item.author)}</strong></div>
-                    <span class="comment-text">${escapeHtml(item.text)}</span>
-                `;
-                container.appendChild(row);
-            });
+            container.style.display = 'none';
+            container.innerHTML = "";
 
             btnDraw.disabled = false;
         }
@@ -2591,13 +2581,13 @@
                 }
 
                 statusMsg.innerHTML = "🔥 **ELENEN KİŞİ LİSTEDEN DÜŞÜLDÜ!**";
-                winnerTitleEl.innerHTML = '<i class="fa-solid fa-fire" style="color:#ef4444;"></i> ELENEN KİŞİ(LER)';
+                winnerTitleEl.innerHTML = '<i class="fa-solid fa-fire" style="color:#ef4444;"></i> ELENEN KİŞİ';
 
                 let eliminatedHtml = "";
-                eliminatedList.forEach((e, idx) => {
+                eliminatedList.forEach((e) => {
                     eliminatedHtml += `
                         <div class="eliminated-badge">
-                            <span><span class="eliminated-rank">${idx + 1}. ELENEN</span> ${escapeHtml(e.author)}</span>
+                            <span><span class="eliminated-rank">ELENEN</span> ${escapeHtml(e.author)}</span>
                             <i class="fa-solid fa-user-xmark"></i>
                         </div>
                     `;
@@ -2608,13 +2598,14 @@
                 finalParticipantsPool = poolCopy;
                 const remainingNames = finalParticipantsPool.map(p => p.author);
                 document.getElementById('manualCommentsText').value = remainingNames.join('\n');
-                processParticipantsList();
+                
+                statusMsg.innerHTML = `✅ Katılımcı Listesi Güncellendi: <b>${finalParticipantsPool.length} Kişi Kaldı</b>`;
 
                 if (finalParticipantsPool.length === 1) {
                     const championName = finalParticipantsPool[0].author;
-                    showCustomAlert(`🎉 TEBRİKLER! En sona kalan şampiyon: ${championName}`, "ŞAMPİYON BELLİ OLDU");
-                    winnerListEl.innerHTML += `
-                        <div class="winner-badge" style="margin-top: 10px; background: linear-gradient(90deg, rgba(243, 195, 68, 0.4), rgba(0,0,0,0.6));">
+                    winnerTitleEl.innerHTML = '<i class="fa-solid fa-crown" style="color:var(--gold-primary);"></i> ŞAMPİYON BELLİ OLDU';
+                    winnerListEl.innerHTML = `
+                        <div class="winner-badge" style="background: linear-gradient(90deg, rgba(243, 195, 68, 0.4), rgba(0,0,0,0.6)); border-color: var(--gold-primary);">
                             <span><span class="winner-rank">👑 ŞAMPİYON</span> ${escapeHtml(championName)}</span>
                             <i class="fa-solid fa-crown" style="color:var(--gold-primary);"></i>
                         </div>
