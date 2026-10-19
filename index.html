@@ -388,6 +388,47 @@
             cursor: pointer;
         }
 
+        /* YOUTUBE SÜPER FİLTRE BUTONLARI */
+        .yt-filter-box {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 10px;
+        }
+
+        .yt-filter-btn {
+            flex: 1;
+            padding: 10px 14px;
+            background: rgba(14, 12, 18, 0.9);
+            border: 1px solid var(--youtube-color);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .yt-filter-btn:hover {
+            background: rgba(255, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .yt-filter-btn.active {
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.3) 0%, rgba(128, 0, 0, 0.6) 100%);
+            border-color: #ff4d4d;
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+        }
+
         .streamers-grid {
             display: flex;
             flex-wrap: wrap;
@@ -486,6 +527,17 @@
             padding: 2px 6px;
             border-radius: 4px;
             border: 1px solid rgba(37, 211, 102, 0.4);
+            margin-top: -4px;
+        }
+
+        .yt-sub-badge {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #ff6b6b;
+            background: rgba(255, 0, 0, 0.12);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 0, 0, 0.3);
             margin-top: -4px;
         }
 
@@ -1352,7 +1404,7 @@
                 </div>
 
                 <div id="tabStreamer" class="admin-tab-content">
-                    <h3><i class="fa-solid fa-video"></i> YAYINCI EKLE (TWITCH / YOUTUBE)</h3>
+                    <h3><i class="fa-solid fa-video"></i> YAYINCI / KANAL EKLE (TWITCH / YOUTUBE)</h3>
                     <div class="form-group">
                         <label>Hangi Oyun Sekmesinde Görünsün?</label>
                         <select id="newStreamerGame" class="form-control">
@@ -1369,12 +1421,12 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Yayıncı / Kanal Adı (Twitch için kullanıcı adı)</label>
-                        <input type="text" id="newStreamerName" class="form-control" placeholder="Örn: milchmann">
+                        <label>Yayıncı / Kanal Adı (Twitch için kullanıcı adı, YouTube için Kanal Kimliği / Adı)</label>
+                        <input type="text" id="newStreamerName" class="form-control" placeholder="Örn: milchmann veya UCxxxxxx">
                     </div>
                     <div class="form-group">
                         <label>Kanal Linki</label>
-                        <input type="text" id="newStreamerUrl" class="form-control" placeholder="Örn: https://www.twitch.tv/milchmann">
+                        <input type="text" id="newStreamerUrl" class="form-control" placeholder="Örn: https://www.youtube.com/@MusaRuzgar">
                     </div>
                     <div class="form-group">
                         <label>Takipçi / Abone Sayısı</label>
@@ -1397,7 +1449,7 @@
                 <div id="tabStreamerManage" class="admin-tab-content">
                     <h3><i class="fa-solid fa-users-gear"></i> GİZLİ YAYINCI YÖNETİMİ</h3>
                     <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-bottom: 10px;">
-                        Ana sayfada sadece canlı yayında olanlar görünür. Çevrimdışı (Offline) olan yayıncılar buraya düşer.
+                        Tüm ekli yayıncı ve YouTuber'larınızı buradan düzenleyebilir veya silebilirsiniz.
                     </p>
                     <div id="adminStreamersList" class="admin-streamer-list">
                         <div style="color:var(--text-muted); text-align:center;">Yükleniyor...</div>
@@ -1509,18 +1561,29 @@
             <div style="color: var(--text-muted); font-size: 0.9rem;">Canlı yayınlar kontrol ediliyor...</div>
         </div>
 
-        <!-- YOUTUBER'LAR -->
+        <!-- YOUTUBER'LAR FİLTRE & İÇERİK ALANI -->
         <div class="section-divider">
             <div class="section-divider-inner">
                 <div class="divider-line"></div>
                 <div class="section-title">
                     <i class="fa-solid fa-circle title-dot"></i>
-                    <i class="fa-brands fa-youtube" style="color: var(--youtube-color);"></i> YOUTUBER'LAR (ABONE SIRALI)
+                    <i class="fa-brands fa-youtube" style="color: var(--youtube-color);"></i> YOUTUBE İÇERİK ÜRETİCİLERİ
                     <i class="fa-solid fa-circle title-dot"></i>
                 </div>
                 <div class="divider-line"></div>
             </div>
         </div>
+
+        <!-- YOUTUBE FİLTRE BUTONLARI -->
+        <div class="yt-filter-box">
+            <button onclick="switchYtSort('latest')" id="btnYtSortLatest" class="yt-filter-btn active">
+                <i class="fa-solid fa-video"></i> Son Video Atan YouTuberlar
+            </button>
+            <button onclick="switchYtSort('popular')" id="btnYtSortPopular" class="yt-filter-btn">
+                <i class="fa-solid fa-fire"></i> En Çok İzlenen / Abone YouTuberlar
+            </button>
+        </div>
+
         <div class="streamers-grid" id="youtubeContainer">
             <div style="color: var(--text-muted); font-size: 0.9rem;">Yükleniyor...</div>
         </div>
@@ -1773,6 +1836,7 @@
 
         let isAdminLoggedIn = false;
         let currentSelectedGame = 'knight';
+        let currentYtSortMode = 'latest'; // 'latest' veya 'popular'
         let globalItemsData = [];
         let globalEquipmentsData = [];
         let globalStreamersData = [];
@@ -1834,6 +1898,13 @@
             renderStreamers();
         }
 
+        function switchYtSort(mode) {
+            currentYtSortMode = mode;
+            document.getElementById('btnYtSortLatest').classList.toggle('active', mode === 'latest');
+            document.getElementById('btnYtSortPopular').classList.toggle('active', mode === 'popular');
+            renderStreamersWithApiCheck();
+        }
+
         function toggleAdminPanel() {
             const panel = document.getElementById('adminPanel');
             if (panel) {
@@ -1867,7 +1938,6 @@
             loadStreamers();
             incrementAndGetVisitorStats();
 
-            // HER 60 SANİYEDE BİR ANLIK YAYIN VE İZLENME SAYILARINI OTOMATİK GÜNCELLE
             setInterval(() => {
                 loadStreamers();
             }, 60000);
@@ -2047,6 +2117,7 @@
                     
                     let isLive = false;
                     let viewerCount = 0;
+                    let lastVideoTime = data.lastVideoTime || 0;
 
                     if (data.platform === 'twitch' && twitchTokensValid) {
                         try {
@@ -2064,11 +2135,25 @@
                         } catch(e) { console.error("Stream check error", e); }
                     }
 
+                    // YOUTUBE SON VİDEO BİLGİSİ ÇEKME (API Key Var İse)
+                    if (data.platform === 'youtube' && storedYoutubeApiKey && currentYtSortMode === 'latest') {
+                        try {
+                            const searchUrl = `https://www.googleapis.com/youtube/v3/search?key=${storedYoutubeApiKey}&channelId=${data.name}&part=snippet,id&order=date&maxResults=1`;
+                            const ytRes = await fetch(searchUrl);
+                            const ytData = await ytRes.json();
+                            if (ytData.items && ytData.items.length > 0) {
+                                const publishedAt = ytData.items[0].snippet.publishedAt;
+                                lastVideoTime = new Date(publishedAt).getTime();
+                            }
+                        } catch(e) { console.error("YouTube video check error", e); }
+                    }
+
                     const streamerObj = {
                         ...data,
                         followers: parseInt(data.followers) || 0,
                         viewerCount: viewerCount,
-                        isLive: isLive
+                        isLive: isLive,
+                        lastVideoTime: lastVideoTime
                     };
 
                     allStreamersWithStatus.push(streamerObj);
@@ -2081,14 +2166,19 @@
                 }
             }
 
-            // Sadece ONLINE olanlar -> Anlık izleyici sayısına göre EN ÇOK İZLENENDEN EN AZA SIRALANIR
+            // TWITCH ONLINE
             let onlineTwitch = twitchList.filter(s => s.isLive);
             onlineTwitch.sort((a, b) => b.viewerCount - a.viewerCount);
 
-            // YouTube sıralama: Abone sayısına göre çoktan aza
-            youtubeList.sort((a, b) => b.followers - a.followers);
+            // YOUTUBE SIRALAMA MODU
+            if (currentYtSortMode === 'latest') {
+                // Son video atan en başa
+                youtubeList.sort((a, b) => (b.lastVideoTime || 0) - (a.lastVideoTime || 0));
+            } else {
+                // En çok abonesi/izleneni olan en başa
+                youtubeList.sort((a, b) => b.followers - a.followers);
+            }
 
-            // ANA SAYFA - CANLI TWITCH YAYINCILARI BASILIYOR
             let twitchOnlineHtml = "";
             onlineTwitch.forEach(data => {
                 twitchOnlineHtml += `
@@ -2120,6 +2210,7 @@
                             </div>
                             <div class="streamer-name">${data.name}</div>
                         </a>
+                        <div class="yt-sub-badge"><i class="fa-solid fa-users"></i> ${data.followers.toLocaleString('tr-TR')}</div>
                     </div>
                 `;
             });
@@ -2127,7 +2218,7 @@
             twitchOnlineContainer.innerHTML = onlineTwitch.length > 0 ? twitchOnlineHtml : '<div style="color: var(--text-muted); font-size: 0.9rem;">Şu an aktif canlı yayında olan yayıncı yok.</div>';
             youtubeContainer.innerHTML = youtubeList.length > 0 ? youtubeHtml : '<div style="color: var(--text-muted); font-size: 0.9rem;">Henüz YouTuber eklenmedi.</div>';
 
-            // ADMIN PANELI - GİZLİ BÖLMEDE TÜM YAYINCILAR (OFFLINE/ONLINE) LİSTELENİYOR
+            // GİZLİ BÖLME
             let adminListHtml = "";
             allStreamersWithStatus.forEach(s => {
                 adminListHtml += `
@@ -2136,8 +2227,8 @@
                             <img src="${s.imageUrl}" alt="${s.name}">
                             <div>
                                 <strong>${s.name}</strong> 
-                                <span class="status-pill ${s.isLive ? 'online' : 'offline'}">
-                                    ${s.isLive ? `🔴 CANLI (${s.viewerCount} İzleyici)` : '⚫ OFFLINE'}
+                                <span class="status-pill ${s.platform === 'twitch' ? (s.isLive ? 'online' : 'offline') : 'online'}">
+                                    ${s.platform === 'twitch' ? (s.isLive ? `🔴 CANLI (${s.viewerCount} İzleyici)` : '⚫ OFFLINE') : '▶️ YOUTUBE'}
                                 </span>
                             </div>
                         </div>
