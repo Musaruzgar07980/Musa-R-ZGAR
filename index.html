@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MusaRUZGAR - Pazar Alanı</title>
+    <title>MusaRUZGAR - Pazar Alanı & Çekiliş</title>
 
     <link rel="icon" type="image/png" href="https://i.hizliresim.com/9tiys4o.png">
     
@@ -496,6 +496,11 @@
             text-decoration: none;
         }
 
+        .btn-gold:hover {
+            filter: brightness(1.1);
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+
         .btn-whatsapp {
             width: 100%;
             max-width: 420px;
@@ -654,7 +659,7 @@
         .btn-edit-action { background: #1d4ed8; color: #fff; display: none; }
         .btn-delete { background: #7f1d1d; color: #fca5a5; border: 1px solid #991b1b; display: none; }
 
-        /* EKİPMAN KARTI (DIŞ ÇERÇEVE SARI, İÇ RESİM SADE) */
+        /* EKİPMAN KARTI */
         .eq-card-container {
             background-color: transparent;
             width: 220px !important;
@@ -684,7 +689,7 @@
             height: 100%;
             backface-visibility: hidden;
             border-radius: 12px;
-            border: 2px solid var(--gold-secondary); /* DIŞ ÇERÇEVE SARI CİZGİ */
+            border: 2px solid var(--gold-secondary);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -700,7 +705,6 @@
             justify-content: flex-start;
         }
 
-        /* 1. PC İSMİ / BAŞLIK (EN ÜSTTE) */
         .eq-card-front h3 {
             font-size: 0.85rem;
             color: var(--gold-primary);
@@ -715,7 +719,6 @@
             width: 100%;
         }
 
-        /* 2. RESİM (SARI İÇ ÇERÇEVE KALDIRILDI) */
         .eq-card-front img {
             width: 100% !important;
             height: 155px !important;
@@ -724,10 +727,9 @@
             border-radius: 8px;
             background: #000;
             padding: 2px;
-            border: none; /* İÇ ÇERÇEVE TEMİZLENDİ */
+            border: none;
         }
 
-        /* 3. FİYAT */
         .eq-card-front .front-eq-price {
             font-size: 0.95rem;
             font-weight: 800;
@@ -735,7 +737,6 @@
             margin-bottom: 4px;
         }
 
-        /* 4. STOK (FİYATIN ALTINDA) */
         .item-stock {
             font-size: 0.8rem;
             font-weight: 700;
@@ -743,7 +744,6 @@
             margin-bottom: 4px;
         }
 
-        /* SAĞ ALTTAKİ ÜRÜN DETAYI BUTONU */
         .btn-detail-toggle {
             position: absolute;
             bottom: 10px;
@@ -906,6 +906,229 @@
             resize: none;
             outline: none;
         }
+
+        /* --- ÇEKİLİŞ ALANI CSS BÖLÜMÜ --- */
+        .giveaway-card {
+            width: 100%;
+            max-width: 700px;
+            background: rgba(15, 14, 18, 0.95);
+            border: 2px solid var(--gold-secondary);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 159, 23, 0.15);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .giveaway-header {
+            text-align: center;
+            border-bottom: 1px solid rgba(212, 159, 23, 0.3);
+            padding-bottom: 12px;
+        }
+
+        .giveaway-header h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold-primary);
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .giveaway-header p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        .giveaway-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .giveaway-input-group input {
+            flex-grow: 1;
+        }
+
+        .giveaway-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            background: rgba(8, 8, 10, 0.6);
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px dashed rgba(212, 159, 23, 0.3);
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .giveaway-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gold-primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .giveaway-checkbox-label input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--gold-primary);
+            cursor: pointer;
+        }
+
+        .giveaway-numbers {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .giveaway-number-input {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .giveaway-number-input input {
+            width: 60px;
+            padding: 4px 8px;
+            text-align: center;
+        }
+
+        .participants-box {
+            max-height: 180px;
+            overflow-y: auto;
+            background: rgba(8, 8, 10, 0.9);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .participant-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            border-left: 3px solid var(--gold-secondary);
+        }
+
+        .participant-item span.comment-text {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .winner-display-box {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            background: rgba(212, 159, 23, 0.08);
+            border: 2px solid var(--gold-primary);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 0 20px var(--gold-glow);
+        }
+
+        .winner-title {
+            font-family: 'Cinzel', serif;
+            color: var(--gold-primary);
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .winner-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .winner-badge {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, rgba(243, 195, 68, 0.2), rgba(0,0,0,0.4));
+            border: 1px solid var(--gold-secondary);
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .winner-rank {
+            background: var(--gold-primary);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            font-family: 'Cinzel', serif;
+        }
+
+        .backup-winner-badge {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px dashed var(--text-muted);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .giveaway-status-msg {
+            font-size: 0.85rem;
+            color: var(--gold-primary);
+            text-align: center;
+            font-weight: 600;
+            min-height: 20px;
+        }
+
+        .tab-toggle-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        .tab-toggle-btn {
+            flex: 1;
+            padding: 6px 10px;
+            background: rgba(10, 10, 12, 0.8);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .tab-toggle-btn.active {
+            background: rgba(212, 159, 23, 0.2);
+            border-color: var(--gold-primary);
+            color: var(--gold-primary);
+        }
     </style>
 </head>
 <body>
@@ -934,6 +1157,7 @@
                     <button onclick="showAdminTab('tabLogo')" id="btnTabLogo" class="admin-nav-btn active">Logo & Oyun Görselleri</button>
                     <button onclick="showAdminTab('tabStreamer')" id="btnTabStreamer" class="admin-nav-btn">Yayıncı Ekle</button>
                     <button onclick="showAdminTab('tabItem')" id="btnTabItem" class="admin-nav-btn">İlan / Ekipman Ekle</button>
+                    <button onclick="showAdminTab('tabApi')" id="btnTabApi" class="admin-nav-btn">Çekiliş API Ayarı</button>
                 </div>
 
                 <div id="tabLogo" class="admin-tab-content active">
@@ -1042,6 +1266,20 @@
                         <i class="fa-solid fa-cloud-arrow-up"></i> Seçilen Oyuna Ekle
                     </button>
                 </div>
+
+                <div id="tabApi" class="admin-tab-content">
+                    <h3><i class="fa-brands fa-youtube"></i> YOUTUBE API KEY AYARI</h3>
+                    <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">
+                        Sınırsız ve otomatik YouTube yorumlarını çekmek için Google Cloud Console üzerinden aldığınız YouTube Data API Key anahtarınızı ekleyebilirsiniz.
+                    </p>
+                    <div class="form-group">
+                        <label>YouTube Data API Key</label>
+                        <input type="text" id="youtubeApiKeyInput" class="form-control" placeholder="AIzaSy...">
+                    </div>
+                    <button onclick="saveYoutubeApiKey()" class="btn-gold" style="max-width: 100%; margin-top: 5px;">
+                        <i class="fa-solid fa-save"></i> API Key'i Kaydet
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -1050,6 +1288,93 @@
                 <i class="fa-solid fa-users"></i>
                 <div class="stat-title">Toplam Ziyaretçi</div>
                 <div class="stat-value" id="totalVisitsCount">Yükleniyor...</div>
+            </div>
+        </div>
+
+        <!-- YENİ: HERKESE AÇIK YOUTUBE ÇEKİLİŞ ALANI -->
+        <div class="section-divider">
+            <div class="section-divider-inner">
+                <div class="divider-line"></div>
+                <div class="section-title">
+                    <i class="fa-solid fa-gift" style="color: var(--gold-primary);"></i> CANLI CANLI YOUTUBE ÇEKİLİŞ ALANI
+                </div>
+                <div class="divider-line"></div>
+            </div>
+        </div>
+
+        <div class="giveaway-card">
+            <div class="giveaway-header">
+                <h2><i class="fa-brands fa-youtube" style="color: var(--youtube-color);"></i> YOUTUBE YORUM ÇEKİLİŞİ</h2>
+                <p>YouTube video linkini girin, yorum yapan talihlileri anında çekin!</p>
+            </div>
+
+            <div class="tab-toggle-box">
+                <button onclick="switchGiveawayMethod('link')" id="btnMethodLink" class="tab-toggle-btn active">
+                    <i class="fa-solid fa-link"></i> YouTube Linki İle Çek
+                </button>
+                <button onclick="switchGiveawayMethod('manual')" id="btnMethodManual" class="tab-toggle-btn">
+                    <i class="fa-solid fa-paste"></i> Manuel Listeyle Çek
+                </button>
+            </div>
+
+            <!-- YÖNTEM 1: YOUTUBE LINKI ILE -->
+            <div id="methodLinkBox">
+                <div class="form-group">
+                    <label style="font-size:0.85rem; color:var(--gold-primary);">YouTube Video Linki:</label>
+                    <div class="giveaway-input-group">
+                        <input type="text" id="ytVideoUrl" class="form-control" placeholder="https://www.youtube.com/watch?v=XXXXXX veya https://youtu.be/XXXXXX">
+                        <button onclick="fetchYoutubeComments()" id="btnFetchComments" class="btn-gold" style="max-width: 160px; padding: 8px 12px; font-size: 0.85rem;">
+                            <i class="fa-solid fa-comments"></i> Yorumları Çek
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- YÖNTEM 2: MANUEL YORUM YAPISTIRMA (Sınırsız / API Yetkisiz Yedek Çözüm) -->
+            <div id="methodManualBox" style="display: none;">
+                <div class="form-group">
+                    <label style="font-size:0.85rem; color:var(--gold-primary);">Katılımcı / Yorum Listesi (Her Satıra Bir İsim):</label>
+                    <textarea id="manualCommentsText" class="form-control" style="height: 100px; resize: vertical;" placeholder="Ahmet&#10;Mehmet&#10;Kullanici123&#10;Ahmet"></textarea>
+                    <button onclick="loadManualComments()" class="btn-gold" style="max-width: 180px; margin-top: 8px; padding: 8px 12px; font-size: 0.85rem;">
+                        <i class="fa-solid fa-list-check"></i> Listeyi Yükle
+                    </button>
+                </div>
+            </div>
+
+            <div class="giveaway-options">
+                <label class="giveaway-checkbox-label">
+                    <input type="checkbox" id="uniqueUserCheck" checked onchange="processParticipantsList()">
+                    <span>Herkesi 1 defa al (Tek hak)</span>
+                </label>
+
+                <div class="giveaway-numbers">
+                    <div class="giveaway-number-input">
+                        <label for="winnerCount">Kazanan:</label>
+                        <input type="number" id="winnerCount" class="form-control" value="1" min="1" max="50">
+                    </div>
+                    <div class="giveaway-number-input">
+                        <label for="backupCount">Yedek:</label>
+                        <input type="number" id="backupCount" class="form-control" value="1" min="0" max="50">
+                    </div>
+                </div>
+            </div>
+
+            <div id="giveawayStatus" class="giveaway-status-msg">
+                Henüz yorum yüklenmedi.
+            </div>
+
+            <div id="participantsContainer" class="participants-box" style="display: none;">
+                <!-- Katılımcılar dinamik listelenecek -->
+            </div>
+
+            <button onclick="startGiveawayDraw()" id="btnStartDraw" class="btn-gold" style="max-width: 100%; font-size: 1.1rem; padding: 14px; margin-top: 5px;" disabled>
+                <i class="fa-solid fa-trophy"></i> ÇEKİLİŞİ BAŞLAT
+            </button>
+
+            <div id="winnerDisplayBox" class="winner-display-box">
+                <div class="winner-title"><i class="fa-solid fa-crown"></i> ÇEKİLİŞ SONUÇLARI</div>
+                <div id="winnerList" class="winner-list"></div>
+                <div id="backupList" class="winner-list" style="margin-top: 10px;"></div>
             </div>
         </div>
 
@@ -1217,6 +1542,11 @@
         let globalItemsData = [];
         let globalEquipmentsData = [];
         let globalStreamersData = [];
+        let storedYoutubeApiKey = "";
+
+        // Çekiliş verileri
+        let rawCommentsList = []; // ham gelen tüm yorumlar
+        let finalParticipantsPool = []; // çekilişte kullanılacak aktif çekiliş havuzu
 
         document.getElementById('newItemCategory').addEventListener('change', function() {
             const val = this.value;
@@ -1243,6 +1573,7 @@
             if(tabId === 'tabLogo') document.getElementById('btnTabLogo').classList.add('active');
             if(tabId === 'tabStreamer') document.getElementById('btnTabStreamer').classList.add('active');
             if(tabId === 'tabItem') document.getElementById('btnTabItem').classList.add('active');
+            if(tabId === 'tabApi') document.getElementById('btnTabApi').classList.add('active');
         }
 
         function switchGame(gameKey) {
@@ -1326,8 +1657,22 @@
                     if (data.logoUrl) document.getElementById('mainLogoImg').src = data.logoUrl;
                     if (data.knightImg) document.getElementById('knightTabImg').src = data.knightImg;
                     if (data.riseImg) document.getElementById('riseTabImg').src = data.riseImg;
+                    if (data.youtubeApiKey) {
+                        storedYoutubeApiKey = data.youtubeApiKey;
+                        document.getElementById('youtubeApiKeyInput').value = data.youtubeApiKey;
+                    }
                 }
             }).catch((error) => console.error("Ayarlar yükleme hatası:", error));
+        }
+
+        function saveYoutubeApiKey() {
+            const key = document.getElementById('youtubeApiKeyInput').value.trim();
+            db.collection("settings").doc("portalSettings").set({
+                youtubeApiKey: key
+            }, { merge: true }).then(() => {
+                storedYoutubeApiKey = key;
+                alert("YouTube API Key başarıyla kaydedildi!");
+            }).catch(err => alert("Kayıt hatası: " + err.message));
         }
 
         function updateLogo() {
@@ -1808,6 +2153,280 @@
 
             const text = encodeURIComponent(`Merhaba MusaRUZGAR, teklif/sipariş mesajım (${currentSelectedGame === 'knight' ? 'Knight Online' : 'Rise Online'}): \n\n${offerMsg}`);
             window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+        }
+
+        /* --- YOUTUBE ÇEKİLİŞ MANTIK VE FONKSİYONLARI --- */
+
+        function switchGiveawayMethod(method) {
+            const linkBox = document.getElementById('methodLinkBox');
+            const manualBox = document.getElementById('methodManualBox');
+            const btnLink = document.getElementById('btnMethodLink');
+            const btnManual = document.getElementById('btnMethodManual');
+
+            if (method === 'link') {
+                linkBox.style.display = 'block';
+                manualBox.style.display = 'none';
+                btnLink.classList.add('active');
+                btnManual.classList.remove('active');
+            } else {
+                linkBox.style.display = 'none';
+                manualBox.style.display = 'block';
+                btnLink.classList.remove('active');
+                btnManual.classList.add('active');
+            }
+        }
+
+        function extractVideoId(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        async function fetchYoutubeComments() {
+            const urlInput = document.getElementById('ytVideoUrl').value.trim();
+            const statusMsg = document.getElementById('giveawayStatus');
+            const btnFetch = document.getElementById('btnFetchComments');
+
+            if (!urlInput) {
+                alert("Lütfen geçerli bir YouTube video linki yazın.");
+                return;
+            }
+
+            const videoId = extractVideoId(urlInput);
+            if (!videoId) {
+                alert("YouTube Video ID'si bulunamadı. Lütfen geçerli bir link girin.");
+                return;
+            }
+
+            btnFetch.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Çekiliyor...';
+            btnFetch.disabled = true;
+            statusMsg.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Yorumlar YouTube üzerinden toplanıyor, lütfen bekleyin...';
+
+            rawCommentsList = [];
+
+            try {
+                if (storedYoutubeApiKey) {
+                    // API Key Varsa Direct Google Data API ile Sayfalayarak Bütün Yorumları Kaçırmadan Çek
+                    let nextPageToken = "";
+                    let fetchMore = true;
+
+                    while (fetchMore) {
+                        let apiUrl = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=100&key=${storedYoutubeApiKey}`;
+                        if (nextPageToken) apiUrl += `&pageToken=${nextPageToken}`;
+
+                        const res = await fetch(apiUrl);
+                        const data = await res.json();
+
+                        if (data.error) {
+                            throw new Error(data.error.message || "API Hatası oluştu.");
+                        }
+
+                        if (data.items) {
+                            data.items.forEach(item => {
+                                const topComment = item.snippet.topLevelComment.snippet;
+                                rawCommentsList.push({
+                                    author: topComment.authorDisplayName,
+                                    text: topComment.textDisplay
+                                });
+                            });
+                        }
+
+                        if (data.nextPageToken) {
+                            nextPageToken = data.nextPageToken;
+                        } else {
+                            fetchMore = false;
+                        }
+                    }
+                } else {
+                    // API Key Olmadığında CORS/Public API Üzerinden Çekim Denemesi
+                    const corsProxyUrl = `https://yt-comments-api.vercel.app/api/comments?videoId=${videoId}`;
+                    const res = await fetch(corsProxyUrl);
+                    if (!res.ok) {
+                        throw new Error("Yorumlar çekilemedi. API Key tanımlı değil veya servis meşgul. İsterseniz 'Manuel Listeyle Çek' sekmesini kullanabilirsiniz.");
+                    }
+                    const data = await res.json();
+                    if (data.comments && data.comments.length > 0) {
+                        data.comments.forEach(c => {
+                            rawCommentsList.push({
+                                author: c.author || c.authorDisplayName || "Kullanıcı",
+                                text: c.text || c.textDisplay || ""
+                            });
+                        });
+                    } else {
+                        throw new Error("Yorum bulunamadı veya video yoruma kapalı.");
+                    }
+                }
+
+                if (rawCommentsList.length === 0) {
+                    statusMsg.innerHTML = "❌ Bu videoda hiç yorum bulunamadı.";
+                    document.getElementById('btnStartDraw').disabled = true;
+                } else {
+                    processParticipantsList();
+                }
+
+            } catch (err) {
+                console.error(err);
+                statusMsg.innerHTML = `<span style="color:#ef4444;">❌ Hata: ${err.message}</span>`;
+                alert("Yorumlar çekilirken bir hata oluştu. Alternatif olarak üstteki 'Manuel Listeyle Çek' sekmesini kullanarak kopyalayıp yapıştırabilirsiniz.");
+            } finally {
+                btnFetch.innerHTML = '<i class="fa-solid fa-comments"></i> Yorumları Çek';
+                btnFetch.disabled = false;
+            }
+        }
+
+        function loadManualComments() {
+            const text = document.getElementById('manualCommentsText').value.trim();
+            const statusMsg = document.getElementById('giveawayStatus');
+
+            if (!text) {
+                alert("Lütfen listeye en az bir isim yazın.");
+                return;
+            }
+
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            rawCommentsList = lines.map(line => ({
+                author: line,
+                text: "Manuel Eklendi"
+            }));
+
+            processParticipantsList();
+        }
+
+        function processParticipantsList() {
+            const isUnique = document.getElementById('uniqueUserCheck').checked;
+            const statusMsg = document.getElementById('giveawayStatus');
+            const container = document.getElementById('participantsContainer');
+            const btnDraw = document.getElementById('btnStartDraw');
+
+            if (rawCommentsList.length === 0) return;
+
+            finalParticipantsPool = [];
+            container.innerHTML = "";
+
+            if (isUnique) {
+                const uniqueAuthors = new Set();
+                rawCommentsList.forEach(c => {
+                    if (!uniqueAuthors.has(c.author)) {
+                        uniqueAuthors.add(c.author);
+                        finalParticipantsPool.push(c);
+                    }
+                });
+            } else {
+                finalParticipantsPool = [...rawCommentsList];
+            }
+
+            statusMsg.innerHTML = `✅ Toplam <b>${rawCommentsList.length}</b> Yorum Çekildi. Çekiliş Havuzu: <b>${finalParticipantsPool.length} Hak/Katılımcı</b> (${isUnique ? 'Tekil Kişiler' : 'Tüm Yorumlar Hak Kazandı'})`;
+
+            container.style.display = 'flex';
+            finalParticipantsPool.forEach((item, idx) => {
+                const row = document.createElement('div');
+                row.className = 'participant-item';
+                row.innerHTML = `
+                    <div><strong>${idx + 1}. ${escapeHtml(item.author)}</strong></div>
+                    <span class="comment-text">${escapeHtml(item.text)}</span>
+                `;
+                container.appendChild(row);
+            });
+
+            btnDraw.disabled = false;
+        }
+
+        function escapeHtml(str) {
+            return str ? str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;") : '';
+        }
+
+        function startGiveawayDraw() {
+            const winnerNum = parseInt(document.getElementById('winnerCount').value) || 1;
+            const backupNum = parseInt(document.getElementById('backupCount').value) || 0;
+            const statusMsg = document.getElementById('giveawayStatus');
+            const winnerBox = document.getElementById('winnerDisplayBox');
+            const winnerListEl = document.getElementById('winnerList');
+            const backupListEl = document.getElementById('backupList');
+            const btnDraw = document.getElementById('btnStartDraw');
+
+            if (finalParticipantsPool.length === 0) {
+                alert("Çekiliş yapılacak katılımcı listesi boş!");
+                return;
+            }
+
+            if (winnerNum + backupNum > finalParticipantsPool.length) {
+                alert(`İstenen kazanan (${winnerNum}) ve yedek (${backupNum}) sayısı, toplam katılan kişi sayısından (${finalParticipantsPool.length}) fazla olamaz!`);
+                return;
+            }
+
+            btnDraw.disabled = true;
+            winnerBox.style.display = 'none';
+            winnerListEl.innerHTML = "";
+            backupListEl.innerHTML = "";
+
+            let countdown = 20; // 2 saniye hızlı animasyon efekti
+            const interval = setInterval(() => {
+                const randomIdx = Math.floor(Math.random() * finalParticipantsPool.length);
+                statusMsg.innerHTML = `<i class="fa-solid fa-dice fa-spin" style="color:var(--gold-primary);"></i> Kazanan Belirleniyor: <span style="font-size:1.2rem; font-weight:bold; color:var(--gold-primary);">${escapeHtml(finalParticipantsPool[randomIdx].author)}</span>`;
+                countdown--;
+
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    executeFinalSelection(winnerNum, backupNum);
+                    btnDraw.disabled = false;
+                }
+            }, 100);
+        }
+
+        function executeFinalSelection(wNum, bNum) {
+            const poolCopy = [...finalParticipantsPool];
+            const winners = [];
+            const backups = [];
+
+            // Asıl kazananları rastgele seç
+            for (let i = 0; i < wNum; i++) {
+                const randIndex = Math.floor(Math.random() * poolCopy.length);
+                winners.push(poolCopy[randIndex]);
+                poolCopy.splice(randIndex, 1);
+            }
+
+            // Yedekleri rastgele seç
+            for (let j = 0; j < bNum; j++) {
+                if (poolCopy.length === 0) break;
+                const randIndex = Math.floor(Math.random() * poolCopy.length);
+                backups.push(poolCopy[randIndex]);
+                poolCopy.splice(randIndex, 1);
+            }
+
+            // Sonuçları Ekrana Yazdır
+            const winnerBox = document.getElementById('winnerDisplayBox');
+            const winnerListEl = document.getElementById('winnerList');
+            const backupListEl = document.getElementById('backupList');
+            const statusMsg = document.getElementById('giveawayStatus');
+
+            statusMsg.innerHTML = "🎉 **ÇEKİLİŞ BAŞARIYLA TAMAMLANDI!** 🎉";
+
+            let winnersHtml = "<div style='color:var(--gold-primary); font-family:Cinzel; font-weight:bold; margin-bottom:5px; text-align:left;'>🏆 KAZANANLAR:</div>";
+            winners.forEach((w, idx) => {
+                winnersHtml += `
+                    <div class="winner-badge">
+                        <span><span class="winner-rank">${idx + 1}. KAZANAN</span> ${escapeHtml(w.author)}</span>
+                        <i class="fa-solid fa-trophy" style="color:var(--gold-primary);"></i>
+                    </div>
+                `;
+            });
+            winnerListEl.innerHTML = winnersHtml;
+
+            if (backups.length > 0) {
+                let backupsHtml = "<div style='color:var(--text-muted); font-family:Cinzel; font-weight:bold; margin-top:10px; margin-bottom:5px; text-align:left;'>🛡️ YEDEKLER:</div>";
+                backups.forEach((b, idx) => {
+                    backupsHtml += `
+                        <div class="backup-winner-badge">
+                            <span><strong>${idx + 1}. YEDEK:</strong> ${escapeHtml(b.author)}</span>
+                            <i class="fa-solid fa-user-clock"></i>
+                        </div>
+                    `;
+                });
+                backupListEl.innerHTML = backupsHtml;
+            }
+
+            winnerBox.style.display = 'flex';
+            winnerBox.scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 </body>
