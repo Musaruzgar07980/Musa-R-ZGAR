@@ -1681,7 +1681,7 @@
                 Henüz yorum/katılımcı yüklenmedi.
             </div>
 
-            <!-- YÜKLENEN YORUMLAR / KATILIMCILAR LİSTESİ -->
+            <!-- YÜKLENEN YORUMLAR LİSTESİ (SADECE YOUTUBE TARAFINDA GÖRÜNECEK) -->
             <div id="participantsContainer" class="participants-box" style="display: none;"></div>
 
             <button onclick="startGiveawayDraw()" id="btnStartDraw" class="btn-gold" style="max-width: 100%; font-size: 1.1rem; padding: 14px; margin-top: 5px;" disabled>
@@ -2359,17 +2359,22 @@
             const manualBox = document.getElementById('methodManualBox');
             const btnLink = document.getElementById('btnMethodLink');
             const btnManual = document.getElementById('btnMethodManual');
+            const participantsContainer = document.getElementById('participantsContainer');
 
             if (method === 'link') {
                 linkBox.style.display = 'block';
                 manualBox.style.display = 'none';
                 btnLink.classList.add('active');
                 btnManual.classList.remove('active');
+                // Eğer havuzda YouTube verisi varsa listeyi tekrar göster
+                if (finalParticipantsPool.length > 0) participantsContainer.style.display = 'flex';
             } else {
                 linkBox.style.display = 'none';
                 manualBox.style.display = 'block';
                 btnLink.classList.remove('active');
                 btnManual.classList.add('active');
+                // Twitch sekmesinde liste kutusunu gizle
+                participantsContainer.style.display = 'none';
             }
         }
 
@@ -2511,7 +2516,7 @@
 
             statusMsg.innerHTML = `✅ Katılımcı Listesi Yüklendi: <b>${finalParticipantsPool.length} Kişi/Hak</b>`;
 
-            // Yüklenen listeyi alt alta kutucuk içerisinde gösterelim
+            // Yüklenen listeyi alt alta kutucuk içerisinde gösterelim (Sadece YouTube sekmesindeyken)
             let listHtml = "";
             finalParticipantsPool.forEach((p, idx) => {
                 listHtml += `
@@ -2522,7 +2527,12 @@
                 `;
             });
             container.innerHTML = listHtml;
-            container.style.display = 'flex';
+            
+            if (currentGiveawayMethod === 'link') {
+                container.style.display = 'flex';
+            } else {
+                container.style.display = 'none';
+            }
 
             btnDraw.disabled = false;
         }
@@ -2619,9 +2629,6 @@
                 document.getElementById('manualCommentsText').value = remainingNames.join('\n');
                 
                 statusMsg.innerHTML = `✅ Katılımcı Listesi Güncellendi: <b>${finalParticipantsPool.length} Kişi Kaldı</b>`;
-
-                // Listeyi de güncelle
-                processParticipantsList();
 
                 if (finalParticipantsPool.length === 1) {
                     const championName = finalParticipantsPool[0].author;
