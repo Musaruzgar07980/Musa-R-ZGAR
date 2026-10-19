@@ -157,8 +157,8 @@
             border-color: var(--gold-primary);
             box-shadow: 0 0 20px var(--gold-glow);
         }
-	
-	.game-tab-img {
+
+        .game-tab-img {
             width: 50px;
             height: 50px;
             border-radius: 50%;
@@ -1253,6 +1253,10 @@
             font-size: 0.8rem;
             cursor: pointer;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
         .tab-toggle-btn.active {
@@ -1437,7 +1441,9 @@
 
         <a href="https://www.enucuzgb.com/rise-online/gb?d=1" target="_blank" class="gb-banner-btn">
             <i class="fa-solid fa-coins" style="font-size: 1.2rem;"></i> GB FİYATLARI İÇİN TIKLAYIN
-        </a><div class="section-divider">
+        </a>
+
+        <div class="section-divider">
             <div class="section-divider-inner">
                 <div class="divider-line"></div>
                 <div class="section-title">
@@ -1598,28 +1604,30 @@
         <button onclick="openGiveawayModal()" class="open-giveaway-trigger-btn">
             <i class="fa-solid fa-gift" style="font-size: 1.4rem;"></i> YOUTUBE ÇEKİLİŞ ALANINI AÇ
         </button>
-    </div><!-- ÇEKİLİŞ MODAL (POP-UP) PENCERESİ -->
+    </div>
+
+    <!-- ÇEKİLİŞ MODAL (POP-UP) PENCERESİ -->
     <div id="giveawayModalOverlay" class="custom-modal-overlay">
         <div class="giveaway-card">
             <button onclick="closeGiveawayModal()" class="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
 
             <div class="giveaway-header">
                 <h2><i class="fa-brands fa-youtube" style="color: var(--youtube-color);"></i> CANLI ÇEKİLİŞ ALANI</h2>
-                <p>YouTube video linkini girin veya manuel listeyle çekiliş yapın!</p>
+                <p>YouTube video linkini girin veya Twitch yardımlaşma listesiyle çekiliş yapın!</p>
             </div>
 
             <div class="tab-toggle-box">
                 <button onclick="switchGiveawayMethod('link')" id="btnMethodLink" class="tab-toggle-btn active">
-                    <i class="fa-solid fa-link"></i> YouTube Linki İle Çek
+                    <i class="fa-brands fa-youtube" style="color: var(--youtube-color);"></i> YouTube Çekilişi
                 </button>
                 <button onclick="switchGiveawayMethod('manual')" id="btnMethodManual" class="tab-toggle-btn">
-                    <i class="fa-solid fa-paste"></i> Manuel Listeyle Çek
+                    <i class="fa-brands fa-twitch" style="color: var(--twitch-color);"></i> Twitch Yardımlaşma
                 </button>
             </div>
 
             <div id="methodLinkBox">
                 <div class="form-group">
-                    <label style="font-size:0.85rem; color:var(--gold-primary);">YouTube Video Linki:</label>
+                    <label style="font-size:0.85rem; color:var(--gold-primary);"><i class="fa-brands fa-youtube"></i> YouTube Video Linki:</label>
                     <div class="giveaway-input-group">
                         <input type="text" id="ytVideoUrl" class="form-control" placeholder="https://www.youtube.com/watch?v=XXXXXX">
                         <button onclick="fetchYoutubeComments()" id="btnFetchComments" class="btn-gold" style="max-width: 160px; padding: 8px 12px; font-size: 0.85rem;">
@@ -1631,8 +1639,8 @@
 
             <div id="methodManualBox" style="display: none;">
                 <div class="form-group">
-                    <label style="font-size:0.85rem; color:var(--gold-primary);">Katılımcı / Yorum Listesi (Her Satıra Bir İsim):</label>
-                    <textarea id="manualCommentsText" class="form-control" style="height: 100px; resize: vertical;" placeholder="Ahmet&#10;Mehmet&#10;Kullanici123&#10;Ayşe"></textarea>
+                    <label style="font-size:0.85rem; color:var(--gold-primary);"><i class="fa-brands fa-twitch" style="color: var(--twitch-color);"></i> Twitch Yardımlaşma Katılımcı Listesi (Her Satıra Bir İsim):</label>
+                    <textarea id="manualCommentsText" class="form-control" style="height: 100px; resize: vertical;" placeholder="İzleyici1&#10;İzleyici2&#10;Moderatör&#10;Abone3"></textarea>
                     
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; flex-wrap: wrap; gap: 8px;">
                         <label class="giveaway-checkbox-label" style="color: #f87171;">
@@ -1673,6 +1681,7 @@
                 Henüz yorum/katılımcı yüklenmedi.
             </div>
 
+            <!-- YÜKLENEN YORUMLAR / KATILIMCILAR LİSTESİ -->
             <div id="participantsContainer" class="participants-box" style="display: none;"></div>
 
             <button onclick="startGiveawayDraw()" id="btnStartDraw" class="btn-gold" style="max-width: 100%; font-size: 1.1rem; padding: 14px; margin-top: 5px;" disabled>
@@ -2454,7 +2463,7 @@
             } catch (err) {
                 console.error(err);
                 statusMsg.innerHTML = `<span style="color:#ef4444;">❌ Hata: ${err.message}</span>`;
-                showCustomAlert("Yorumlar otomatik çekilemedi. YouTube API Key ekleyebilir veya 'Manuel Listeyle Çek' sekmesini kullanabilirsiniz.", "BİLGİ");
+                showCustomAlert("Yorumlar otomatik çekilemedi. YouTube API Key ekleyebilir veya 'Twitch Yardımlaşma' sekmesini kullanabilirsiniz.", "BİLGİ");
             } finally {
                 btnFetch.innerHTML = '<i class="fa-solid fa-comments"></i> Yorumları Çek';
                 btnFetch.disabled = false;
@@ -2472,7 +2481,7 @@
             const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             rawCommentsList = lines.map(line => ({
                 author: line,
-                text: "Manuel Eklendi"
+                text: "Twitch Yardımlaşma Katılımcısı"
             }));
 
             processParticipantsList();
@@ -2502,8 +2511,18 @@
 
             statusMsg.innerHTML = `✅ Katılımcı Listesi Yüklendi: <b>${finalParticipantsPool.length} Kişi/Hak</b>`;
 
-            container.style.display = 'none';
-            container.innerHTML = "";
+            // Yüklenen listeyi alt alta kutucuk içerisinde gösterelim
+            let listHtml = "";
+            finalParticipantsPool.forEach((p, idx) => {
+                listHtml += `
+                    <div class="participant-item">
+                        <span><strong>${idx + 1}.</strong> ${escapeHtml(p.author)}</span>
+                        <span class="comment-text">${escapeHtml(p.text)}</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = listHtml;
+            container.style.display = 'flex';
 
             btnDraw.disabled = false;
         }
@@ -2600,6 +2619,9 @@
                 document.getElementById('manualCommentsText').value = remainingNames.join('\n');
                 
                 statusMsg.innerHTML = `✅ Katılımcı Listesi Güncellendi: <b>${finalParticipantsPool.length} Kişi Kaldı</b>`;
+
+                // Listeyi de güncelle
+                processParticipantsList();
 
                 if (finalParticipantsPool.length === 1) {
                     const championName = finalParticipantsPool[0].author;
