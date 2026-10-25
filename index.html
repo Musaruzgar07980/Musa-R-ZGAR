@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MusaRUZGAR - Pazar Alanı & Canlı Yayınlar</title>
 
-    <!-- Güvenlik Meta Başlığı -->
     <link rel="icon" type="image/png" href="https://i.hizliresim.com/9tiys4o.png">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1510,10 +1509,6 @@
 
                 <div id="tabApi" class="admin-tab-content">
                     <h3><i class="fa-solid fa-key"></i> API AYARLARI</h3>
-                    <div class="form-group">
-                        <label><i class="fa-brands fa-youtube" style="color:var(--youtube-color);"></i> YouTube Data API Key</label>
-                        <input type="text" id="youtubeApiKeyInput" class="form-control" placeholder="AIzaSy...">
-                    </div>
                     <div class="form-group" style="margin-top: 10px;">
                         <label><i class="fa-solid fa-cloud" style="color:var(--gold-primary);"></i> Cloudflare Worker Twitch URL</label>
                         <input type="text" id="twitchWorkerUrlInput" class="form-control" placeholder="https://senin-worker.workers.dev">
@@ -1576,11 +1571,8 @@
         </div>
 
         <div class="yt-filter-box">
-            <button onclick="switchYtSort('latest')" id="btnYtSortLatest" class="yt-filter-btn active">
-                <i class="fa-solid fa-video"></i> Son Video Atan YouTuberlar
-            </button>
-            <button onclick="switchYtSort('popular')" id="btnYtSortPopular" class="yt-filter-btn">
-                <i class="fa-solid fa-fire"></i> En Çok İzlenen / Abone YouTuberlar
+            <button onclick="switchYtSort('popular')" id="btnYtSortPopular" class="yt-filter-btn active" style="flex:unset; width:100%;">
+                <i class="fa-solid fa-fire"></i> YouTuber Listesi (Abone Sıralı)
             </button>
         </div>
 
@@ -1827,18 +1819,15 @@
 
         let isAdminLoggedIn = false;
         let currentSelectedGame = 'knight';
-        let currentYtSortMode = 'latest'; 
         let globalItemsData = [];
         let globalEquipmentsData = [];
         let globalStreamersData = [];
-        let storedYoutubeApiKey = "";
         let storedTwitchWorkerUrl = "";
 
         let rawCommentsList = [];
         let finalParticipantsPool = [];
         let currentGiveawayMethod = 'link';
 
-        // Güvenli URL ve XSS Kaçış Fonksiyonları
         function escapeHtml(str) {
             if (!str) return '';
             return String(str)
@@ -1910,13 +1899,6 @@
             renderStreamers();
         }
 
-        function switchYtSort(mode) {
-            currentYtSortMode = mode;
-            document.getElementById('btnYtSortLatest').classList.toggle('active', mode === 'latest');
-            document.getElementById('btnYtSortPopular').classList.toggle('active', mode === 'popular');
-            renderStreamersWithApiCheck();
-        }
-
         function toggleAdminPanel() {
             const panel = document.getElementById('adminPanel');
             if (panel) {
@@ -1929,7 +1911,6 @@
             }
         }
 
-        // Firebase Auth ile Giriş
         function handleAdminLogin() {
             const email = document.getElementById('adminEmail').value.trim();
             const pass = document.getElementById('adminPassword').value;
@@ -1940,7 +1921,7 @@
             }
 
             auth.signInWithEmailAndPassword(email, pass)
-                .then((userCredential) => {
+                .then(() => {
                     showCustomAlert('Yönetici girişi başarılı!', 'TEBRİKLER');
                 })
                 .catch((error) => {
@@ -1954,7 +1935,6 @@
             });
         }
 
-        // Firebase Auth Durum Dinleyicisi (onAuthStateChanged)
         auth.onAuthStateChanged((user) => {
             const loginSection = document.getElementById('loginSection');
             const addItemSection = document.getElementById('addItemSection');
@@ -1984,7 +1964,6 @@
             loadStreamers();
             incrementAndGetVisitorStats();
 
-            // Kota optimizasyonu: 5 dakikada bir ve sayfa aktifse yenile
             setInterval(() => {
                 if (!document.hidden) {
                     loadStreamers();
@@ -1997,7 +1976,6 @@
             const sessionKey = "musaruzgar_visited";
 
             if (sessionStorage.getItem(sessionKey)) {
-                // Oturum açılmışsa sadece mevcut değeri oku, işlem yapma
                 statsRef.get().then((doc) => {
                     if (doc.exists) {
                         document.getElementById('totalVisitsCount').innerText = (doc.data().totalVisits || 0).toLocaleString('tr-TR');
@@ -2031,10 +2009,6 @@
                     if (data.logoUrl) document.getElementById('mainLogoImg').src = data.logoUrl;
                     if (data.knightImg) document.getElementById('knightTabImg').src = data.knightImg;
                     if (data.riseImg) document.getElementById('riseTabImg').src = data.riseImg;
-                    if (data.youtubeApiKey) {
-                        storedYoutubeApiKey = data.youtubeApiKey;
-                        document.getElementById('youtubeApiKeyInput').value = data.youtubeApiKey;
-                    }
                     if (data.twitchWorkerUrl) {
                         storedTwitchWorkerUrl = data.twitchWorkerUrl;
                         document.getElementById('twitchWorkerUrlInput').value = data.twitchWorkerUrl;
@@ -2044,14 +2018,11 @@
         }
 
         function saveApiKeys() {
-            const ytKey = document.getElementById('youtubeApiKeyInput').value.trim();
             const twWorker = document.getElementById('twitchWorkerUrlInput').value.trim();
 
             db.collection("settings").doc("portalSettings").set({
-                youtubeApiKey: ytKey,
                 twitchWorkerUrl: twWorker
             }, { merge: true }).then(() => {
-                storedYoutubeApiKey = ytKey;
                 storedTwitchWorkerUrl = twWorker;
                 showCustomAlert("API Ayarları başarıyla kaydedildi!", "BAŞARILI");
                 loadStreamers();
@@ -2158,7 +2129,7 @@
                         const twRes = await fetch(storedTwitchWorkerUrl);
                         const twData = await twRes.json();
                         if (twData && twData.streams) {
-                            twitchStatuses = twData.streams; // { username: viewer_count }
+                            twitchStatuses = twData.streams;
                         }
                     } catch(e) { console.error("Cloudflare Worker Twitch hatası", e); }
                 }
@@ -2168,7 +2139,6 @@
                         
                         let isLive = false;
                         let viewerCount = 0;
-                        let lastVideoTime = data.lastVideoTime || 0;
 
                         if (data.platform === 'twitch') {
                             const lowerName = data.name.toLowerCase();
@@ -2178,24 +2148,11 @@
                             }
                         }
 
-                        if (data.platform === 'youtube' && storedYoutubeApiKey) {
-                            try {
-                                const searchUrl = `https://www.googleapis.com/youtube/v3/search?key=${storedYoutubeApiKey}&channelId=${encodeURIComponent(data.name)}&part=snippet,id&order=date&maxResults=1`;
-                                const ytRes = await fetch(searchUrl);
-                                const ytData = await ytRes.json();
-                                if (ytData.items && ytData.items.length > 0) {
-                                    const publishedAt = ytData.items[0].snippet.publishedAt;
-                                    lastVideoTime = new Date(publishedAt).getTime();
-                                }
-                            } catch(e) { console.error("YouTube video check error:", e); }
-                        }
-
                         const streamerObj = {
                             ...data,
                             followers: parseInt(data.followers) || 0,
                             viewerCount: viewerCount,
-                            isLive: isLive,
-                            lastVideoTime: lastVideoTime
+                            isLive: isLive
                         };
 
                         allStreamersWithStatus.push(streamerObj);
@@ -2211,11 +2168,8 @@
                 let onlineTwitch = twitchList.filter(s => s.isLive);
                 onlineTwitch.sort((a, b) => b.viewerCount - a.viewerCount);
 
-                if (currentYtSortMode === 'latest') {
-                    youtubeList.sort((a, b) => (b.lastVideoTime || 0) - (a.lastVideoTime || 0));
-                } else {
-                    youtubeList.sort((a, b) => b.followers - a.followers);
-                }
+                // YouTube yayıncılarını direkt abone sayısına göre sırala (API sorgusuz)
+                youtubeList.sort((a, b) => b.followers - a.followers);
 
                 let twitchOnlineHtml = "";
                 onlineTwitch.forEach(data => {
@@ -2248,7 +2202,7 @@
                                 </div>
                                 <div class="streamer-name">${escapeHtml(data.name)}</div>
                             </a>
-                            <div class="yt-sub-badge"><i class="fa-solid fa-users"></i> ${data.followers.toLocaleString('tr-TR')}</div>
+                            <div class="yt-sub-badge"><i class="fa-solid fa-users"></i> ${data.followers.toLocaleString('tr-TR')} Abone</div>
                         </div>
                     `;
                 });
@@ -2287,7 +2241,6 @@
             }
         }
 
-        // Event Delegation ile Admin Yayıncı Listesi Tıklama Yönetimi
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('admin-edit-btn')) {
                 const id = e.target.getAttribute('data-id');
@@ -2473,7 +2426,6 @@
             return cardEl;
         }
 
-        // Event Delegation ile İlan Düzenleme ve Silme
         document.addEventListener('click', (e) => {
             const editBtn = e.target.closest('.item-edit-btn');
             const deleteBtn = e.target.closest('.item-delete-btn');
@@ -2768,55 +2720,24 @@
             rawCommentsList = [];
 
             try {
-                if (storedYoutubeApiKey) {
-                    let nextPageToken = "";
-                    let fetchMore = true;
+                const targetUrl = `https://yt-comments-api.vercel.app/api/comments?videoId=${videoId}`;
+                const corsProxy = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+                
+                const res = await fetch(corsProxy);
+                if (!res.ok) throw new Error("Yorum servisine erişilemedi.");
+                
+                const wrapperData = await res.json();
+                const data = JSON.parse(wrapperData.contents);
 
-                    while (fetchMore) {
-                        let apiUrl = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=100&key=${storedYoutubeApiKey}`;
-                        if (nextPageToken) apiUrl += `&pageToken=${nextPageToken}`;
-
-                        const res = await fetch(apiUrl);
-                        const data = await res.json();
-
-                        if (data.error) throw new Error(data.error.message || "API Hatası oluştu.");
-
-                        if (data.items) {
-                            data.items.forEach(item => {
-                                const topComment = item.snippet.topLevelComment.snippet;
-                                rawCommentsList.push({
-                                    author: topComment.authorDisplayName,
-                                    text: topComment.textDisplay
-                                });
-                            });
-                        }
-
-                        if (data.nextPageToken) {
-                            nextPageToken = data.nextPageToken;
-                        } else {
-                            fetchMore = false;
-                        }
-                    }
-                } else {
-                    const targetUrl = `https://yt-comments-api.vercel.app/api/comments?videoId=${videoId}`;
-                    const corsProxy = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
-                    
-                    const res = await fetch(corsProxy);
-                    if (!res.ok) throw new Error("Yorum servisine erişilemedi.");
-                    
-                    const wrapperData = await res.json();
-                    const data = JSON.parse(wrapperData.contents);
-
-                    if (data.comments && data.comments.length > 0) {
-                        data.comments.forEach(c => {
-                            rawCommentsList.push({
-                                author: c.author || c.authorDisplayName || "Kullanıcı",
-                                text: c.text || c.textDisplay || ""
-                            });
+                if (data.comments && data.comments.length > 0) {
+                    data.comments.forEach(c => {
+                        rawCommentsList.push({
+                            author: c.author || c.authorDisplayName || "Kullanıcı",
+                            text: c.text || c.textDisplay || ""
                         });
-                    } else {
-                        throw new Error("Yorum bulunamadı veya video yoruma kapalı.");
-                    }
+                    });
+                } else {
+                    throw new Error("Yorum bulunamadı veya video yoruma kapalı.");
                 }
 
                 if (rawCommentsList.length === 0) {
@@ -2829,7 +2750,7 @@
             } catch (err) {
                 console.error(err);
                 statusMsg.innerHTML = `<span style="color:#ef4444;">❌ Hata: ${escapeHtml(err.message)}</span>`;
-                showCustomAlert("Yorumlar otomatik çekilemedi. YouTube API Key ekleyebilir veya 'Twitch Yardımlaşma' sekmesini kullanabilirsiniz.", "BİLGİ");
+                showCustomAlert("Yorumlar çekilemedi. Lütfen geçerli bir video linki girdiğinizden emin olun.", "BİLGİ");
             } finally {
                 btnFetch.innerHTML = '<i class="fa-solid fa-comments"></i> Yorumları Çek';
                 btnFetch.disabled = false;
