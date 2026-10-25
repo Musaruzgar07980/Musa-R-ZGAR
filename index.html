@@ -2528,7 +2528,7 @@
             else tablets.forEach((eq, idx) => tabletContainer.appendChild(createEqCard(eq, 'tab_' + idx)));
 
             if (generalEqs.length === 0) eqContainer.innerHTML = '<div style="width: 100%; text-align:center; color:var(--text-muted); font-size:0.85rem;">Ekipman bulunamadı.</div>';
-            else generalEqs.forEach((eq, idx) => tabletContainer.appendChild ? generalEqs.forEach((eQ, i) => eqContainer.appendChild(createEqCard(eQ, 'geneq_' + i))) : null);
+            else generalEqs.forEach((eq, idx) => eqContainer.appendChild(createEqCard(eq, 'geneq_' + idx)));
         }
 
         function createEqCard(eq, indexKey) {
