@@ -2126,7 +2126,17 @@
                 let twitchStatuses = {};
                 if (storedTwitchWorkerUrl) {
                     try {
-                        const twRes = await fetch(storedTwitchWorkerUrl);
+                        // Yayıncı isimlerini toplayıp Worker'a URL parametresi olarak gönderiyoruz:
+                        const twitchNames = globalStreamersData
+                        .filter(s => s.platform === 'twitch')
+                        .map(s => encodeURIComponent(s.name.trim()))
+                        .join(',');
+
+                        const fetchUrl = storedTwitchWorkerUrl.includes('?') 
+                        ? `${storedTwitchWorkerUrl}&usernames=${twitchNames}`
+                        : `${storedTwitchWorkerUrl}?usernames=${twitchNames}`;
+
+                        const twRes = await fetch(fetchUrl);
                         const twData = await twRes.json();
                         if (twData && twData.streams) {
                             twitchStatuses = twData.streams;
