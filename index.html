@@ -2143,8 +2143,14 @@
                         if (data.platform === 'twitch') {
                             const lowerName = data.name.toLowerCase();
                             if (twitchStatuses[lowerName] !== undefined && twitchStatuses[lowerName] !== null) {
-                                isLive = true;
-                                viewerCount = twitchStatuses[lowerName];
+                                const streamInfo = twitchStatuses[lowerName];
+                                if (typeof streamInfo === 'object') {
+                                    isLive = streamInfo.isLive || false;
+                                    viewerCount = Number(streamInfo.viewerCount) || 0;
+                                } else if (typeof streamInfo === 'number') {
+                                    isLive = true;
+                                    viewerCount = streamInfo;
+                                }
                             }
                         }
 
@@ -2168,7 +2174,6 @@
                 let onlineTwitch = twitchList.filter(s => s.isLive);
                 onlineTwitch.sort((a, b) => b.viewerCount - a.viewerCount);
 
-                // YouTube yayıncılarını direkt abone sayısına göre sırala (API sorgusuz)
                 youtubeList.sort((a, b) => b.followers - a.followers);
 
                 let twitchOnlineHtml = "";
@@ -2184,7 +2189,7 @@
                                 </div>
                                 <div class="streamer-name">${escapeHtml(data.name)}</div>
                             </a>
-                            <div class="viewer-count-badge"><i class="fa-solid fa-eye"></i> ${data.viewerCount.toLocaleString('tr-TR')} izleyici</div>
+                            <div class="viewer-count-badge"><i class="fa-solid fa-eye"></i> ${Number(data.viewerCount || 0).toLocaleString('tr-TR')} izleyici</div>
                         </div>
                     `;
                 });
